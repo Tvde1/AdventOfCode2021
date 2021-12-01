@@ -7,4 +7,9 @@
     <RootNamespace>AdventOfCode.Runner</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Puzzles\Puzzles.csproj" />
+  </ItemGroup>
+
 </Project>

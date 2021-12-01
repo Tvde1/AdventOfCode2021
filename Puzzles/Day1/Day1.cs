@@ -1,29 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day1
 {
-    public class Day1 : AdventDayBase
-    {
-        const string InputFile = "input.txt";
+	public class Day1 : AdventDayBase
+	{
+		private const string InputFile = "Day1/day1.txt";
 
-        public IEnumerable<string> One()
-        {
-            var lines = File.ReadAllLines(InputFile);
+		public Day1()
+		 : base(1)
+		{
+			AddPart(BuildPartOne());
+			AddPart(BuildPartTwo());
+		}
 
-            var count = lines
-                .Select(int.Parse)
-                .Pairs()
-                .Count(x => x.Item1 < x.Item2);
+		public AdventAssignment BuildPartOne()
+		{
+			return AdventAssignment.Build(
+				1,
+				InputFile,
+				input => input.Split(Environment.NewLine).Select(int.Parse),
+				data => data.Pairs().Count(x => x.Item1 < x.Item2).ToString().Enumerate());
+		}
 
-            Console.WriteLine(count);
-            yield return count;
-
-            // 1527
-        }
-    }
+		public AdventAssignment BuildPartTwo()
+		{
+			return AdventAssignment.Build(
+				2,
+				InputFile,
+				input => input.Split(Environment.NewLine).Select(int.Parse),
+				data => data.Triplets().Select(x => x.Item1 + x.Item2 + x.Item3).Pairs().Count(x => x.Item1 < x.Item2).ToString().Enumerate());
+		}
+	}
 }
 
