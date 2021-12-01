@@ -36,8 +36,6 @@ namespace AdventOfCode.Common
 					yield return line;
 				}
 			}
-
-			yield return "==========";
 		}
 	}
 
