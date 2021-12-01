@@ -101,5 +101,15 @@ namespace AdventOfCode.Common.Monads
 		        return FromException(ex);
 	        }
         }
-    }
+
+		public static bool operator ==(TryCatch<TResult> left, TryCatch<TResult> right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(TryCatch<TResult> left, TryCatch<TResult> right)
+		{
+			return !(left == right);
+		}
+	}
 }

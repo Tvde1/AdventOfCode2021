@@ -70,5 +70,15 @@ namespace AdventOfCode.Common.Monads
 		private readonly struct Void
 		{
 		}
+
+		public static bool operator ==(TryCatch left, TryCatch right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(TryCatch left, TryCatch right)
+		{
+			return !(left == right);
+		}
 	}
 }
