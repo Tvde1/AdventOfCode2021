@@ -15,7 +15,7 @@ namespace AdventOfCode.Puzzles.Day1
 			AddPart(BuildPartTwo());
 		}
 
-		public AdventAssignment BuildPartOne()
+		public static AdventAssignment BuildPartOne()
 		{
 			return AdventAssignment.Build(
 				1,
@@ -24,7 +24,7 @@ namespace AdventOfCode.Puzzles.Day1
 				data => data.Pairs().Count(x => x.Item1 < x.Item2).ToString().Enumerate());
 		}
 
-		public AdventAssignment BuildPartTwo()
+		public static AdventAssignment BuildPartTwo()
 		{
 			return AdventAssignment.Build(
 				2,
