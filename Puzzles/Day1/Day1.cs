@@ -9,7 +9,7 @@ namespace AdventOfCode.Puzzles.Day1
 		private const string InputFile = "Day1/day1.txt";
 
 		public Day1()
-		 : base(1)
+			: base(1)
 		{
 			AddPart(BuildPartOne());
 			AddPart(BuildPartTwo());
@@ -30,8 +30,8 @@ namespace AdventOfCode.Puzzles.Day1
 				2,
 				InputFile,
 				input => input.Split(Environment.NewLine).Select(int.Parse),
-				data => data.Triplets().Select(x => x.Item1 + x.Item2 + x.Item3).Pairs().Count(x => x.Item1 < x.Item2).ToString().Enumerate());
+				data => data.Triplets().Select(x => x.Item1 + x.Item2 + x.Item3).Pairs().Count(x => x.Item1 < x.Item2)
+					.ToString().Enumerate());
 		}
 	}
 }
-

@@ -16,11 +16,11 @@ namespace AdventOfCode.Puzzles.Day2
 			Forward,
 		}
 
-		private record Command(Direction Direction, int Count);
+		private readonly record struct Command(Direction Direction, int Count);
 
-		private record State(int Depth, int HorizontalPosition);
+		private readonly record struct State(int Depth, int HorizontalPosition);
 
-		private record State2(int Depth, int HorizontalPosition, int Aim);
+		private readonly record struct State2(int Depth, int HorizontalPosition, int Aim);
 
 		public Day2()
 			: base(1)
