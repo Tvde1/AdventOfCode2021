@@ -18,9 +18,7 @@ namespace AdventOfCode.Puzzles.Day2
 
 		private readonly record struct Command(Direction Direction, int Count);
 
-		private readonly record struct State(int Depth, int HorizontalPosition);
-
-		private readonly record struct State2(int Depth, int HorizontalPosition, int Aim);
+		private readonly record struct State(int Depth, int HorizontalPosition, int Aim);
 
 		public Day2()
 			: base(1)
@@ -35,27 +33,23 @@ namespace AdventOfCode.Puzzles.Day2
 				1,
 				InputFile,
 				input => input.Split(Environment.NewLine).Select(x => x.Split(" ")).Select(ParseCommand),
-				data =>
-				{
-					var (depth, horizontalPosition) = data.Aggregate(
-						new State(0, 0),
-						(state, command) => command switch
+				data => CalculateCourseResult(data.Aggregate(
+					new State(0, 0, 0),
+					(state, command) => command switch
+					{
+						{Direction: Direction.Up} => state with
 						{
-							{Direction: Direction.Up} => state with
-							{
-								Depth = state.Depth - command.Count
-							},
-							{Direction: Direction.Down} => state with
-							{
-								Depth = state.Depth + command.Count
-							},
-							{Direction: Direction.Forward} => state with
-							{
-								HorizontalPosition = state.HorizontalPosition + command.Count
-							},
-						});
-					return (depth * horizontalPosition).ToString().Enumerate();
-				});
+							Depth = state.Depth - command.Count
+						},
+						{Direction: Direction.Down} => state with
+						{
+							Depth = state.Depth + command.Count
+						},
+						{Direction: Direction.Forward} => state with
+						{
+							HorizontalPosition = state.HorizontalPosition + command.Count
+						},
+					})).ToString().Enumerate());
 		}
 
 		public static AdventAssignment BuildPartTwo()
@@ -64,28 +58,24 @@ namespace AdventOfCode.Puzzles.Day2
 				2,
 				InputFile,
 				input => input.Split(Environment.NewLine).Select(x => x.Split(" ")).Select(ParseCommand),
-				data =>
-				{
-					var (depth, horizontalPosition, _) = data.Aggregate(
-						new State2(0, 0, 0),
-						(state, command) => command switch
+				data => CalculateCourseResult(data.Aggregate(
+					new State(0, 0, 0),
+					(state, command) => command switch
+					{
+						{Direction: Direction.Up} => state with
 						{
-							{Direction: Direction.Up} => state with
-							{
-								Aim = state.Aim - command.Count,
-							},
-							{Direction: Direction.Down} => state with
-							{
-								Aim = state.Aim + command.Count,
-							},
-							{Direction: Direction.Forward} => state with
-							{
-								HorizontalPosition = state.HorizontalPosition + command.Count,
-								Depth = state.Depth + (state.Aim * command.Count),
-							},
-						});
-					return (depth * horizontalPosition).ToString().Enumerate();
-				});
+							Aim = state.Aim - command.Count,
+						},
+						{Direction: Direction.Down} => state with
+						{
+							Aim = state.Aim + command.Count,
+						},
+						{Direction: Direction.Forward} => state with
+						{
+							HorizontalPosition = state.HorizontalPosition + command.Count,
+							Depth = state.Depth + (state.Aim * command.Count),
+						},
+					})).ToString().Enumerate());
 		}
 
 		private static Command ParseCommand(string[] input)
@@ -96,6 +86,11 @@ namespace AdventOfCode.Puzzles.Day2
 				"down" => Direction.Down,
 				"forward" => Direction.Forward,
 			}, int.Parse(input[1]));
+		}
+
+		private static int CalculateCourseResult(State state)
+		{
+			return state.Depth * state.HorizontalPosition;
 		}
 	}
 }
