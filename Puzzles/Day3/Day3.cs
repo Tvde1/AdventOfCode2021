@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AdventOfCode.Common;
 
-namespace AdventOfCode.Puzzles.Day2
+namespace AdventOfCode.Puzzles.Day3
 {
 	public class Day3 : AdventDayBase
 	{
 		private const string InputFile = "Day3/day3.txt";
-
-		private readonly record struct BitCounter(int Count);
 
 		private const string testInput = @"00100
 11110
@@ -28,15 +24,13 @@ namespace AdventOfCode.Puzzles.Day2
 		public Day3()
 			: base(3)
 		{
-			AddPart(BuildPartOne());
-			AddPart(BuildPartTwo());
+			AddPart(PartOne);
+			AddPart(BuildPartTwo);
 		}
 
-		public static AdventAssignment BuildPartOne()
-		{
-			// 2743844
-			return AdventAssignment.Build(
-				1,
+		// 2743844
+		public static AdventAssignment PartOne =>
+			AdventAssignment.Build(
 				InputFile,
 				input => input.Split(Environment.NewLine).ToArray(),
 				data =>
@@ -44,52 +38,28 @@ namespace AdventOfCode.Puzzles.Day2
 					var aggregate = new int[data.First().Length];
 
 					foreach (var line in data)
-					{
 						for (var index = 0; index < line.Length; index++)
-						{
 							aggregate[index] += line[index] == '1' ? 1 : -1;
-						}
-					}
 
 					var aggregateString = new string(aggregate.Select(x => x > 0 ? '1' : '0').ToArray());
-					var result = EncodeBools(aggregateString);
-					var inverseAggregateString = new string(aggregate.Select(x => x < 0 ? '1' : '0').ToArray());
-					var inverseResult = EncodeBools(inverseAggregateString);
+					var result = Convert.ToInt32(aggregateString, 2);
+
+					var inverseResult = ~result & 0b1111_1111_1111;
 
 					return (result * inverseResult).ToString().Enumerate();
 				});
-		}
 
-		public static AdventAssignment BuildPartTwo()
-		{
-			// 6677951
-			return AdventAssignment.Build(
-				2,
-				InputFile,
-				input => input.Split(Environment.NewLine).ToArray(),
-				data =>
-				{
-					var mostCommon = EncodeBools(FindMostCommon(data, false));
-					var leastCommon = EncodeBools(FindMostCommon(data, true));
+		// 6677951
+		public static AdventAssignment BuildPartTwo => AdventAssignment.Build(
+			InputFile,
+			input => input.Split(Environment.NewLine).ToArray(),
+			data =>
+			{
+				var mostCommon = Convert.ToInt32(FindMostCommon(data, false), 2);
+				var leastCommon = Convert.ToInt32(FindMostCommon(data, true), 2);
 
-					return (mostCommon * leastCommon).ToString().Enumerate();
-				});
-		}
-
-		private static decimal EncodeBools(string source)
-		{
-			return source.Aggregate(0,
-				(agg, curr) =>
-				{
-					agg <<= 1;
-					if (curr == '1')
-					{
-						agg |= 1;
-					}
-
-					return agg;
-				});
-		}
+				return (mostCommon * leastCommon).ToString().Enumerate();
+			});
 
 		public static string FindMostCommon(string[] input, bool inverse, int indexToMatch = 0)
 		{
@@ -99,13 +69,9 @@ namespace AdventOfCode.Puzzles.Day2
 
 			var set = (!inverse ? grouped.Last() : grouped.First()).ToArray();
 
-			if (set.Length == 1)
-			{
-				return set[0];
-			}
+			if (set.Length == 1) return set[0];
 
 			return FindMostCommon(set, inverse, indexToMatch + 1);
 		}
 	}
 }
-

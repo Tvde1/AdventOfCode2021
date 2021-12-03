@@ -1,84 +1,126 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Common.Monads
 {
-	public readonly struct TryCatch
+	public readonly record struct TryCatch
 	{
-		private readonly TryCatch<Void> _voidTryCatch;
-
-		private TryCatch(TryCatch<Void> voidTryCatch)
-		{
-			this._voidTryCatch = voidTryCatch;
-		}
-
-		public Exception Exception => this._voidTryCatch.Exception;
-
-		public bool Succeeded => this._voidTryCatch.Succeeded;
-
-		public bool Failed => this._voidTryCatch.Failed;
-
-		public void Match(
-			Action onSuccess,
-			Action<Exception> onError) => this._voidTryCatch.Match(
-				onSuccess: (dummy) => { onSuccess(); },
-				onError: onError);
-
-		public void ThrowIfFailed() => this._voidTryCatch.ThrowIfFailed();
-
-		public override bool Equals(object? obj)
-		{
-			if (obj is TryCatch other)
-			{
-				return this.Equals(other);
-			}
-
-			return false;
-		}
-
-		public bool Equals(TryCatch other) => this._voidTryCatch.Equals(other._voidTryCatch);
-
-		public override int GetHashCode() => this._voidTryCatch.GetHashCode();
-
-		public static TryCatch FromResult() => new(TryCatch<Void>.FromResult(default));
-
-		public static TryCatch FromException(Exception exception) => new(TryCatch<Void>.FromException(exception));
-
-		public static TryCatch Try(Action action)
-		{
-			try
-			{
-				action();
-				return TryCatch.FromResult();
-			}
-			catch (Exception ex)
-			{
-				return TryCatch.FromException(ex);
-			}
-		}
-
 		public static TryCatch<T> Try<T>(Func<T> func)
 		{
 			return TryCatch<T>.Try(func);
 		}
-
-
-		/// <summary>
-		/// Represents a void return type.
-		/// </summary>
-		private readonly struct Void
-		{
-		}
-
-		public static bool operator ==(TryCatch left, TryCatch right)
-		{
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(TryCatch left, TryCatch right)
-		{
-			return !(left == right);
-		}
 	}
+
+    public readonly record struct TryCatch<TResult>
+    {
+        private readonly Either<Exception, TResult> _either;
+
+        private TryCatch(Either<Exception, TResult> either)
+        {
+            _either = either;
+        }
+
+        public bool Succeeded => _either.IsRight;
+
+        public bool Failed => !Succeeded;
+
+        public TResult Result =>
+            _either.Match(l => throw new InvalidOperationException(
+                    $"Tried to get the result of a {nameof(TryCatch<TResult>)} that ended in an exception."),
+                r => r);
+
+        public Exception Exception =>
+            _either.Match(e => e, r => throw new InvalidOperationException(
+                $"Tried to get the exception of a {nameof(TryCatch<TResult>)} that ended in a result."));
+
+        public Exception InnerMostException
+        {
+            get
+            {
+                Exception exception = Exception;
+                while (exception.InnerException != null)
+                {
+                    exception = exception.InnerException;
+                }
+
+                return exception;
+            }
+        }
+
+        public TResult ResultOrThrow
+        {
+            get
+            {
+                ThrowIfFailed();
+                return Result;
+            }
+        }
+
+        public void Match(
+            Action<TResult> onSuccess,
+            Action<Exception> onError)
+        {
+            _either.Match(onError, onSuccess);
+        }
+
+        public void ThrowIfFailed()
+        {
+            if (!Succeeded)
+            {
+                ExceptionDispatchInfo.Capture(Exception).Throw();
+            }
+        }
+
+        public TryCatch<T> Continue<T>(Func<TResult, T> onSucceeded)
+        {
+            return _either.Match(TryCatch<T>.FromException, r => TryCatch.Try(() => onSucceeded(r)));
+        }
+
+        public TryCatch<TResult> SelectException<TEx>(Func<TEx, Exception> selector)
+        {
+            return this switch
+            {
+                { Succeeded: true } => this,
+                { Exception: TEx e } => FromException(selector(e)),
+                _ => this,
+            };
+        }
+
+        public bool Equals(TryCatch<TResult> other)
+        {
+            return _either.Equals(other._either);
+        }
+
+        public override int GetHashCode()
+        {
+            return _either.GetHashCode();
+        }
+
+        public static TryCatch<TResult> FromResult(TResult result)
+        {
+            return new TryCatch<TResult>(result);
+        }
+
+        public static TryCatch<TResult> FromException(Exception exception)
+        {
+            return new TryCatch<TResult>(
+                new AggregateException(
+                    $"{nameof(TryCatch<TResult>)} resulted in an exception.",
+                    exception));
+        }
+
+        public static TryCatch<TResult> Try(Func<TResult> func)
+        {
+            try
+            {
+                return FromResult(func());
+            }
+            catch (Exception ex)
+            {
+                return FromException(ex);
+            }
+        }
+    }
 }

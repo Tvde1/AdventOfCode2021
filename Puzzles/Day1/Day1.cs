@@ -18,7 +18,6 @@ namespace AdventOfCode.Puzzles.Day1
 		public static AdventAssignment BuildPartOne()
 		{
 			return AdventAssignment.Build(
-				1,
 				InputFile,
 				input => input.Split(Environment.NewLine).Select(int.Parse),
 				data => data.Pairs().Count(x => x.Item1 < x.Item2).ToString().Enumerate());
@@ -27,7 +26,6 @@ namespace AdventOfCode.Puzzles.Day1
 		public static AdventAssignment BuildPartTwo()
 		{
 			return AdventAssignment.Build(
-				2,
 				InputFile,
 				input => input.Split(Environment.NewLine).Select(int.Parse),
 				data => data.Triplets().Select(x => x.Item1 + x.Item2 + x.Item3).Pairs().Count(x => x.Item1 < x.Item2)

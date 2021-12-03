@@ -4,6 +4,7 @@ using System.Linq;
 using AdventOfCode.Common;
 using AdventOfCode.Puzzles.Day1;
 using AdventOfCode.Puzzles.Day2;
+using AdventOfCode.Puzzles.Day3;
 
 namespace AdventOfCode.Runner
 {

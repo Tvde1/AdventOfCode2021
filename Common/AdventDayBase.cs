@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace AdventOfCode.Common
 {
@@ -24,14 +23,12 @@ namespace AdventOfCode.Common
 			yield return "==========";
 			yield return $"Begin day {_day}";
 
+			var index = 0;
 			foreach (var part in _parts)
 			{
-				yield return $"Part: {part.Index}";
+				yield return $"Part: {++index}";
 				var lines = part.Run();
-				foreach (var line in lines)
-				{
-					yield return line;
-				}
+				foreach (var line in lines) yield return line;
 			}
 		}
 	}
