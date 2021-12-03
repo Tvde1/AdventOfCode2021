@@ -21,7 +21,7 @@ namespace AdventOfCode.Puzzles.Day2
 		private readonly record struct State(int Depth, int HorizontalPosition, int Aim);
 
 		public Day2()
-			: base(1)
+			: base(2)
 		{
 			AddPart(BuildPartOne());
 			AddPart(BuildPartTwo());

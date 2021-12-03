@@ -14,6 +14,7 @@ namespace AdventOfCode.Runner
 	    {
             new Day1(),
             new Day2(),
+            new Day3(),
 	    };
 
         public void Run()
