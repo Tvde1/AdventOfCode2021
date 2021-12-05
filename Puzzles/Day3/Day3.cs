@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day3
@@ -35,14 +37,22 @@ namespace AdventOfCode.Puzzles.Day3
 				input => input.Split(Environment.NewLine).ToArray(),
 				data =>
 				{
-					var aggregate = new int[data.First().Length];
+					var aggregate = new int[data[0].Length];
 
 					foreach (var line in data)
 						for (var index = 0; index < line.Length; index++)
 							aggregate[index] += line[index] == '1' ? 1 : -1;
 
-					var aggregateString = new string(aggregate.Select(x => x > 0 ? '1' : '0').ToArray());
-					var result = Convert.ToInt32(aggregateString, 2);
+					var result = aggregate.Aggregate(0, (agg, cur) =>
+					{
+						agg <<= 1;
+						if (cur > 0)
+						{
+							agg |= 1;
+						}
+
+						return agg;
+					});
 
 					var inverseResult = ~result & 0b1111_1111_1111;
 
