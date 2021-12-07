@@ -31,6 +31,7 @@ namespace AdventOfCode.Puzzles.Day6
 				input => input.Split(",").Select(int.Parse),
 				data => SimulateLanternFish(data, 80).Count().ToString().Enumerate());
 
+		// 1743335992042
 		public static AdventAssignment PartTwo =>
 			AdventAssignment.Build(
 				InputFile,

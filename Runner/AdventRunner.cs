@@ -8,6 +8,7 @@ using AdventOfCode.Puzzles.Day3;
 using AdventOfCode.Puzzles.Day4;
 using AdventOfCode.Puzzles.Day5;
 using AdventOfCode.Puzzles.Day6;
+using AdventOfCode.Puzzles.Day7;
 
 namespace AdventOfCode.Runner
 {
@@ -22,6 +23,7 @@ namespace AdventOfCode.Runner
             new Day4(),
             new Day5(),
             new Day6(),
+            new Day7(),
 	    };
 
         public void Run()

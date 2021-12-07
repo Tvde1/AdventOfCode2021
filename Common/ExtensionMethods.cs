@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode.Common
 {
@@ -44,6 +46,19 @@ namespace AdventOfCode.Common
 		public static IEnumerable<T> Enumerate<T>(this T item)
 		{
 			yield return item;
+		}
+
+		public static IEnumerator<int> GetEnumerator(this Range range)
+		{
+			var start = range.Start.GetOffset(int.MaxValue);
+			var end = range.End.GetOffset(int.MaxValue);
+			var acc = end.CompareTo(start);
+			var current = start;
+			do
+			{
+				yield return current;
+				current += acc;
+			} while (current != end);
 		}
 	}
 }
