@@ -84,5 +84,10 @@ namespace AdventOfCode.Common
 			var o = TryCatch.Try(() => source[x, y]).Match(s => s, _ => (int?) null);
             return o;
         }
+
+        public static string ToAlphabeticalOrder(this string source)
+        {
+            return new string(source.OrderBy(x => x).ToArray());
+        }
 	}
 }

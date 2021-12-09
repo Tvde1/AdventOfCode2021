@@ -65,10 +65,10 @@ namespace AdventOfCode.Puzzles.Day4
 							continue;
 						}
 
-						return (winningBoard.SumOfAllUnmarked * dataNumber);
+						return (winningBoard.SumOfAllUnmarked * dataNumber).ToString();
 					}
 
-					return "No found".Enumerate();
+					return "No found";
 				});
 
 		private static AdventAssignment PartTwo = AdventAssignment.Build(
@@ -113,12 +113,12 @@ namespace AdventOfCode.Puzzles.Day4
 
 					if (data.Boards.Count == 0)
 					{
-						return (winningBoard.First().SumOfAllUnmarked * dataNumber);
+						return (winningBoard.First().SumOfAllUnmarked * dataNumber).ToString();
 					}
 
 				}
 
-				return "No found".Enumerate();
+				return "No found";
 			});
 
 		private readonly record struct Vector2(int X, int Y);

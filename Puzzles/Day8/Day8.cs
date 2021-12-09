@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
@@ -29,7 +30,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
             : base(8)
         {
             AddPart(PartOne);
-            //AddPart(PartTwo);
+            AddPart(PartTwo);
         }
 
         // Test: 26
@@ -43,7 +44,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         public static AdventAssignment PartTwo =>
             AdventAssignment.Build(
                 InputFile,
-                input => TestInput.Split(Environment.NewLine).Select(SegmentData.Parse),
+                input => input.Split(Environment.NewLine).Select(SegmentData.Parse),
                 data =>  data.Sum(segmentData =>
                         CalculateNumber(segmentData.Output, CalculateConnections(segmentData.Signals)))
                     );
@@ -54,9 +55,9 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
             {
                 var s = input.Split(" | ");
 
-                var signals = s[0].Split(StringConstants.Space, StringSplitOptions.TrimEntries).ToArray();
+                var signals = s[0].Split(StringConstants.Space, StringSplitOptions.TrimEntries).Select(x => x.ToAlphabeticalOrder()).ToArray();
 
-                var output = s[1].Split(StringConstants.Space, StringSplitOptions.TrimEntries).ToArray();
+                var output = s[1].Split(StringConstants.Space, StringSplitOptions.TrimEntries).Select(x => x.ToAlphabeticalOrder()).ToArray();
 
                 return new SegmentData(signals, output);
             }
@@ -64,20 +65,32 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
         private static IReadOnlyDictionary<string, int> CalculateConnections(string[] signals)
         {
+            // Known
             var one = signals.Single(x => x is { Length: 2 });
             var four = signals.Single(x => x is { Length: 4 });
             var seven = signals.Single(x => x is { Length: 3 });
             var eight = signals.Single(x => x is { Length: 7 });
 
+            // Figured out
             var three = signals.Single(x => x is { Length: 5 } && ContainsAllChars(x, one));
             var nine = signals.Single(x => x is { Length: 6 } && ContainsAllChars(x, four));
             var zero = signals.Except(nine.Enumerate()).Single(x => x is { Length: 6 } && ContainsAllChars(x, one));
-            var six = signals.Except(new[] {nine, zero}).First(x => x is { Length: 6 });
+            var six = signals.Except(new[] {nine, zero}).Single(x => x is { Length: 6 });
 
-            var two = signals.Single(x => x.Except(six).Count() == 2);
-            var five = signals.Except(seven.Enumerate()).Single(x => x.Except(six).Count() == 5);
+            var two = signals.Except(new []{ three }).Single(x =>
+            {
+                if (x is {Length: 5})
+                {
+                    var enumerable = six.Except(x).ToList();
+                    var b = enumerable.Count == 2;
+                    return b;
+                }
 
-            return new Dictionary<string, int>
+                return false;
+            });
+            var five = signals.Except(new[] { three, two }).Single(x => x is {Length: 5} && six.Except(x).Count() == 1);
+
+            var mapping = new Dictionary<string, int>
             {
                 {one, 1},
                 {two, 2},
@@ -90,6 +103,10 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
                 {nine, 9},
                 {zero, 0},
             };
+
+            Debug.Assert(mapping.Keys.Count == 10);
+
+            return mapping;
         }
 
         private static bool ContainsAllChars(string input, string sub)
@@ -99,7 +116,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
         private static int CalculateNumber(IEnumerable<string> inputs, IReadOnlyDictionary<string, int> mapping)
         {
-            return inputs.Select((t, i) => mapping[t] * Convert.ToInt32(Math.Pow(10, i))).Sum();
+            return inputs.Select((t, i) => mapping[t] * Convert.ToInt32(Math.Pow(10, 3 - i))).Sum();
         }
     }
 }
