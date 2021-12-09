@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day9;
@@ -28,36 +29,43 @@ public class Day9 : AdventDayBase
             InputFile,
             input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
-            data => CalculateLowestPoints(data).Sum(x => data[x.X, x.Y] + 1));
+            data => CalculateLowestPointsParallel(data).Sum(x => data[x.X, x.Y] + 1));
 
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
-            data => CalculateLowestPoints(data).Select(x => CalculateBasinSize(data, x).Item1)
+            data => CalculateLowestPointsParallel(data).Select(x => CalculateBasinSize(data, x).Item1)
                 .OrderByDescending(x => x).Take(3).Aggregate(1, (a, b) => a * b));
 
-    public static IEnumerable<(int X, int Y)> CalculateLowestPoints(int[,] inputs)
+    public static ParallelQuery<(int X, int Y)> CalculateLowestPointsParallel(int[,] inputs)
     {
-        var width = inputs.GetUpperBound(0);
-        var height = inputs.GetUpperBound(1);
+        var width = inputs.GetUpperBound(0) + 1;
+        var height = inputs.GetUpperBound(1) + 1;
 
-        for (var currentHeight = 0; currentHeight <= height; currentHeight++)
-        for (var currentWidth = 0; currentWidth <= width; currentWidth++)
+        return Enumerable.Range(0, width).AsParallel().SelectMany(currentWidth =>
         {
-            var current = inputs[currentWidth, currentHeight];
-
-            var neighbors = new[]
+            return Enumerable.Range(0, height).AsParallel().Select(currentHeight =>
             {
-                inputs.TryGet(currentWidth - 1, currentHeight) ?? int.MaxValue,
-                inputs.TryGet(currentWidth + 1, currentHeight) ?? int.MaxValue,
-                inputs.TryGet(currentWidth, currentHeight - 1) ?? int.MaxValue,
-                inputs.TryGet(currentWidth, currentHeight + 1) ?? int.MaxValue
-            };
+                var current = inputs[currentWidth, currentHeight];
 
-            if (neighbors.All(x => x > current)) yield return (currentWidth, currentHeight);
-        }
+                var neighbors = new[]
+                {
+                    inputs.TryGet(currentWidth - 1, currentHeight),
+                    inputs.TryGet(currentWidth + 1, currentHeight),
+                    inputs.TryGet(currentWidth, currentHeight - 1),
+                    inputs.TryGet(currentWidth, currentHeight + 1),
+                };
+
+                if (neighbors.WhereNotNull().All(x => x > current))
+                {
+                    return ((int X, int Y)?)(currentWidth, currentHeight);
+                }
+
+                return null;
+            });
+        }).WhereNotNull();
     }
 
     public static (int, HashSet<(int X, int Y)>) CalculateBasinSize(int[,] inputs, (int X, int Y) currentPoint,

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AdventOfCode.Common.Monads;
 
@@ -88,6 +87,24 @@ namespace AdventOfCode.Common
         public static string ToAlphabeticalOrder(this string source)
         {
             return new string(source.OrderBy(x => x).ToArray());
+        }
+
+        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+            where T : struct
+        {
+            return source.Where(x => x is not null).Select(x => x!.Value);
+		}
+
+        public static ParallelQuery<T> WhereNotNull<T>(this ParallelQuery<T?> source)
+			where T : struct
+        {
+            return source.Where(x => x is not null).Select(x => x!.Value);
+        }
+
+		public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+            where T : class
+        {
+            return source.Where(x => x is not null).Select(x => x!);
         }
 	}
 }
