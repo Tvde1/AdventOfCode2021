@@ -55,7 +55,7 @@ namespace AdventOfCode.Puzzles.Day5
 						}
 					}
 
-					return board.Values.Count(x => x > 1).ToString().Enumerate();
+					return board.Values.Count(x => x > 1);
 				});
 
 		public static AdventAssignment PartTwo =>
@@ -67,7 +67,7 @@ namespace AdventOfCode.Puzzles.Day5
 				{
 					var board = FillBoard(data);
 
-					return board.Values.Count(x => x > 1).ToString().Enumerate();
+					return board.Values.Count(x => x > 1);
 				});
 
 

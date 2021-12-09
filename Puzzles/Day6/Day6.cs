@@ -29,14 +29,14 @@ namespace AdventOfCode.Puzzles.Day6
 			AdventAssignment.Build(
 				InputFile,
 				input => input.Split(",").Select(int.Parse),
-				data => SimulateLanternFish(data, 80).Count().ToString().Enumerate());
+				data => SimulateLanternFish(data, 80).Count());
 
 		// 1743335992042
 		public static AdventAssignment PartTwo =>
 			AdventAssignment.Build(
 				InputFile,
 				input => input.Split(",").Select(int.Parse).ToList(),
-				data => SimulateLanternFishFaster(data, 256).ToString().Enumerate());
+				data => SimulateLanternFishFaster(data, 256));
 
 
 		public static IEnumerable<int> SimulateLanternFish(IEnumerable<int> data, int daysToSimulate)

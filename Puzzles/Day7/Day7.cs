@@ -23,14 +23,14 @@ namespace AdventOfCode.Puzzles.Day7
 			AdventAssignment.Build(
 				InputFile,
 				input => input.Split(",").Select(int.Parse),
-				data => FindMedianCrabCost(data).ToString().Enumerate());
+				data => FindMedianCrabCost(data));
 
 		// 99634572
 		public static AdventAssignment PartTwo =>
 			AdventAssignment.Build(
 				InputFile,
 				input => input.Split(",").Select(int.Parse).ToList(),
-				data => FindBruteForceCrabCost(data).ToString().Enumerate());
+				data => FindBruteForceCrabCost(data));
 
 
 		public static int FindMedianCrabCost(IEnumerable<int> horizontalPositions)

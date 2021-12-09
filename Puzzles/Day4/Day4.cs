@@ -65,7 +65,7 @@ namespace AdventOfCode.Puzzles.Day4
 							continue;
 						}
 
-						return (winningBoard.SumOfAllUnmarked * dataNumber).ToString().Enumerate();
+						return (winningBoard.SumOfAllUnmarked * dataNumber);
 					}
 
 					return "No found".Enumerate();
@@ -113,7 +113,7 @@ namespace AdventOfCode.Puzzles.Day4
 
 					if (data.Boards.Count == 0)
 					{
-						return (winningBoard.First().SumOfAllUnmarked * dataNumber).ToString().Enumerate();
+						return (winningBoard.First().SumOfAllUnmarked * dataNumber);
 					}
 
 				}

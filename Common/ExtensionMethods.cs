@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Common
 {
@@ -60,5 +62,27 @@ namespace AdventOfCode.Common
 				current += acc;
 			} while (current != end);
 		}
+
+        public static T[,] ToTwoDimensionalArray<T>(this IEnumerable<IEnumerable<T>> enumerable)
+        {
+            var columns = enumerable.Select(inner => inner.ToArray()).ToArray();
+            var lineCount = columns.Max(columns => columns.Length);
+            var twa = new T[lineCount, columns.Length];
+            for (var columnIndex = 0; columnIndex < columns.Length; columnIndex++)
+            {
+                var line = columns[columnIndex];
+                for (var lineIndex = 0; lineIndex < line.Length; lineIndex++)
+                {
+                    twa[lineIndex, columnIndex] = line[lineIndex];
+                }
+            }
+            return twa;
+        }
+
+        public static int? TryGet(this int[,] source, int x, int y)
+        {
+			var o = TryCatch.Try(() => source[x, y]).Match(s => s, _ => (int?) null);
+            return o;
+        }
 	}
 }

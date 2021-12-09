@@ -65,6 +65,11 @@ namespace AdventOfCode.Common.Monads
             _either.Match(onError, onSuccess);
         }
 
+        public TOut Match<TOut>(Func<TResult, TOut> onSuccess, Func<Exception, TOut> onError)
+        {
+            return _either.Match(onError, onSuccess);
+        }
+
         public void ThrowIfFailed()
         {
             if (!Succeeded)

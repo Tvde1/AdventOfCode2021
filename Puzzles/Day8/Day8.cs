@@ -29,7 +29,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
             : base(8)
         {
             AddPart(PartOne);
-            AddPart(PartTwo);
+            //AddPart(PartTwo);
         }
 
         // Test: 26
@@ -38,15 +38,15 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
             AdventAssignment.Build(
                 InputFile,
                 input => input.Split(Environment.NewLine).Select(SegmentData.Parse),
-                data => data.Sum(x => x.Output.Count(a => a is { Length: 2 or 3 or 4 or 7 })).ToString().Enumerate());
+                data => data.Sum(x => x.Output.Count(a => a is { Length: 2 or 3 or 4 or 7 })));
 
         public static AdventAssignment PartTwo =>
             AdventAssignment.Build(
                 InputFile,
                 input => TestInput.Split(Environment.NewLine).Select(SegmentData.Parse),
-                data => data.Sum(segmentData =>
+                data =>  data.Sum(segmentData =>
                         CalculateNumber(segmentData.Output, CalculateConnections(segmentData.Signals)))
-                    .ToString().Enumerate());
+                    );
 
         private readonly record struct SegmentData(string[] Signals, string[] Output)
         {

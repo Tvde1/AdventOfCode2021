@@ -56,7 +56,7 @@ namespace AdventOfCode.Puzzles.Day3
 
 					var inverseResult = ~result & 0b1111_1111_1111;
 
-					return (result * inverseResult).ToString().Enumerate();
+					return (result * inverseResult);
 				});
 
 		// 6677951
@@ -68,7 +68,7 @@ namespace AdventOfCode.Puzzles.Day3
 				var mostCommon = Convert.ToInt32(FindMostCommon(data, false), 2);
 				var leastCommon = Convert.ToInt32(FindMostCommon(data, true), 2);
 
-				return (mostCommon * leastCommon).ToString().Enumerate();
+				return (mostCommon * leastCommon);
 			});
 
 		public static string FindMostCommon(string[] input, bool inverse, int indexToMatch = 0)

@@ -36,7 +36,7 @@ namespace AdventOfCode.Puzzles.Day2
 						{
 							HorizontalPosition = state.HorizontalPosition + command.Count
 						}
-					}).ComputeResult().ToString().Enumerate());
+					}).ComputeResult());
 		}
 
 		public static AdventAssignment BuildPartTwo()
@@ -61,7 +61,7 @@ namespace AdventOfCode.Puzzles.Day2
 							HorizontalPosition = state.HorizontalPosition + command.Count,
 							Depth = state.Depth + state.Aim * command.Count
 						}
-					}).ComputeResult().ToString().Enumerate());
+					}).ComputeResult());
 		}
 
 		private enum Direction : byte
