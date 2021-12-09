@@ -60,16 +60,17 @@ public class Day9 : AdventDayBase
         }
     }
 
-    public static (int, List<(int X, int Y)>) CalculateBasinSize(int[,] inputs, (int X, int Y) currentPoint,
-        List<(int X, int Y)>? visitedPoints = null)
+    public static (int, HashSet<(int X, int Y)>) CalculateBasinSize(int[,] inputs, (int X, int Y) currentPoint,
+        HashSet<(int X, int Y)>? visitedPoints = null)
     {
-        visitedPoints ??= new List<(int X, int Y)>();
+        visitedPoints ??= new HashSet<(int X, int Y)>();
 
-        if (visitedPoints.Contains(currentPoint)) return (0, visitedPoints);
+        if (!visitedPoints.Add(currentPoint))
+        {
+            return (0, visitedPoints);
+        }
 
-        visitedPoints.Add(currentPoint);
-
-        var current = inputs[currentPoint.X, currentPoint.Y];
+        var currentValue = inputs[currentPoint.X, currentPoint.Y];
 
         var neighbors = new[]
         {
@@ -83,11 +84,11 @@ public class Day9 : AdventDayBase
         foreach (var neighbor in neighbors)
         {
             var val = inputs.TryGet(neighbor.X, neighbor.Y);
-            if (val > current && val != 9)
+            if (val > currentValue && val != 9)
             {
                 var (size, newVisitedPoints) = CalculateBasinSize(inputs, neighbor, visitedPoints);
                 sum += size;
-                visitedPoints = visitedPoints.Union(newVisitedPoints).ToList();
+                visitedPoints = visitedPoints.Union(newVisitedPoints).ToHashSet();
             }
         }
 
