@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
 using AdventOfCode.Puzzles.Day1;
+using AdventOfCode.Puzzles.Day10;
 using AdventOfCode.Puzzles.Day2;
 using AdventOfCode.Puzzles.Day3;
 using AdventOfCode.Puzzles.Day4;
@@ -14,7 +15,6 @@ using AdventOfCode.Puzzles.Day9;
 
 namespace AdventOfCode.Runner
 {
-
     public class AdventRunner
     {
 	    private readonly List<AdventDayBase> _days = new()
@@ -28,6 +28,7 @@ namespace AdventOfCode.Runner
             new Day7(),
             new Day8(),
             new Day9(),
+            new Day10(),
 	    };
 
         public void Run()
