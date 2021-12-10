@@ -28,14 +28,14 @@ public class Day9 : AdventDayBase
     public static AdventAssignment PartOne =>
         AdventAssignment.Build(
             InputFile,
-            input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
+            input => TestInput.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
             data => CalculateLowestPointsParallel(data).Sum(x => data[x.X, x.Y] + 1));
 
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
-            input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
+            input => TestInput.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
             data => CalculateLowestPointsParallel(data).Select(x => CalculateBasinSize(data, x))
                 .OrderByDescending(x => x).Take(3).Aggregate(1, (a, b) => a * b));
