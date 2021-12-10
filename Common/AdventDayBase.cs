@@ -5,15 +5,16 @@ namespace AdventOfCode.Common
 {
 	public abstract class AdventDayBase
 	{
-		private readonly int _day;
 		private readonly List<AdventAssignment> _parts = new();
 
-		protected AdventDayBase(int day)
+		protected AdventDayBase(int number)
 		{
-			_day = day;
+            Number = number;
 		}
 
-		protected AdventDayBase AddPart(AdventAssignment part)
+        public int Number { get; }
+
+        protected AdventDayBase AddPart(AdventAssignment part)
 		{
 			_parts.Add(part);
 			return this;
@@ -23,7 +24,7 @@ namespace AdventOfCode.Common
 		{
 			var sw = new Stopwatch();
 			yield return "==========";
-			yield return $"Begin day {_day}";
+			yield return $"Begin day {Number}";
 
 			var index = 0;
 			foreach (var part in _parts)

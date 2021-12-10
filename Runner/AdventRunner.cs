@@ -17,8 +17,11 @@ namespace AdventOfCode.Runner
 {
     public class AdventRunner
     {
-	    private readonly List<AdventDayBase> _days = new()
-	    {
+        public List<int> _daysToSkip = new();
+        public int? _onlyDay = 9;
+
+        private readonly List<AdventDayBase> _days = new()
+        {
             new Day1(),
             new Day2(),
             new Day3(),
@@ -29,21 +32,34 @@ namespace AdventOfCode.Runner
             new Day8(),
             new Day9(),
             new Day10(),
-	    };
+        };
 
         public void Run()
         {
-	        foreach (var line in _days.SelectMany(x => x.Run()))
-	        {
-		        Console.WriteLine(line);
-	        }
+            List<AdventDayBase> days;
+            if (_onlyDay.HasValue)
+            {
+                days = _days.Where(x => x.Number == _onlyDay.Value)
+                    .ToList();
+            }
+            else
+            {
+                days = _days
+                    .Where(x => !_daysToSkip.Contains(x.Number))
+                    .ToList();
+            }
+
+            foreach (var line in days.SelectMany(x => x.Run()))
+            {
+                Console.WriteLine(line);
+            }
 
             Console.WriteLine("End of advent...");
         }
 
         public static AdventRunner Build()
         {
-	        return new AdventRunner();
+            return new AdventRunner();
         }
     }
 }

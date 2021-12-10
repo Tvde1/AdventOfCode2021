@@ -80,8 +80,14 @@ namespace AdventOfCode.Common
 
 		public static int? TryGet(this int[,] source, int x, int y)
 		{
-			var o = TryCatch.Try(() => source[x, y]).Match(s => s, _ => (int?)null);
-			return o;
+            try
+            {
+                return source[x, y];
+            }
+            catch
+            {
+                return null;
+            }
 		}
 
 		public static string ToAlphabeticalOrder(this string source)
@@ -95,11 +101,17 @@ namespace AdventOfCode.Common
 			return source.Where(x => x is not null).Select(x => x!.Value);
 		}
 
-		public static ParallelQuery<T> WhereNotNull<T>(this ParallelQuery<T?> source)
-			where T : struct
-		{
-			return source.Where(x => x is not null).Select(x => x!.Value);
-		}
+        public static ParallelQuery<T> WhereNotNull<T>(this ParallelQuery<T?> source)
+            where T : struct
+        {
+            return source.Where(x => x is not null).Select(x => x!.Value);
+        }
+
+        public static ParallelQuery<T> WhereNotNull<T>(this ParallelQuery<T?> source)
+            where T : class
+        {
+            return source.Where(x => x is not null).Cast<T>();
+        }
 
 		public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
 			where T : class

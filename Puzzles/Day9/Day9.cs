@@ -28,53 +28,51 @@ public class Day9 : AdventDayBase
     public static AdventAssignment PartOne =>
         AdventAssignment.Build(
             InputFile,
-            input => TestInput.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
+            input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
             data => CalculateLowestPointsParallel(data).Sum(x => data[x.X, x.Y] + 1));
 
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
-            input => TestInput.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
+            input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
             data => CalculateLowestPointsParallel(data).Select(x => CalculateBasinSize(data, x))
                 .OrderByDescending(x => x).Take(3).Aggregate(1, (a, b) => a * b));
 
-    public static ParallelQuery<(int X, int Y)> CalculateLowestPointsParallel(int[,] inputs)
+    private record Vector2(int X, int Y);
+
+    private static IEnumerable<Vector2> CalculateLowestPointsParallel(int[,] inputs)
     {
         var width = inputs.GetUpperBound(0) + 1;
         var height = inputs.GetUpperBound(1) + 1;
 
         return Enumerable.Range(0, width)
-            .AsParallel()
             .SelectMany(currentWidth =>
-            Enumerable.Range(0, height)
-            .AsParallel()
-            .Select(currentHeight =>
-            {
-                var current = inputs[currentWidth, currentHeight];
+                Enumerable.Range(0, height)
+                    .Select(currentHeight =>
+                    {
+                        var current = inputs[currentWidth, currentHeight];
 
-                var neighbors = new[]
-                {
-                    inputs.TryGet(currentWidth - 1, currentHeight),
-                    inputs.TryGet(currentWidth + 1, currentHeight),
-                    inputs.TryGet(currentWidth, currentHeight - 1),
-                    inputs.TryGet(currentWidth, currentHeight + 1),
-                };
+                        var l = inputs.TryGet(currentWidth - 1, currentHeight);
+                        var r = inputs.TryGet(currentWidth + 1, currentHeight);
+                        var d = inputs.TryGet(currentWidth, currentHeight - 1);
+                        var u = inputs.TryGet(currentWidth, currentHeight + 1);
 
-                if (neighbors.WhereNotNull().All(x => x > current))
-                {
-                    return ((int X, int Y)?) (currentWidth, currentHeight);
-                }
+                        if ((l is null || l > current) && (r is null || r > current) && (d is null || d > current) &&
+                            (u is null || u > current))
+                        {
+                            return new Vector2(currentWidth, currentHeight);
+                        }
 
-                return null;
-            }).WhereNotNull());
+                        return null;
+                    }).WhereNotNull());
     }
 
-    public static int CalculateBasinSize(int[,] inputs, (int X, int Y) startingPoint)
+    private static int CalculateBasinSize(int[,] inputs, Vector2 startingPoint)
     {
-        var visitedPoints = new ConcurrentBag<(int X, int Y)>();
-        var pointsToVisit = new ConcurrentQueue<(int X, int Y)>();
+        var visitedPoints = new HashSet<Vector2>();
+        var pointsToVisit = new Queue<Vector2>();
 
         pointsToVisit.Enqueue(startingPoint);
         var sum = 0;
@@ -93,10 +91,10 @@ public class Day9 : AdventDayBase
 
             var neighbors = new[]
             {
-                (X: currentPoint.X - 1, currentPoint.Y),
-                (X: currentPoint.X + 1, currentPoint.Y),
-                (currentPoint.X, Y: currentPoint.Y - 1),
-                (currentPoint.X, Y: currentPoint.Y + 1)
+                new Vector2(currentPoint.X - 1, currentPoint.Y),
+                new Vector2 (currentPoint.X + 1, currentPoint.Y),
+                new Vector2(currentPoint.X, currentPoint.Y - 1),
+                new Vector2(currentPoint.X, currentPoint.Y + 1)
             };
 
             foreach (var neighbor in neighbors)

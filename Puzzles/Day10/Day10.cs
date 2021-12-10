@@ -33,7 +33,7 @@ public class Day10 : AdventDayBase
             InputFile,
             input => input.Split(Environment.NewLine),
             data => data
-            // .AsParallel()
+            .AsParallel()
             .Select(GetNavigationSubsystemError)
             .WhereNotNull()
             .WhereLeft()
@@ -45,7 +45,7 @@ public class Day10 : AdventDayBase
             InputFile,
             input => input.Split(Environment.NewLine),
             data => data
-            // .AsParallel()
+            .AsParallel()
             .Select(GetNavigationSubsystemError)
             .WhereNotNull()
             .WhereRight()
