@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace AdventOfCode.Common
 {
@@ -20,6 +21,7 @@ namespace AdventOfCode.Common
 
 		public IEnumerable<string> Run()
 		{
+			var sw = new Stopwatch();
 			yield return "==========";
 			yield return $"Begin day {_day}";
 
@@ -27,8 +29,12 @@ namespace AdventOfCode.Common
 			foreach (var part in _parts)
 			{
 				yield return $"Part: {++index}";
+
+				sw.Start();
 				var lines = part.Run();
+				sw.Stop();
 				foreach (var line in lines) yield return line;
+				yield return $"Took {sw.Elapsed.TotalMilliseconds}ms";
 			}
 		}
 	}

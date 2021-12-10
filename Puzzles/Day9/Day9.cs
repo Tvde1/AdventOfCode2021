@@ -45,8 +45,12 @@ public class Day9 : AdventDayBase
         var width = inputs.GetUpperBound(0) + 1;
         var height = inputs.GetUpperBound(1) + 1;
 
-        return Enumerable.Range(0, width).AsParallel().SelectMany(currentWidth =>
-            Enumerable.Range(0, height).AsParallel().Select(currentHeight =>
+        return Enumerable.Range(0, width)
+            .AsParallel()
+            .SelectMany(currentWidth =>
+            Enumerable.Range(0, height)
+            .AsParallel()
+            .Select(currentHeight =>
             {
                 var current = inputs[currentWidth, currentHeight];
 

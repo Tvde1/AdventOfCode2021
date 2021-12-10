@@ -5,7 +5,7 @@ namespace AdventOfCode.Common
 {
 	public abstract class AdventAssignment
 	{
-		public abstract IEnumerable<string> Run();
+		public abstract List<string> Run();
 
         public static AdventAssignment Build<TData>(string inputFileName, Func<string, TData> dataParser,
             Func<TData, IEnumerable<string>> executeFunc) =>

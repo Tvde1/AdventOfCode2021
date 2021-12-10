@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
-using System.Threading.Tasks;
 using AdventOfCode.Common;
+using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Puzzles.Day10;
 
@@ -27,24 +25,59 @@ public class Day10 : AdventDayBase
         : base(10)
     {
         AddPart(PartOne);
-        // AddPart(PartTwo);
+        AddPart(PartTwo);
     }
 
     public static AdventAssignment PartOne =>
         AdventAssignment.Build(
             InputFile,
-            input => TestInput.Split(Environment.NewLine),
-            data => data.Select(GetNavigationSubsystemError).WhereNotNull().Select(x => _errorScores[x.found]).Sum());
+            input => input.Split(Environment.NewLine),
+            data => data
+            // .AsParallel()
+            .Select(GetNavigationSubsystemError)
+            .WhereNotNull()
+            .WhereLeft()
+            .Select(x => _unexpectedTokenErrorScores[x.found])
+            .Sum());
 
-    //public static AdventAssignment PartTwo =>
-    //    AdventAssignment.Build(
-    //        InputFile,
-    //        input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
-    //            .ToTwoDimensionalArray(),
-    //        data => CalculateLowestPointsParallel(data).Select(x => CalculateBasinSize(data, x))
-    //            .OrderByDescending(x => x).Take(3).Aggregate(1, (a, b) => a * b));
+    public static AdventAssignment PartTwo =>
+        AdventAssignment.Build(
+            InputFile,
+            input => input.Split(Environment.NewLine),
+            data => data
+            // .AsParallel()
+            .Select(GetNavigationSubsystemError)
+            .WhereNotNull()
+            .WhereRight()
+            .Select(GetAutocompleteScore)
+            .OrderBy(x => x)
+            .Middle());
 
-    public static (char expected, char found)? GetNavigationSubsystemError(string input)
+    private static readonly Dictionary<char, char> _opposites = new()
+    {
+        { '(', ')' },
+        { '[', ']' },
+        { '{', '}' },
+        { '<', '>' },
+    };
+
+    private static readonly Dictionary<char, int> _unexpectedTokenErrorScores = new()
+    {
+        { ')', 3 },
+        { ']', 57 },
+        { '}', 1197 },
+        { '>', 25137 },
+    };
+
+    private static readonly Dictionary<char, int> _incompleteTokenErrorScores = new()
+    {
+        { ')', 1 },
+        { ']', 2 },
+        { '}', 3 },
+        { '>', 4 },
+    };
+
+    public static Either<(char expected, char found), char[]>? GetNavigationSubsystemError(string input)
     {
         var stack = new Stack<char>();
 
@@ -52,7 +85,7 @@ public class Day10 : AdventDayBase
         {
             if (character is '(' or '[' or '{' or '<')
             {
-                stack.Push(character);
+                stack.Push(_opposites[character]);
                 continue;
             }
 
@@ -67,14 +100,27 @@ public class Day10 : AdventDayBase
             }
         }
 
+        if (stack.Any())
+        {
+            return stack.ToArray();
+        }
+
         return null;
     }
 
-    private static readonly Dictionary<char, int> _errorScores = new()
+    private static long GetAutocompleteScore(char[] missingCharacters)
     {
-        { ')', 3 },
-        { ']', 57 },
-        { '}', 1197 },
-        { '>', 25137 },
-    };
+        var score = 0L;
+
+        foreach (var character in missingCharacters)
+        {
+            checked
+            {
+                score *= 5;
+                score += _incompleteTokenErrorScores[character];
+            }
+        }
+
+        return score;
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Common
@@ -19,12 +20,13 @@ namespace AdventOfCode.Common
 			_executeFunc = executeFunc;
 		}
 
-		public override IEnumerable<string> Run()
+		public override List<string> Run()
 		{
 			return TryCatch.Try(() => File.ReadAllText(_inputFileName))
 				.Continue(input => _dataParser(input))
 				.Continue(data => _executeFunc(data))
-				.ResultOrThrow;
+				.ResultOrThrow
+				.ToList();
 		}
 
 		public static AdventAssignment<TData> Build(string inputFileName, Func<string, TData> dataParser,
