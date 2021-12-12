@@ -44,35 +44,20 @@ kj-dc";
         AdventAssignment.Build(
             InputFile,
             input => GetAllCaveConnections(input.Split(Environment.NewLine)),
-            data =>
-            {
-                return GetFullFromCurrentToEndPaths(data, CaveStart, CaveEnd).Count();
-                //return string.Join(Environment.NewLine, GetFullFromCurrentToEndPaths(data, CaveStart, CaveEnd));
-            });
+            data => GetFullFromCurrentToEndPaths(data, CaveStart, CaveEnd).Count());
 
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
             input => GetAllCavesFull(input.Split(Environment.NewLine)),
-            data =>
-            {
-                var aaa = data.Values
-                    .Where(cave => cave.CaveType == CaveType.Small).ToList();
-
-                var bb=aaa
-                    .SelectMany(c => GetFullFromCurrentToEndPaths2(data, CaveStart, CaveEnd, c.Name))
-                    .Distinct();
-
-                // return bb.Count();
-
-                return
-                //string.Join(Environment.NewLine, bb) + Environment.NewLine + Environment.NewLine + 
-                bb.Count();
-            });
+            data => data.Values
+                .Where(cave => cave.CaveType == CaveType.Small)
+                .SelectMany(c => GetFullFromCurrentToEndPaths2(data, CaveStart, CaveEnd, c.Name))
+                .Distinct().Count());
 
     private static ILookup<string, string> GetAllCaveConnections(IEnumerable<string> inputs)
     {
-        var split = inputs.Select(x => x.Split('-'));
+        var split = inputs.Select(x => x.Split('-')).ToList();
 
         return split
             .Union(split.Select(x => x.Reverse().ToArray()))
@@ -133,7 +118,7 @@ kj-dc";
 
             if (cave.Key.All(char.IsLower))
             {
-                if (cave.Key == CaveEnd || cave.Key == CaveStart)
+                if (cave.Key is CaveEnd or CaveStart)
                 {
                     caveType = CaveType.StartEnd;
                 }
@@ -146,7 +131,7 @@ kj-dc";
             var caveO = new Cave
             {
                 Name = cave.Key,
-                Connections = cave.OrderBy(x=>x).ToArray(),
+                Connections = cave.OrderBy(x => x).ToArray(),
                 CaveType = caveType,
             };
 
@@ -198,16 +183,11 @@ kj-dc";
 
     private static bool AllowVisitCount(Cave cave, string specialSmallCave, int visitedCount)
     {
-        switch (cave.CaveType)
+        return cave.CaveType switch
         {
-            case CaveType.Big:
-                return true;
-            case CaveType.Small:
-                return visitedCount < (cave.Name == specialSmallCave ? 2 : 1);
-            case CaveType.StartEnd:
-                return visitedCount < 1;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            CaveType.Big => true,
+            CaveType.Small => visitedCount < (cave.Name == specialSmallCave ? 2 : 1),
+            CaveType.StartEnd => visitedCount < 1,
+        };
     }
 }
