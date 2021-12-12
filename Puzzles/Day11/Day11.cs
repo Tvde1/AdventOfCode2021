@@ -32,7 +32,7 @@ public class Day11 : AdventDayBase
     public static AdventAssignment PartOne =>
         AdventAssignment.Build(
             InputFile,
-            input => TestInput.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString()))).ToTwoDimensionalArray(),
+            input => input.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString()))).ToTwoDimensionalArray(),
             data =>
             {
                 var totalFlashCount = 0;
@@ -40,7 +40,7 @@ public class Day11 : AdventDayBase
                 {
                     data = Step(data, out var amountFlashed);
                     totalFlashCount += amountFlashed;
-                    PrintBoard(data, i);
+                    // PrintBoard(data, i);
                 }
                 return totalFlashCount;
             });
@@ -48,8 +48,20 @@ public class Day11 : AdventDayBase
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
-            input => input.Split(Environment.NewLine),
-            data => data);
+            input => input.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString()))).ToTwoDimensionalArray(),
+            data =>
+            {
+                var i = 1;
+                for (; ; i++)
+                {
+                    data = Step(data, out _);
+                    if (data.Flatten().All(x => x == 0))
+                    {
+                        break;
+                    }
+                }
+                return i;
+            });
 
     private static void PrintBoard(int[,] board, int step)
     {
@@ -112,8 +124,8 @@ public class Day11 : AdventDayBase
                 var l = new Point(currentPoint.X - 1, currentPoint.Y);
                 var r = new Point(currentPoint.X + 1, currentPoint.Y);
                 var d = new Point(currentPoint.X, currentPoint.Y - 1);
-                var dl = new Point(currentPoint.X - 1, currentPoint.Y + 1);
-                var dr = new Point(currentPoint.X + 1, currentPoint.Y + 1);
+                var dl = new Point(currentPoint.X - 1, currentPoint.Y - 1);
+                var dr = new Point(currentPoint.X + 1, currentPoint.Y - 1);
 
                 var neighbors = new[]
                 {

@@ -19,8 +19,8 @@ namespace AdventOfCode.Runner
 {
     public class AdventRunner
     {
-        public List<int> _daysToSkip = new() { 9, 11 };
-        public int? _onlyDay = null;
+        private readonly List<int> _daysToSkip = new() { 9, 11 };
+        private readonly int? _onlyDay = 11;
 
         private readonly List<AdventDayBase> _days = new()
         {

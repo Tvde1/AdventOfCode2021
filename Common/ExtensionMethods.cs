@@ -142,7 +142,7 @@ namespace AdventOfCode.Common
         public static T Middle<T>(this ParallelQuery<T> source)
         {
             var list = source.ToList();
-            int index = (int)Math.Floor(list.Count / 2d);
+            var index = (int)Math.Floor(list.Count / 2d);
             var item = list[index];
             return item;
         }
@@ -150,7 +150,7 @@ namespace AdventOfCode.Common
         public static T Middle<T>(this IEnumerable<T> source)
         {
             var list = source.ToList();
-            int index = (int)Math.Floor(list.Count / 2d);
+            var index = (int)Math.Floor(list.Count / 2d);
             var item = list[index];
             return item;
         }
@@ -168,6 +168,12 @@ namespace AdventOfCode.Common
             }
 
             return source;
+        }
+
+        public static IEnumerable<T> Flatten<T>(this T[,] source)
+            where T : struct
+        {
+            return source.Cast<T>();
         }
     }
 }
