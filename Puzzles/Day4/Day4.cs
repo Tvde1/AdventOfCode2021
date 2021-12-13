@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
+using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day4;
 
@@ -36,7 +37,7 @@ public class Day4 : AdventDayBase
 
                     currentBoardValues.AddRange(s.Replace(StringConstants.DoubleSpace, StringConstants.Space).Trim()
                         .Split(StringConstants.Space).Select((num, x) =>
-                            new BoardValue(int.Parse(num), false, new Vector2(x, currentY))));
+                            new BoardValue(int.Parse(num), false, new Point2D(x, currentY))));
                     currentY++;
                 }
 
@@ -82,7 +83,7 @@ public class Day4 : AdventDayBase
 
                 currentBoardValues.AddRange(s.Replace(StringConstants.DoubleSpace, StringConstants.Space).Trim()
                     .Split(StringConstants.Space).Select((num, x) =>
-                        new BoardValue(int.Parse(num), false, new Vector2(x, currentY))));
+                        new BoardValue(int.Parse(num), false, new Point2D(x, currentY))));
                 currentY++;
             }
 
@@ -110,11 +111,9 @@ public class Day4 : AdventDayBase
         AddPart(PartTwo);
     }
 
-    private readonly record struct Vector2(int X, int Y);
-
     private class BoardValue
     {
-        public BoardValue(int number, bool isChecked, Vector2 location)
+        public BoardValue(int number, bool isChecked, Point2D location)
         {
             Number = number;
             IsChecked = isChecked;
@@ -123,14 +122,14 @@ public class Day4 : AdventDayBase
 
         public int Number { get; }
         public bool IsChecked { get; set; }
-        public Vector2 Location { get; }
+        public Point2D Location { get; }
     }
 
     private class Board
     {
-        private static readonly Vector2[][] WinPositions = CalcWinPositions().ToArray();
+        private static readonly Point2D[][] WinPositions = CalcWinPositions().ToArray();
 
-        private readonly Dictionary<Vector2, BoardValue> _valueByLocation;
+        private readonly Dictionary<Point2D, BoardValue> _valueByLocation;
         private readonly Dictionary<int, BoardValue> _valueByValue;
 
         public Board(IReadOnlyCollection<BoardValue> values)
@@ -141,15 +140,15 @@ public class Day4 : AdventDayBase
 
         public int SumOfAllUnmarked => _valueByValue.Values.Where(x => !x.IsChecked).Sum(x => x.Number);
 
-        private static IEnumerable<Vector2[]> CalcWinPositions()
+        private static IEnumerable<Point2D[]> CalcWinPositions()
         {
             var range = Enumerable.Range(0, 5).ToArray();
 
-            var verticals = range.Select(x => range.Select(y => new Vector2(x, y)).ToArray());
-            var horizontals = range.Select(y => range.Select(x => new Vector2(x, y)).ToArray());
+            var verticals = range.Select(x => range.Select(y => new Point2D(x, y)).ToArray());
+            var horizontals = range.Select(y => range.Select(x => new Point2D(x, y)).ToArray());
 
-            var diag1 = range.Select(x => new Vector2(x, x)).ToArray();
-            var diag2 = range.Select(x => new Vector2(x, 4 - x)).ToArray();
+            var diag1 = range.Select(x => new Point2D(x, x)).ToArray();
+            var diag2 = range.Select(x => new Point2D(x, 4 - x)).ToArray();
             return verticals.Concat(horizontals).Append(diag1).Append(diag2);
         }
 

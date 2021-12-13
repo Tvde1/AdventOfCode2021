@@ -74,8 +74,6 @@ public class Day3 : AdventDayBase
 
         var set = (!inverse ? grouped.Last() : grouped.First()).ToArray();
 
-        if (set.Length == 1) return set[0];
-
-        return FindMostCommon(set, inverse, indexToMatch + 1);
+        return set.Length == 1 ? set[0] : FindMostCommon(set, inverse, indexToMatch + 1);
     }
 }

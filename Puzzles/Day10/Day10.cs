@@ -33,48 +33,48 @@ public class Day10 : AdventDayBase
             InputFile,
             input => input.Split(Environment.NewLine),
             data => data
-            .AsParallel()
-            .Select(GetNavigationSubsystemError)
-            .WhereNotNull()
-            .WhereLeft()
-            .Select(x => _unexpectedTokenErrorScores[x.found])
-            .Sum());
+                .AsParallel()
+                .Select(GetNavigationSubsystemError)
+                .WhereNotNull()
+                .WhereLeft()
+                .Select(x => UnexpectedTokenErrorScores[x.found])
+                .Sum());
 
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
             input => input.Split(Environment.NewLine),
             data => data
-            .AsParallel()
-            .Select(GetNavigationSubsystemError)
-            .WhereNotNull()
-            .WhereRight()
-            .Select(GetAutocompleteScore)
-            .OrderBy(x => x)
-            .Middle());
+                .AsParallel()
+                .Select(GetNavigationSubsystemError)
+                .WhereNotNull()
+                .WhereRight()
+                .Select(GetAutocompleteScore)
+                .OrderBy(x => x)
+                .Middle());
 
-    private static readonly Dictionary<char, char> _opposites = new()
+    private static readonly Dictionary<char, char> Opposites = new()
     {
-        { '(', ')' },
-        { '[', ']' },
-        { '{', '}' },
-        { '<', '>' },
+        {'(', ')'},
+        {'[', ']'},
+        {'{', '}'},
+        {'<', '>'},
     };
 
-    private static readonly Dictionary<char, int> _unexpectedTokenErrorScores = new()
+    private static readonly Dictionary<char, int> UnexpectedTokenErrorScores = new()
     {
-        { ')', 3 },
-        { ']', 57 },
-        { '}', 1197 },
-        { '>', 25137 },
+        {')', 3},
+        {']', 57},
+        {'}', 1197},
+        {'>', 25137},
     };
 
-    private static readonly Dictionary<char, int> _incompleteTokenErrorScores = new()
+    private static readonly Dictionary<char, int> IncompleteTokenErrorScores = new()
     {
-        { ')', 1 },
-        { ']', 2 },
-        { '}', 3 },
-        { '>', 4 },
+        {')', 1},
+        {']', 2},
+        {'}', 3},
+        {'>', 4},
     };
 
     public static Either<(char expected, char found), char[]>? GetNavigationSubsystemError(string input)
@@ -85,7 +85,7 @@ public class Day10 : AdventDayBase
         {
             if (character is '(' or '[' or '{' or '<')
             {
-                stack.Push(_opposites[character]);
+                stack.Push(Opposites[character]);
                 continue;
             }
 
@@ -100,12 +100,7 @@ public class Day10 : AdventDayBase
             }
         }
 
-        if (stack.Any())
-        {
-            return stack.ToArray();
-        }
-
-        return null;
+        return stack.Any() ? stack.ToArray() : (Either<(char expected, char found), char[]>?) null;
     }
 
     private static long GetAutocompleteScore(char[] missingCharacters)
@@ -117,7 +112,7 @@ public class Day10 : AdventDayBase
             checked
             {
                 score *= 5;
-                score += _incompleteTokenErrorScores[character];
+                score += IncompleteTokenErrorScores[character];
             }
         }
 

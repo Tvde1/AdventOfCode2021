@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using AdventOfCode.Common;
+using AdventOfCode.Common.Models;
 using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Puzzles.Day13;
@@ -59,15 +60,6 @@ fold along x=5";
 
                 return RenderSheet(data);
             });
-
-    public readonly record struct Point2D(int X, int Y)
-    {
-        public static Point2D Parse(string input)
-        {
-            var sp = input.Split(',');
-            return new Point2D(int.Parse(sp[0]), int.Parse(sp[1]));
-        }
-    }
 
     public readonly record struct Sheet
     {
@@ -159,16 +151,18 @@ fold along x=5";
         };
     }
 
-    public static string RenderSheet(Sheet input)
+    public static IEnumerable<string> RenderSheet(Sheet input)
     {
         var minX = input.Points.Min(x => x.X);
         var minY = input.Points.Min(x => x.Y);
         var maxX = input.Points.Max(x => x.X);
         var maxY = input.Points.Max(x => x.Y);
 
-        var rendered = string.Join(Environment.NewLine, Enumerable.Range(minY, maxY - minY + 1).Select(currentY =>
+        var rendered = Enumerable.Range(minY, maxY - minY + 1).Select(currentY =>
             new string(Enumerable.Range(minX, maxX - minX + 1)
-                .Select(currentX => input.Points.Contains(new Point2D(currentX, currentY)) ? CharConstants.Filled : CharConstants.Space).ToArray())));
+                .Select(currentX => input.Points.Contains(new Point2D(currentX, currentY))
+                    ? CharConstants.Filled
+                    : CharConstants.Space).ToArray()));
 
         return rendered;
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdventOfCode.Common;
+using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day9;
 
@@ -40,9 +41,7 @@ public class Day9 : AdventDayBase
             data => CalculateLowestPointsParallel(data).Select(x => CalculateBasinSize(data, x))
                 .OrderByDescending(x => x).Take(3).Aggregate(1, (a, b) => a * b));
 
-    private record Vector2(int X, int Y);
-
-    private static IEnumerable<Vector2> CalculateLowestPointsParallel(int[,] inputs)
+    private static IEnumerable<Point2D> CalculateLowestPointsParallel(int[,] inputs)
     {
         var width = inputs.GetUpperBound(0) + 1;
         var height = inputs.GetUpperBound(1) + 1;
@@ -62,17 +61,17 @@ public class Day9 : AdventDayBase
                         if ((l is null || l > current) && (r is null || r > current) && (d is null || d > current) &&
                             (u is null || u > current))
                         {
-                            return new Vector2(currentWidth, currentHeight);
+                            return (Point2D?) new Point2D(currentWidth, currentHeight);
                         }
 
                         return null;
                     }).WhereNotNull());
     }
 
-    private static int CalculateBasinSize(int[,] inputs, Vector2 startingPoint)
+    private static int CalculateBasinSize(int[,] inputs, Point2D startingPoint)
     {
-        var visitedPoints = new HashSet<Vector2>();
-        var pointsToVisit = new Queue<Vector2>();
+        var visitedPoints = new HashSet<Point2D>();
+        var pointsToVisit = new Queue<Point2D>();
 
         pointsToVisit.Enqueue(startingPoint);
         var sum = 0;
@@ -91,10 +90,10 @@ public class Day9 : AdventDayBase
 
             var neighbors = new[]
             {
-                new Vector2(currentPoint.X - 1, currentPoint.Y),
-                new Vector2 (currentPoint.X + 1, currentPoint.Y),
-                new Vector2(currentPoint.X, currentPoint.Y - 1),
-                new Vector2(currentPoint.X, currentPoint.Y + 1)
+                new Point2D(currentPoint.X - 1, currentPoint.Y),
+                new Point2D(currentPoint.X + 1, currentPoint.Y),
+                new Point2D(currentPoint.X, currentPoint.Y - 1),
+                new Point2D(currentPoint.X, currentPoint.Y + 1)
             };
 
             foreach (var neighbor in neighbors)

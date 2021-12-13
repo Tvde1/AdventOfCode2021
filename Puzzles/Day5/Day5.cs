@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
+using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day5;
 
@@ -35,7 +36,7 @@ public class Day5 : AdventDayBase
                 .Select(VentLine.Parse(false)),
             data =>
             {
-                var board = new Dictionary<Vector2, int>();
+                var board = new Dictionary<Point2D, int>();
 
                 foreach (var point in data.SelectMany(x => x.AllCoveringPoints))
                     if (board.ContainsKey(point))
@@ -58,9 +59,9 @@ public class Day5 : AdventDayBase
                 return board.Values.Count(x => x > 1);
             });
 
-    private static Dictionary<Vector2, int> FillBoard(IEnumerable<VentLine> data)
+    private static Dictionary<Point2D, int> FillBoard(IEnumerable<VentLine> data)
     {
-        var board = new Dictionary<Vector2, int>();
+        var board = new Dictionary<Point2D, int>();
 
         foreach (var point in data.SelectMany(x => x.AllCoveringPoints))
             if (board.ContainsKey(point))
@@ -71,37 +72,27 @@ public class Day5 : AdventDayBase
         return board;
     }
 
-
-    private readonly record struct Vector2(int X, int Y);
-
     private readonly struct VentLine
     {
-        private readonly Vector2 _start;
-        private readonly Vector2 _end;
-
-        private VentLine(Vector2 start, Vector2 end, bool countDiagonals)
+        private VentLine(Point2D start, Point2D end, bool countDiagonals)
         {
-            _start = start;
-            _end = end;
             AllCoveringPoints = CalculateAllCoveringPoints(start, end, countDiagonals);
         }
 
-        public Vector2[] AllCoveringPoints { get; }
+        public Point2D[] AllCoveringPoints { get; }
 
         public static Func<string, VentLine> Parse(bool countDiagonals)
         {
             return input =>
             {
                 var s = input.Split(" -> ");
-                var start = s[0].Split(",");
-                var startVector = new Vector2(int.Parse(start[0]), int.Parse(start[1]));
-                var end = s[1].Split(",");
-                var endVector = new Vector2(int.Parse(end[0]), int.Parse(end[1]));
+                var startVector = Point2D.Parse(s[0]);
+                var endVector = Point2D.Parse(s[1]);
                 return new VentLine(startVector, endVector, countDiagonals);
             };
         }
 
-        private static Vector2[] CalculateAllCoveringPoints(Vector2 start, Vector2 end, bool countDiagonals)
+        private static Point2D[] CalculateAllCoveringPoints(Point2D start, Point2D end, bool countDiagonals)
         {
             var isVertical = start.X == end.X;
             var isHorizontal = start.Y == end.Y;
@@ -113,7 +104,7 @@ public class Day5 : AdventDayBase
                 var largest = Math.Max(start.Y, end.Y);
 
                 return Enumerable.Range(smallest, largest - smallest + 1)
-                    .Select(y => new Vector2(x, y))
+                    .Select(y => new Point2D(x, y))
                     .ToArray();
             }
 
@@ -124,19 +115,19 @@ public class Day5 : AdventDayBase
                 var largest = Math.Max(start.X, end.X);
 
                 return Enumerable.Range(smallest, largest - smallest + 1)
-                    .Select(x => new Vector2(x, y))
+                    .Select(x => new Point2D(x, y))
                     .ToArray();
             }
 
             if (countDiagonals)
             {
-                return GenerateDiagnoals(start, end).ToArray();
+                return GenerateDiagonals(start, end).ToArray();
             }
 
-            return Array.Empty<Vector2>();
+            return Array.Empty<Point2D>();
         }
 
-        private static IEnumerable<Vector2> GenerateDiagnoals(Vector2 start, Vector2 end)
+        private static IEnumerable<Point2D> GenerateDiagonals(Point2D start, Point2D end)
         {
             var goingRight = start.X < end.X;
             var goingDown = start.Y < end.Y;
@@ -146,7 +137,7 @@ public class Day5 : AdventDayBase
 
             while (x != end.X)
             {
-                yield return new Vector2(x, y);
+                yield return new Point2D(x, y);
 
                 if (goingDown)
                     y++;
@@ -159,7 +150,7 @@ public class Day5 : AdventDayBase
                     x--;
             }
 
-            yield return new Vector2(x, y);
+            yield return new Point2D(x, y);
         }
     }
 }

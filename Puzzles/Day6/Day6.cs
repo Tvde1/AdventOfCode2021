@@ -71,20 +71,4 @@ public class Day6 : AdventDayBase
         var val = agg.Values.Aggregate<ulong, ulong>(0, (current, val) => current + val);
         return val;
     }
-
-    // I started a O(1) solution but did not finish.
-    //public static int FastCount(IReadOnlyList<int> data, int daysToSimulate)
-    //{
-    //	var (quotient, remainder) = Math.DivRem(daysToSimulate, 7);
-
-    //	var ageAFishHasToBeToStillGetABabyInTheRemainderTime = remainder - 1;
-
-    //	var initialFish = data.Count;
-    //	var fishWithinRemainder = data.Count(x => x <= ageAFishHasToBeToStillGetABabyInTheRemainderTime);
-
-    //	var allProducedCount = initialFish * quotient;
-    //	var remainderProducedCount = fishWithinRemainder * quotient;
-
-    //	return initialFish + allProducedCount + remainderProducedCount;
-    //}
 }

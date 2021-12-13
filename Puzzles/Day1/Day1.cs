@@ -28,7 +28,11 @@ public class Day1 : AdventDayBase
         return AdventAssignment.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(int.Parse),
-            data => data.Triplets().Select(x => x.Item1 + x.Item2 + x.Item3).Pairs().Count(x => x.Item1 < x.Item2)
+            data => data
+                .Triplets()
+                .Select(x => x.Item1 + x.Item2 + x.Item3)
+                .Pairs()
+                .Count(x => x.Item1 < x.Item2)
         );
     }
 }
