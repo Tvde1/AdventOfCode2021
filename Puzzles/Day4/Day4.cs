@@ -143,7 +143,7 @@ public class Day4 : AdventDayBase
 
         private static IEnumerable<Vector2[]> CalcWinPositions()
         {
-            var range = Enumerable.Range(0, 5);
+            var range = Enumerable.Range(0, 5).ToArray();
 
             var verticals = range.Select(x => range.Select(y => new Vector2(x, y)).ToArray());
             var horizontals = range.Select(y => range.Select(x => new Vector2(x, y)).ToArray());
