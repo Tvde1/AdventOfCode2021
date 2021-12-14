@@ -12,19 +12,23 @@
     <None Remove="Day11\day11.txt" />
     <None Remove="Day12\day12.txt" />
     <None Remove="Day13\day13.txt" />
-    <None Remove="Day1\day1.txt" />
-    <None Remove="Day2\day2.txt" />
-    <None Remove="Day3\day3.txt" />
-    <None Remove="Day4\day4.txt" />
-    <None Remove="Day6\day6.txt" />
-    <None Remove="Day5\day5.txt" />
-    <None Remove="Day7\day7.txt" />
-    <None Remove="Day8\day8.txt" />
-    <None Remove="Day9\day9.txt" />
+    <None Remove="Day14\day14.txt" />
+    <None Remove="Day01\day1.txt" />
+    <None Remove="Day02\day2.txt" />
+    <None Remove="Day03\day3.txt" />
+    <None Remove="Day04\day4.txt" />
+    <None Remove="Day06\day6.txt" />
+    <None Remove="Day05\day5.txt" />
+    <None Remove="Day07\day7.txt" />
+    <None Remove="Day08\day8.txt" />
+    <None Remove="Day09\day9.txt" />
     <None Remove="EmptyDay\day25.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Day14\day14.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="EmptyDay\day25.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -37,34 +41,34 @@
     <Content Include="Day11\day11.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day1\day1.txt">
+    <Content Include="Day01\day1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day2\day2.txt">
+    <Content Include="Day02\day2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Day10\day10.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day9\day9.txt">
+    <Content Include="Day09\day9.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day8\day8.txt">
+    <Content Include="Day08\day8.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day7\day7.txt">
+    <Content Include="Day07\day7.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day6\day6.txt">
+    <Content Include="Day06\day6.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day5\day5.txt">
+    <Content Include="Day05\day5.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day4\day4.txt">
+    <Content Include="Day04\day4.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day3\day3.txt">
+    <Content Include="Day03\day3.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -74,7 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Day1\day1.txt">
+    <Resource Include="Day01\day1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

@@ -2,7 +2,7 @@
 using System.Linq;
 using AdventOfCode.Common;
 
-namespace AdventOfCode.Puzzles.Day2;
+namespace AdventOfCode.Puzzles.Day02;
 
 public class Day2 : AdventDayBase
 {

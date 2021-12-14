@@ -4,7 +4,7 @@ using System.Linq;
 using AdventOfCode.Common;
 using AdventOfCode.Common.Models;
 
-namespace AdventOfCode.Puzzles.Day4;
+namespace AdventOfCode.Puzzles.Day04;
 
 public class Day4 : AdventDayBase
 {

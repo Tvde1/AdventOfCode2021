@@ -22,6 +22,21 @@ namespace AdventOfCode.Common
             }
         }
 
+        public static IEnumerable<(TOut, TOut)> Pairs<TOut, TIn>(this IEnumerable<TIn> items, Func<TIn, TOut> mapFunc)
+        {
+            using var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext())
+                yield break;
+
+            var previous = mapFunc(enumerator.Current);
+            while (enumerator.MoveNext())
+            {
+                var current = mapFunc(enumerator.Current);
+                yield return (previous, current);
+                previous = current;
+            }
+        }
+
         public static IEnumerable<(T, T, T)> Triplets<T>(this IEnumerable<T> items)
         {
             using var enumerator = items.GetEnumerator();
@@ -174,6 +189,26 @@ namespace AdventOfCode.Common
             where T : struct
         {
             return source.Cast<T>();
+        }
+
+        public static int MostCommonCount<T>(this IEnumerable<T> source)
+        {
+            return source.GroupBy(x => x).MaxBy(x => x.Count())!.Count();
+        }
+
+        public static int LeastCommonCount<T>(this IEnumerable<T> source)
+        {
+            return source.GroupBy(x => x).MinBy(x => x.Count())!.Count();
+        }
+
+        public static string Join(this (char, char) pair)
+        {
+            return pair.Item1.ToString() + pair.Item2;
+        }
+
+        public static string Join(this (char, char, char) triplet)
+        {
+            return triplet.Item1.ToString() + triplet.Item2 + triplet.Item3;
         }
     }
 }

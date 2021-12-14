@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
 
-namespace AdventOfCode.Puzzles.Day7;
+namespace AdventOfCode.Puzzles.Day07;
 
 public class Day7 : AdventDayBase
 {

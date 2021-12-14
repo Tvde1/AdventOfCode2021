@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using AdventOfCode.Common;
-using AdventOfCode.Common.Monads;
+﻿using AdventOfCode.Common;
 
-namespace AdventOfCode.Puzzles.Day25;
+namespace AdventOfCode.Puzzles.EmptyDay;
 
 public class Day25 : AdventDayBase
 {
