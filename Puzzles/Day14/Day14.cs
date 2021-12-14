@@ -43,7 +43,7 @@ CN -> C";
             {
                 for (var i = 1; i <= 10; i++)
                 {
-                    data = SimpleSolution.IteratePolymerTemplate(data);
+                    data = SimulationSolution.IteratePolymerTemplate(data);
                 }
 
                 return data.Hash();
@@ -52,8 +52,8 @@ CN -> C";
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
-            _ => PolymerTemplate.Parse(TestInput),
-            data => IteratorSolution.CalculatePolymerHashFast(data, 15));
+            PolymerTemplate.Parse,
+            data => PairIteratorSolution.CalculatePolymerHashFast(data, 40));
 
     public record PolymerTemplate(string Polymer, IReadOnlyDictionary<(char, char), char> PolymerInstructions)
     {
@@ -80,64 +80,65 @@ CN -> C";
         }
     }
 
-
-    public static class SimpleSolution
+    private static class SimulationSolution
     {
+
         public static PolymerTemplate IteratePolymerTemplate(PolymerTemplate template)
         {
             var pairs = template.Polymer.Pairs();
 
-            var newPolymer = string.Join(string.Empty, pairs.Select(x => x.Item1.ToString() + template.PolymerInstructions[x])) + template.Polymer[^1];
+            var newPolymer =
+                string.Join(string.Empty, pairs.Select(x => x.Item1.ToString() + template.PolymerInstructions[x])) +
+                template.Polymer[^1];
 
             return template with { Polymer = newPolymer };
         }
     }
 
-    public static class IteratorSolution
+    private static class PairIteratorSolution
     {
         public static long CalculatePolymerHashFast(PolymerTemplate template, int iterations)
         {
-            var startPairs = template.Polymer.Pairs();
+            var startPairs = template.Polymer.Pairs().ToList();
 
-            var charCounts = template.PolymerInstructions.Values.Distinct().ToDictionary(x => x, _ => 0L);
+            var pairCounts = startPairs.GroupBy(x => x).ToDictionary(x => x.Key, x => (long)x.Count());
 
-            foreach (var pair in startPairs)
+            for (var i = 1; i <= iterations; i++)
             {
-                foreach (var polymerChar in CalculateIterations(pair, template.PolymerInstructions, iterations))
-                {
-                    charCounts[polymerChar] += 1;
-                }
+                pairCounts = IncrementPairs(pairCounts, template.PolymerInstructions);
             }
 
-            charCounts[template.Polymer[^1]] += 1;
+            pairCounts[startPairs[0]] += 1;
+            pairCounts[startPairs[^1]] += 1;
 
-            return charCounts.Values.Max() - charCounts.Values.Min();
+            var charCounts = new Dictionary<char, long>();
+
+            foreach (var ((char1, char2), index) in pairCounts)
+            {
+                charCounts.UpdateOrAdd(char1, i => i + index, index);
+                charCounts.UpdateOrAdd(char2, i => i + index, index);
+            }
+
+            return charCounts.Values.Max() / 2 - charCounts.Values.Min() / 2;
         }
 
-        public static IEnumerable<char> CalculateIterations((char, char) pair, IReadOnlyDictionary<(char, char), char> instructions, int iterations)
+        private static Dictionary<(char, char), long> IncrementPairs(Dictionary<(char, char), long> pairCount,
+            IReadOnlyDictionary<(char, char), char> instructions)
         {
-            if (iterations == 0)
+            var returnDict = instructions.Keys.Distinct().ToDictionary(x => x, _ => 0L);
+            foreach (var (currentPair, currentPairOccurrenceCount) in pairCount.Where(x => x.Value != 0))
             {
-                yield return pair.Item1;
-                yield break;
+                var (newPair1, newPair2) = CalculatePolymerStep(currentPair, instructions);
+
+                returnDict[newPair1] += currentPairOccurrenceCount;
+                returnDict[newPair2] += currentPairOccurrenceCount;
             }
 
-            var (subPair1, subPair2) = CalculatePolymerStep(pair, instructions);
-            var it1 = CalculateIterations(subPair1, instructions, iterations - 1);
-            var it2 = CalculateIterations(subPair2, instructions, iterations - 1);
-
-            foreach (var subPair1Chars in it1)
-            {
-                yield return subPair1Chars;
-            }
-
-            foreach (var subPair2Chars in it2)
-            {
-                yield return subPair2Chars;
-            }
+            return returnDict;
         }
 
-        public static ((char, char), (char, char)) CalculatePolymerStep((char, char) pair, IReadOnlyDictionary<(char, char), char> instructions)
+        private static ((char, char), (char, char)) CalculatePolymerStep((char, char) pair,
+            IReadOnlyDictionary<(char, char), char> instructions)
         {
             var polymerInBetween = instructions[pair];
             return ((pair.Item1, polymerInBetween), (polymerInBetween, pair.Item2));
