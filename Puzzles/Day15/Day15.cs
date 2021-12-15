@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AdventOfCode.Common;
 using AdventOfCode.Common.Models;
 
@@ -32,57 +33,79 @@ public class Day15 : AdventDayBase
         AdventAssignment.Build(
             InputFile,
             GetGrid,
-            data => GetCost(data, new Point2D(0, 0), new Point2D(data.GetUpperBound(0), data.GetUpperBound(1))));
+            data =>
+            {
+                var startPoint = new Point2D(0, 0);
+                var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
+
+                var (Path, Cost) = GetCost(data, startPoint, endPoint);
+
+                PrintBoard(data, Path);
+
+                return Cost;
+            });
 
     public static AdventAssignment PartTwo =>
         AdventAssignment.Build(
             InputFile,
-            input => GetBigGrid(GetGrid(TestInput), 5),
-            data => GetCost(data, new Point2D(0, 0), new Point2D(data.GetUpperBound(0), data.GetUpperBound(1))));
+            input => GetBigGrid(GetGrid(input), 5),
+            data =>
+            {
+                var startPoint = new Point2D(0, 0);
+                var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
+
+                var (Path, Cost) = GetCost(data, startPoint, endPoint);
+
+                PrintBoard(data, Path);
+
+                return Cost;
+            });
 
     private static int[,] GetGrid(string input) => input.Split(Environment.NewLine).Select(x => x.Select(cha => int.Parse(cha.ToString()))).ToTwoDimensionalArray();
 
     private static int[,] GetBigGrid(int[,] grid, int timesBigger)
     {
-        var rightBound = grid.GetUpperBound(0);
-        var bottomBound = grid.GetUpperBound(1);
+        var width = grid.GetLength(0);
+        var height = grid.GetLength(1);
 
-        var newGrid = new int[(rightBound + 1) * timesBigger, (bottomBound + 1) * timesBigger];
+        int newWidth = grid.GetLength(0) * timesBigger;
+        int newHeight = grid.GetLength(1) * timesBigger;
 
-        foreach (var currentX in Enumerable.Range(0, newGrid.GetLength(0)))
-        foreach (var currentY in Enumerable.Range(0, newGrid.GetLength(1)))
+        var newGrid = new int[newWidth, newHeight];
+
+        foreach (var currentX in Enumerable.Range(0, newWidth))
         {
-            var (quotientX, remainderX) = Math.DivRem(currentX, rightBound + 1);
-            var (quotientY, remainderY) = Math.DivRem(currentY, bottomBound + 1);
-
-            var valueAt = grid[remainderX, remainderY];
-
-            var newValue = valueAt + quotientX + quotientY;
-
-            while (newValue > 9)
+            foreach (var currentY in Enumerable.Range(0, newHeight))
             {
-                newValue -= 9;
-            }
+                var (quotientX, remainderX) = Math.DivRem(currentX, width);
+                var (quotientY, remainderY) = Math.DivRem(currentY, height);
 
-            newGrid[currentX, currentY] = newValue;
+                var valueAt = grid[remainderX, remainderY];
+
+                var newValue = valueAt + quotientX + quotientY;
+
+                newValue = (newValue - 1) % 9 + 1;
+
+                newGrid[currentX, currentY] = newValue;
+            }
         }
 
         return newGrid;
     }
 
-    private static int GetCost(int[,] grid, Point2D start, Point2D end)
+    private static (Point2D[] Path, int Cost) GetCost(int[,] grid, Point2D start, Point2D end)
     {
         var rightBound = grid.GetUpperBound(0);
         var bottomBound = grid.GetUpperBound(1);
 
         var visitedPoints = new HashSet<Point2D>();
-        var openPoints = new Dictionary<Point2D, int> { { start, 0 } };
+        var openPoints = new PriorityQueue<Point2D, int>();
+        openPoints.Enqueue(start, 0);
 
-        while (openPoints.Count > 0)
+        var breadCrumbs = new Dictionary<Point2D, (Point2D Point, int Cost)>();
+
+        while (openPoints.TryDequeue(out var lowestCostPoint, out var lowestCostValue))
         {
-            var (lowestCostPoint, lowestCostValue) = openPoints.OrderBy(x => x.Key).First();
-
-            openPoints.Remove(lowestCostPoint);
             visitedPoints.Add(lowestCostPoint);
 
             var neighbors = GetNeighbors(lowestCostPoint, rightBound, bottomBound);
@@ -96,27 +119,18 @@ public class Day15 : AdventDayBase
 
                 var newCost = lowestCostValue + grid.GetPoint(neighbor);
 
+                if (!breadCrumbs.TryGetValue(neighbor, out var crumb) || crumb.Cost > lowestCostValue)
+                {
+                    breadCrumbs[neighbor] = (lowestCostPoint, lowestCostValue);
+                }
+
+
                 if (neighbor == end)
                 {
-                    return newCost;
+                    return (GetPath(breadCrumbs, end), newCost);
                 }
 
-                var doInsertPoint = true;
-
-                if (openPoints.TryGetValue(neighbor, out var existingNeighbor))
-                {
-                    doInsertPoint = existingNeighbor > newCost;
-
-                    if (doInsertPoint)
-                    {
-                        openPoints.Remove(neighbor);
-                    }
-                }
-
-                if (doInsertPoint)
-                {
-                    openPoints.Add(neighbor, newCost);
-                }
+                openPoints.Enqueue(neighbor, newCost);
             }
         }
 
@@ -126,13 +140,13 @@ public class Day15 : AdventDayBase
     private static IEnumerable<Point2D> GetNeighbors(Point2D point, int rightBound, int bottomBound)
     {
         // Left
-        if (point.X > 1)
+        if (point.X > 0)
         {
             yield return point with { X = point.X - 1 };
         }
 
         // Up
-        if (point.Y > 1)
+        if (point.Y > 0)
         {
             yield return point with { Y = point.Y - 1 };
         }
@@ -150,9 +164,38 @@ public class Day15 : AdventDayBase
         }
     }
 
-    static int ComputeHScore(int x, int y, int targetX, int targetY)
+    static void PrintBoard(int[,] board, Point2D[] path)
     {
-        return Math.Abs(targetX - x) + Math.Abs(targetY - y);
+        var width = board.GetLength(0);
+        var height = board.GetLength(1);
+        foreach (var y in Enumerable.Range(0, height))
+        {
+            foreach (var x in Enumerable.Range(0, width))
+            {
+                if (path.Contains(new Point2D(x, y)))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+
+                Console.Write(board[x, y]);
+
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            Console.WriteLine();
+        }
+    }
+
+    private static Point2D[] GetPath(Dictionary<Point2D, (Point2D Point, int Cost)> breadCrumbs, Point2D currentPoint)
+    {
+        var path = new List<Point2D> { currentPoint };
+
+        while (breadCrumbs.TryGetValue(currentPoint, out var newPoint))
+        {
+            path.Add(newPoint.Point);
+            currentPoint = newPoint.Point;
+        }
+
+        return path.AsEnumerable().Reverse().ToArray();
     }
 
     private class Oopsie : Exception
