@@ -16,13 +16,15 @@ using AdventOfCode.Puzzles.Day11;
 using AdventOfCode.Puzzles.Day12;
 using AdventOfCode.Puzzles.Day13;
 using AdventOfCode.Puzzles.Day14;
+using AdventOfCode.Puzzles.Day15;
+using AdventOfCode.Puzzles.EmptyDay;
 
 namespace AdventOfCode.Runner
 {
     public class AdventRunner
     {
         private readonly List<int> _daysToSkip = new() { 9, 11 };
-        private readonly int? _onlyDay = 14;
+        private readonly int? _onlyDay = 15;
 
         private readonly List<AdventDayBase> _days = new()
         {
@@ -40,6 +42,7 @@ namespace AdventOfCode.Runner
             new Day12(),
             new Day13(),
             new Day14(),
+            new Day15(),
         };
 
         public void Run()

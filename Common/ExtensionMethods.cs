@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using AdventOfCode.Common.Models;
 using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Common
@@ -209,6 +211,29 @@ namespace AdventOfCode.Common
         public static string Join(this (char, char, char) triplet)
         {
             return triplet.Item1.ToString() + triplet.Item2 + triplet.Item3;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T GetPoint<T>(this T[,] grid, Point2D point)
+        {
+            return grid[point.X, point.Y];
+        }
+
+        public static bool TryGetFirst<T>(this IEnumerable<T> items, Func<T, bool> predicate, out T item) 
+            where T : struct
+        {
+            foreach (var it in items)
+            {
+                if (!predicate(it))
+                {
+                    continue;
+                }
+                item = it;
+                return true;
+            }
+
+            item = default;
+            return false;
         }
     }
 }
