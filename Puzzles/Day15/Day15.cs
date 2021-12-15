@@ -108,10 +108,13 @@ public class Day15 : AdventDayBase
         {
             visitedPoints.Add(lowestCostPoint);
 
-            var neighbors = GetNeighbors(lowestCostPoint, rightBound, bottomBound);
+            UglyMutableWayToGetNeighbors(lowestCostPoint, rightBound, bottomBound,
+                out var neighbors, out var neighborCount);
 
-            foreach (var neighbor in neighbors)
+            for(int i = 0; i < neighborCount; i++)
             {
+                var neighbor = neighbors[i];
+
                 if (visitedPoints.Contains(neighbor))
                 {
                     continue;
@@ -123,7 +126,6 @@ public class Day15 : AdventDayBase
                 {
                     breadCrumbs[neighbor] = (lowestCostPoint, lowestCostValue);
                 }
-
 
                 if (neighbor == end)
                 {
@@ -161,6 +163,37 @@ public class Day15 : AdventDayBase
         if (point.Y < bottomBound)
         {
             yield return point with { Y = point.Y + 1 };
+        }
+    }
+
+    private static void UglyMutableWayToGetNeighbors(Point2D point, int rightBound, int bottomBound,
+        out Point2D[] neighbors, out int neighborCount)
+    {
+        neighbors = new Point2D[4];
+        neighborCount = 0;
+
+        // Left
+        if (point.X > 0)
+        {
+            neighbors[neighborCount++] = point with { X = point.X - 1 };
+        }
+
+        // Up
+        if (point.Y > 0)
+        {
+            neighbors[neighborCount++] = point with { Y = point.Y - 1 };
+        }
+
+        // Right
+        if (point.X < rightBound)
+        {
+            neighbors[neighborCount++] = point with { X = point.X + 1 };
+        }
+
+        // Down
+        if (point.Y < bottomBound)
+        {
+            neighbors[neighborCount++] = point with { Y = point.Y + 1 };
         }
     }
 
