@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using AdventOfCode.Common.Models;
@@ -219,7 +221,7 @@ namespace AdventOfCode.Common
             return grid[point.X, point.Y];
         }
 
-        public static bool TryGetFirst<T>(this IEnumerable<T> items, Func<T, bool> predicate, out T item) 
+        public static bool TryGetFirst<T>(this IEnumerable<T> items, Func<T, bool> predicate, out T item)
             where T : struct
         {
             foreach (var it in items)
@@ -234,6 +236,56 @@ namespace AdventOfCode.Common
 
             item = default;
             return false;
+        }
+
+        public static IEnumerable<bool> EnumerateToBits(this IEnumerable<byte> source, int mostSignificantPosition)
+        {
+            foreach (var by in source)
+            {
+                for (var i = mostSignificantPosition; i >= 0; i--)
+                {
+                    var toCheck = 1 << i;
+                    var isThat = (by & toCheck) == toCheck;
+
+                    yield return isThat;
+                }
+            }
+        }
+
+        public static bool TryDequeueAmount<T>(this Queue<T> source, int amount, [NotNullWhen(true)] out T[]? items)
+        {
+            var list = new List<T>(amount);
+
+            for (var i = 0; i < amount; i++)
+            {
+                if (!source.TryDequeue(out var item))
+                {
+                    items = null;
+                    return false;
+                }
+
+                list.Add(item);
+
+            }
+
+            items = list.ToArray();
+
+            return true;
+        }
+
+        public static int ArrangeBits(this IEnumerable<bool> source)
+        {
+            var result = 0;
+            foreach (var b in source)
+            {
+                result <<= 1;
+                if (b)
+                {
+                    result |= 1;
+                }
+            }
+
+            return result;
         }
     }
 }
