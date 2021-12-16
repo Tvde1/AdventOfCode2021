@@ -7,7 +7,7 @@ using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day15;
 
-public class Day15 : AdventDayBase
+public partial class Day15 : AdventDayBase
 {
     private const string InputFile = "Day15/day15.txt";
 
@@ -104,8 +104,15 @@ public class Day15 : AdventDayBase
 
         var breadCrumbs = new Dictionary<Point2D, (Point2D Point, int Cost)>();
 
+        int iterations = 0;
         while (openPoints.TryDequeue(out var lowestCostPoint, out var lowestCostValue))
         {
+            if (iterations > 100_000)
+            {
+                openPoints = new PriorityQueue<Point2D, int>(openPoints.UnorderedItems.OrderBy(x => x.Priority).Take(50_000));
+                iterations = 0;
+            }
+
             visitedPoints.Add(lowestCostPoint);
 
             UglyMutableWayToGetNeighbors(lowestCostPoint, rightBound, bottomBound,
@@ -229,18 +236,5 @@ public class Day15 : AdventDayBase
         }
 
         return path.AsEnumerable().Reverse().ToArray();
-    }
-
-    private class Oopsie : Exception
-    {
-        public Oopsie()
-            : base("This should not be possible")
-        {
-        }
-
-        public Oopsie(string message)
-            : base(message)
-        {
-        }
     }
 }

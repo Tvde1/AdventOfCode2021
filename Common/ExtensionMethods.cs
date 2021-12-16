@@ -238,20 +238,18 @@ namespace AdventOfCode.Common
             return false;
         }
 
-        public static IEnumerable<bool> EnumerateToBits(this IEnumerable<byte> source, int mostSignificantPosition)
+        public static IEnumerable<bool> ToBits(this byte source, int mostSignificantPosition)
         {
-            foreach (var by in source)
+            for (var i = mostSignificantPosition - 1; i >= 0; i--)
             {
-                for (var i = mostSignificantPosition; i >= 0; i--)
-                {
-                    var toCheck = 1 << i;
-                    var isThat = (by & toCheck) == toCheck;
+                var toCheck = 1 << i;
+                var isThat = (source & toCheck) == toCheck;
 
-                    yield return isThat;
-                }
+                yield return isThat;
             }
         }
 
+        [DebuggerStepThrough]
         public static bool TryDequeueAmount<T>(this Queue<T> source, int amount, [NotNullWhen(true)] out T[]? items)
         {
             var list = new List<T>(amount);
@@ -273,6 +271,7 @@ namespace AdventOfCode.Common
             return true;
         }
 
+        [DebuggerStepThrough]
         public static int ArrangeBits(this IEnumerable<bool> source)
         {
             var result = 0;
