@@ -5,7 +5,7 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day07;
 
-public class Day7 : AdventDayBase
+public class Day7 : AdventDay
 {
     private const string InputFile = "Day7/day7.txt";
 
@@ -19,15 +19,15 @@ public class Day7 : AdventDayBase
     }
 
     // 355764
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(",").Select(int.Parse),
             data => FindMedianCrabCost(data));
 
     // 99634572
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(",").Select(int.Parse).ToList(),
             data => FindBruteForceCrabCost(data));

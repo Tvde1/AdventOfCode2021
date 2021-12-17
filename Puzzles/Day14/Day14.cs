@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdventOfCode.Puzzles.Day14;
 
-public class Day14 : AdventDayBase
+public class Day14 : AdventDay
 {
     private const string InputFile = "Day14/day14.txt";
 
@@ -35,8 +35,8 @@ CN -> C";
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             _ => PolymerTemplate.Parse(TestInput),
             data =>
@@ -49,8 +49,8 @@ CN -> C";
                 return data.Hash();
             });
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             PolymerTemplate.Parse,
             data => PairIteratorSolution.CalculatePolymerHashFast(data, 40));

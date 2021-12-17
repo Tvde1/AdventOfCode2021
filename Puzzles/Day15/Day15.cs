@@ -7,7 +7,7 @@ using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day15;
 
-public partial class Day15 : AdventDayBase
+public partial class Day15 : AdventDay
 {
     private const string InputFile = "Day15/day15.txt";
 
@@ -26,11 +26,11 @@ public partial class Day15 : AdventDayBase
         : base(15)
     {
         AddPart(PartOne);
-        AddPart(PartTwo);
+        // AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             GetGrid,
             data =>
@@ -40,13 +40,13 @@ public partial class Day15 : AdventDayBase
 
                 var (Path, Cost) = GetCost(data, startPoint, endPoint);
 
-                PrintBoard(data, Path);
+                // PrintBoard(data, Path);
 
                 return Cost;
             });
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => GetBigGrid(GetGrid(input), 5),
             data =>
@@ -104,19 +104,22 @@ public partial class Day15 : AdventDayBase
 
         var breadCrumbs = new Dictionary<Point2D, (Point2D Point, int Cost)>();
 
+        var neighbors = new Point2D[4];
+
         int iterations = 0;
         while (openPoints.TryDequeue(out var lowestCostPoint, out var lowestCostValue))
         {
-            if (iterations > 100_000)
-            {
-                openPoints = new PriorityQueue<Point2D, int>(openPoints.UnorderedItems.OrderBy(x => x.Priority).Take(50_000));
-                iterations = 0;
-            }
+            iterations++;
+            //if (iterations > 100_000)
+            //{
+            //    openPoints = new PriorityQueue<Point2D, int>(openPoints.UnorderedItems.OrderBy(x => x.Priority).Take(50_000));
+            //    iterations = 0;
+            //}
 
             visitedPoints.Add(lowestCostPoint);
 
-            UglyMutableWayToGetNeighbors(lowestCostPoint, rightBound, bottomBound,
-                out var neighbors, out var neighborCount);
+            FillArrayWithNeighbors(lowestCostPoint, rightBound, bottomBound,
+                ref neighbors, out var neighborCount);
 
             for(int i = 0; i < neighborCount; i++)
             {
@@ -173,10 +176,9 @@ public partial class Day15 : AdventDayBase
         }
     }
 
-    private static void UglyMutableWayToGetNeighbors(Point2D point, int rightBound, int bottomBound,
-        out Point2D[] neighbors, out int neighborCount)
+    private static void FillArrayWithNeighbors(Point2D point, int rightBound, int bottomBound,
+        ref Point2D[] neighbors, out int neighborCount)
     {
-        neighbors = new Point2D[4];
         neighborCount = 0;
 
         // Left

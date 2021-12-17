@@ -2,7 +2,7 @@
 
 namespace AdventOfCode.Puzzles.EmptyDay;
 
-public class Day25 : AdventDayBase
+public class Day25 : AdventDay
 {
     private const string InputFile = "Day25/day25.txt";
 
@@ -15,14 +15,14 @@ public class Day25 : AdventDayBase
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input,
             data => data);
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input,
             data => data);

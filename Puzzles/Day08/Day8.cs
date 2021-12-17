@@ -6,7 +6,7 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day08;
 
-public class Day8 : AdventDayBase
+public class Day8 : AdventDay
 {
     private const string InputFile = "Day8/day8.txt";
 
@@ -31,14 +31,14 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
     // Test: 26
     // 288
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(SegmentData.Parse),
             data => data.Sum(x => x.Output.Count(a => a is {Length: 2 or 3 or 4 or 7})));
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(SegmentData.Parse),
             data => data.Sum(segmentData =>

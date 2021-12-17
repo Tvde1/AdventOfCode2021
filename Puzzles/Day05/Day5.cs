@@ -6,7 +6,7 @@ using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day05;
 
-public class Day5 : AdventDayBase
+public class Day5 : AdventDay
 {
     private const string InputFile = "Day5/day5.txt";
 
@@ -29,8 +29,8 @@ public class Day5 : AdventDayBase
     }
 
     // 2743844
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine)
                 .Select(VentLine.Parse(false)),
@@ -47,8 +47,8 @@ public class Day5 : AdventDayBase
                 return board.Values.Count(x => x > 1);
             });
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine)
                 .Select(VentLine.Parse(true)),

@@ -6,7 +6,7 @@ using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Puzzles.Day10;
 
-public class Day10 : AdventDayBase
+public class Day10 : AdventDay
 {
     private const string InputFile = "Day10/day10.txt";
 
@@ -28,8 +28,8 @@ public class Day10 : AdventDayBase
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine),
             data => data
@@ -40,8 +40,8 @@ public class Day10 : AdventDayBase
                 .Select(x => UnexpectedTokenErrorScores[x.found])
                 .Sum());
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine),
             data => data

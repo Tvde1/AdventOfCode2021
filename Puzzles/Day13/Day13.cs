@@ -8,7 +8,7 @@ using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Puzzles.Day13;
 
-public class Day13 : AdventDayBase
+public class Day13 : AdventDay
 {
     private const string InputFile = "Day13/day13.txt";
 
@@ -41,14 +41,14 @@ fold along x=5";
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             Sheet.Parse,
             data => FoldSheet(data).Points.Count);
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             Sheet.Parse,
             data =>

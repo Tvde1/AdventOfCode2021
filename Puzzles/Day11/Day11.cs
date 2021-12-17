@@ -7,7 +7,7 @@ using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day11;
 
-public class Day11 : AdventDayBase
+public class Day11 : AdventDay
 {
     private const string InputFile = "Day11/day11.txt";
 
@@ -29,8 +29,8 @@ public class Day11 : AdventDayBase
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString())))
                 .ToTwoDimensionalArray(),
@@ -46,8 +46,8 @@ public class Day11 : AdventDayBase
                 return totalFlashCount;
             });
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString())))
                 .ToTwoDimensionalArray(),

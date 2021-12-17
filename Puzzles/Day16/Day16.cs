@@ -5,7 +5,7 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day16;
 
-public class Day16 : AdventDayBase
+public class Day16 : AdventDay
 {
     private const string InputFile = "Day16/day16.txt";
 
@@ -18,8 +18,8 @@ public class Day16 : AdventDayBase
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => HexToBits(TestInput),
             data =>
@@ -54,8 +54,8 @@ public class Day16 : AdventDayBase
                 return flattened.Aggregate(0, (sum, packet) => sum + packet.Version);
             });
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input,
             data => data);

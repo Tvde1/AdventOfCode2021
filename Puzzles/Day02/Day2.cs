@@ -1,91 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day02;
 
-public class Day2 : AdventDayBase
+using Day2Data = IEnumerable<Command>;
+
+public readonly record struct Command(Command.DirectionType Direction, int Count)
 {
-    private const string InputFile = "Day2/day2.txt";
-
-    public Day2()
-        : base(2)
-    {
-        AddPart(BuildPartOne());
-        AddPart(BuildPartTwo());
-    }
-
-    public static AdventAssignment BuildPartOne()
-    {
-        return AdventAssignment.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(Command.Parse),
-            data => data.Aggregate(
-                State.Empty,
-                (state, command) => command switch
-                {
-                    {Direction: Direction.Up} => state with
-                    {
-                        Depth = state.Depth - command.Count
-                    },
-                    {Direction: Direction.Down} => state with
-                    {
-                        Depth = state.Depth + command.Count
-                    },
-                    {Direction: Direction.Forward} => state with
-                    {
-                        HorizontalPosition = state.HorizontalPosition + command.Count
-                    }
-                }).ComputeResult());
-    }
-
-    public static AdventAssignment BuildPartTwo()
-    {
-        return AdventAssignment.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(Command.Parse),
-            data => data.Aggregate(
-                State.Empty,
-                (state, command) => command switch
-                {
-                    {Direction: Direction.Up} => state with
-                    {
-                        Aim = state.Aim - command.Count
-                    },
-                    {Direction: Direction.Down} => state with
-                    {
-                        Aim = state.Aim + command.Count
-                    },
-                    {Direction: Direction.Forward} => state with
-                    {
-                        HorizontalPosition = state.HorizontalPosition + command.Count,
-                        Depth = state.Depth + state.Aim * command.Count
-                    }
-                }).ComputeResult());
-    }
-
-    private enum Direction : byte
+    public enum DirectionType : byte
     {
         Up,
         Down,
         Forward
     }
 
-    private readonly record struct Command(Direction Direction, int Count)
+    public static Command Parse(string input)
     {
-        public static Command Parse(string input)
+        var split = input.Split(StringConstants.Space);
+        return new Command(split[0] switch
         {
-            var split = input.Split(StringConstants.Space);
-            return new Command(split[0] switch
-            {
-                "up" => Direction.Up,
-                "down" => Direction.Down,
-                "forward" => Direction.Forward
-            }, int.Parse(split[1]));
-        }
+            "up" => DirectionType.Up,
+            "down" => DirectionType.Down,
+            "forward" => DirectionType.Forward,
+            _ => throw new ArgumentOutOfRangeException(nameof(Direction)),
+        }, int.Parse(split[1]));
     }
+}
 
-    private readonly record struct State
+public class Day2 : AdventDay<Day2Data>
+{
+
+    private const string InputFile = "Day2/day2.txt";
+
+    public Day2()
+        : base(2, AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo)
+    { }
+
+    private static Day2Data Parse(string input) => input.Split(Environment.NewLine).Select(Command.Parse);
+
+    public readonly record struct State
     {
         private State(int depth, int horizontalPosition, int aim)
         {
@@ -105,4 +60,41 @@ public class Day2 : AdventDayBase
             return Depth * HorizontalPosition;
         }
     }
+
+    private static string PartOne(Day2Data data) => data.Aggregate(
+                State.Empty,
+                (state, command) => command switch
+                {
+                    { Direction: Command.DirectionType.Up } => state with
+                    {
+                        Depth = state.Depth - command.Count
+                    },
+                    { Direction: Command.DirectionType.Down } => state with
+                    {
+                        Depth = state.Depth + command.Count
+                    },
+                    { Direction: Command.DirectionType.Forward } => state with
+                    {
+                        HorizontalPosition = state.HorizontalPosition + command.Count
+                    }
+                }).ComputeResult().ToString();
+
+    private static string PartTwo(Day2Data data) => data.Aggregate(
+                State.Empty,
+                (state, command) => command switch
+                {
+                    { Direction: Command.DirectionType.Up } => state with
+                    {
+                        Aim = state.Aim - command.Count
+                    },
+                    { Direction: Command.DirectionType.Down } => state with
+                    {
+                        Aim = state.Aim + command.Count
+                    },
+                    { Direction: Command.DirectionType.Forward } => state with
+                    {
+                        HorizontalPosition = state.HorizontalPosition + command.Count,
+                        Depth = state.Depth + state.Aim * command.Count
+                    }
+                }).ComputeResult().ToString();
 }

@@ -7,7 +7,7 @@ using AdventOfCode.Common.Monads;
 
 namespace AdventOfCode.Puzzles.Day12;
 
-public class Day12 : AdventDayBase
+public class Day12 : AdventDay
 {
     private const string InputFile = "Day12/day12.txt";
 
@@ -40,14 +40,14 @@ kj-dc";
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => GetAllCaveConnections(input.Split(Environment.NewLine)),
             data => GetFullFromCurrentToEndPaths(data, CaveStart, CaveEnd).Count());
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => GetAllCavesFull(input.Split(Environment.NewLine)),
             data => data.Values

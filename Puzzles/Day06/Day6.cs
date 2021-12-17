@@ -4,7 +4,7 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day06;
 
-public class Day6 : AdventDayBase
+public class Day6 : AdventDay
 {
     private const string InputFile = "Day6/day6.txt";
 
@@ -18,15 +18,15 @@ public class Day6 : AdventDayBase
     }
 
     // 389726
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(",").Select(int.Parse),
             data => SimulateLanternFish(data, 80).Count());
 
     // 1743335992042
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(",").Select(int.Parse).ToList(),
             data => SimulateLanternFishFaster(data, 256));

@@ -24,9 +24,9 @@ namespace AdventOfCode.Runner
     public class AdventRunner
     {
         private readonly List<int> _daysToSkip = new() { 9, 11, 15, };
-        private readonly int? _onlyDay = 16;
+        private readonly int? _onlyDay = 15;
 
-        private readonly List<AdventDayBase> _days = new()
+        private readonly List<AdventDay> _days = new()
         {
             new Day1(),
             new Day2(),
@@ -48,7 +48,7 @@ namespace AdventOfCode.Runner
 
         public void Run()
         {
-            List<AdventDayBase> days;
+            List<AdventDay> days;
             if (_onlyDay.HasValue)
             {
                 days = _days.Where(x => x.Number == _onlyDay.Value)

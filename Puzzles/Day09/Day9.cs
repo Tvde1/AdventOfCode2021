@@ -6,7 +6,7 @@ using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day09;
 
-public class Day9 : AdventDayBase
+public class Day9 : AdventDay
 {
     private const string InputFile = "Day9/day9.txt";
 
@@ -24,15 +24,15 @@ public class Day9 : AdventDayBase
         AddPart(PartTwo);
     }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartOne =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
             data => CalculateLowestPointsParallel(data).Sum(x => data[x.X, x.Y] + 1));
 
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
+    public static AdventDayPart PartTwo =>
+        AdventDayPart.Build(
             InputFile,
             input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
                 .ToTwoDimensionalArray(),
