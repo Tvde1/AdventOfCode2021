@@ -16,3 +16,5 @@ public readonly record struct Point2D(int X, int Y) : IComparable<Point2D>
         return xComparison != 0 ? xComparison : Y.CompareTo(other.Y);
     }
 }
+
+public readonly record struct Vector2(int X, int Y);
