@@ -19,7 +19,7 @@ public class Day17 : AdventDay
         : base(17, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), TargetArea.Parse, PartOne, PartTwo))
     { }
 
-    private readonly record struct FiringError(bool IsHit, Vector2 Distance);
+    private readonly record struct FiringError(bool IsHit, Vector2D Distance);
 
     private readonly record struct TargetArea(int MinX, int MaxX, int MinY, int MaxY)
     {
@@ -43,12 +43,12 @@ public class Day17 : AdventDay
         var yPossibilities = Enumerable.Range(data.MinY, 1000).ToArray();
 
         var highestY = int.MinValue;
-        var best = new Vector2(int.MinValue, int.MinValue);
+        var best = new Vector2D(int.MinValue, int.MinValue);
 
         foreach (var x in xPossibilities)
             foreach (var y in yPossibilities)
             {
-                var probe = new Probe(new Point2D(0, 0), new Vector2(x, y));
+                var probe = new Probe(new Point2D(0, 0), new Vector2D(x, y));
 
                 var highestProbeY = probe.Point.Y;
 
@@ -70,7 +70,7 @@ public class Day17 : AdventDay
                         if (highestProbeY > highestY)
                         {
                             highestY = highestProbeY;
-                            best = new Vector2(x, y);
+                            best = new Vector2D(x, y);
                         }
                         break;
                     }
@@ -97,7 +97,7 @@ public class Day17 : AdventDay
         foreach (var x in xPossibilities)
             foreach (var y in yPossibilities)
             {
-                var probe = new Probe(new Point2D(0, 0), new Vector2(x, y));
+                var probe = new Probe(new Point2D(0, 0), new Vector2D(x, y));
 
                 var highestProbeY = probe.Point.Y;
 
@@ -127,7 +127,7 @@ public class Day17 : AdventDay
         return amountFound.ToString();
     }
 
-    private readonly record struct Probe(Point2D Point, Vector2 Velocity);
+    private readonly record struct Probe(Point2D Point, Vector2D Velocity);
 
     private static Probe CalculateProbeStep(Probe probe)
     {
@@ -142,7 +142,7 @@ public class Day17 : AdventDay
         };
         var newYVelocity = probe.Velocity.Y - 1;
 
-        return new Probe(new Point2D(newX, newY), new Vector2(newXVelocity, newYVelocity));
+        return new Probe(new Point2D(newX, newY), new Vector2D(newXVelocity, newYVelocity));
     }
 
     private static FiringError GetFiringError(TargetArea targetArea, Point2D target)
@@ -152,7 +152,7 @@ public class Day17 : AdventDay
 
         if (isInX && isInY)
         {
-            return new FiringError(true, new Vector2(0, 0));
+            return new FiringError(true, new Vector2D(0, 0));
         }
 
         var toLeftOfX = targetArea.MinX - target.X;
@@ -181,6 +181,6 @@ public class Day17 : AdventDay
             firingErrorY = aboveY;
         }
 
-        return new FiringError(false, new Vector2(firingErrorX, firingErrorY));
+        return new FiringError(false, new Vector2D(firingErrorX, firingErrorY));
     }
 }
