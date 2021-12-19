@@ -22,36 +22,29 @@ public class Day10 : AdventDay
 <{([{{}}[<[[[<>{}]]]>[]]";
 
     public Day10()
-        : base(10)
-    {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        : base(10, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine),
-            data => data
-                .AsParallel()
-                .Select(GetNavigationSubsystemError)
-                .WhereNotNull()
-                .WhereLeft()
-                .Select(x => UnexpectedTokenErrorScores[x.found])
-                .Sum());
+    private static string[] Parse(string input) => input.Split(Environment.NewLine);
 
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine),
-            data => data
-                .AsParallel()
-                .Select(GetNavigationSubsystemError)
-                .WhereNotNull()
-                .WhereRight()
-                .Select(GetAutocompleteScore)
-                .OrderBy(x => x)
-                .Middle());
+    private static string PartOne(string[] data) => 
+        data.AsParallel()
+            .Select(GetNavigationSubsystemError)
+            .WhereNotNull()
+            .WhereLeft()
+            .Select(x => UnexpectedTokenErrorScores[x.found])
+            .Sum()
+            .ToString();
+
+    private static string PartTwo(string[] data) =>
+        data.AsParallel()
+            .Select(GetNavigationSubsystemError)
+            .WhereNotNull()
+            .WhereRight()
+            .Select(GetAutocompleteScore)
+            .OrderBy(x => x)
+            .Middle()
+            .ToString();
 
     private static readonly Dictionary<char, char> Opposites = new()
     {
@@ -77,7 +70,7 @@ public class Day10 : AdventDay
         {'>', 4},
     };
 
-    public static Either<(char expected, char found), char[]>? GetNavigationSubsystemError(string input)
+    private static Either<(char expected, char found), char[]>? GetNavigationSubsystemError(string input)
     {
         var stack = new Stack<char>();
 

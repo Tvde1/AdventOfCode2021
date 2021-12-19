@@ -7,12 +7,13 @@ namespace AdventOfCode.Puzzles.Day01;
 
 using Part1Data = IEnumerable<int>;
 
-public class Day1 : AdventDay<Part1Data>
+public class Day1 : AdventDay
 {
-    private const string InputFile = "Day1/day1.txt";
+    private const string InputFile = "Day01/day1.txt";
 
-    public Day1() : base(1, AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo)
-    {    }
+    public Day1()
+        : base(1, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
 
     public static Part1Data Parse(string s) => s.Split(Environment.NewLine).Select(int.Parse);
 

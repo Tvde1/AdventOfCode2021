@@ -5,30 +5,17 @@ using AdventOfCode.Common.Models;
 
 namespace AdventOfCode.Puzzles.Day17;
 
-public class Day17 : AdventDayBase
+public class Day17 : AdventDay
 {
     private const string InputFile = "Day17/day17.txt";
 
     private const string TestInput = @"target area: x=20..30, y=-10..-5";
 
     public Day17()
-        : base(17)
-    {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        : base(17, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse))
+    { }
 
-    public static AdventAssignment PartOne =>
-        AdventAssignment.Build(
-            InputFile,
-            input => input,
-            data => data);
-
-    public static AdventAssignment PartTwo =>
-        AdventAssignment.Build(
-            InputFile,
-            input => input,
-            data => data);
+    public static string Parse(string input) => input;
 
     private readonly record struct FiringError(bool IsHit, Vector2 Distance);
 

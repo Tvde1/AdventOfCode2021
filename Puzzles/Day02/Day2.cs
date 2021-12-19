@@ -5,40 +5,37 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day02;
 
-using Day2Data = IEnumerable<Command>;
-
-public readonly record struct Command(Command.DirectionType Direction, int Count)
+public class Day2 : AdventDay
 {
-    public enum DirectionType : byte
-    {
-        Up,
-        Down,
-        Forward
-    }
-
-    public static Command Parse(string input)
-    {
-        var split = input.Split(StringConstants.Space);
-        return new Command(split[0] switch
-        {
-            "up" => DirectionType.Up,
-            "down" => DirectionType.Down,
-            "forward" => DirectionType.Forward,
-            _ => throw new ArgumentOutOfRangeException(nameof(Direction)),
-        }, int.Parse(split[1]));
-    }
-}
-
-public class Day2 : AdventDay<Day2Data>
-{
-
-    private const string InputFile = "Day2/day2.txt";
+    private const string InputFile = "Day02/day2.txt";
 
     public Day2()
-        : base(2, AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo)
+        : base(2, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
     { }
 
-    private static Day2Data Parse(string input) => input.Split(Environment.NewLine).Select(Command.Parse);
+    private static IEnumerable<Command> Parse(string input) => input.Split(Environment.NewLine).Select(Command.Parse);
+
+    public readonly record struct Command(Command.DirectionType Direction, int Count)
+    {
+        public enum DirectionType : byte
+        {
+            Up,
+            Down,
+            Forward
+        }
+
+        public static Command Parse(string input)
+        {
+            var split = input.Split(StringConstants.Space);
+            return new Command(split[0] switch
+            {
+                "up" => DirectionType.Up,
+                "down" => DirectionType.Down,
+                "forward" => DirectionType.Forward,
+                _ => throw new ArgumentOutOfRangeException(nameof(Direction)),
+            }, int.Parse(split[1]));
+        }
+    }
 
     public readonly record struct State
     {
@@ -61,7 +58,7 @@ public class Day2 : AdventDay<Day2Data>
         }
     }
 
-    private static string PartOne(Day2Data data) => data.Aggregate(
+    private static string PartOne(IEnumerable<Command> data) => data.Aggregate(
                 State.Empty,
                 (state, command) => command switch
                 {
@@ -79,7 +76,7 @@ public class Day2 : AdventDay<Day2Data>
                     }
                 }).ComputeResult().ToString();
 
-    private static string PartTwo(Day2Data data) => data.Aggregate(
+    private static string PartTwo(IEnumerable<Command> data) => data.Aggregate(
                 State.Empty,
                 (state, command) => command switch
                 {

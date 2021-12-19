@@ -35,31 +35,20 @@ fold along y=7
 fold along x=5";
 
     public Day13()
-        : base(13)
+        : base(13, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Sheet.Parse, PartOne, PartTwo))
+    { }
+
+    public static string PartOne(Sheet data) => FoldSheet(data).Points.Count.ToString();
+
+    public static string PartTwo(Sheet data)
     {
-        AddPart(PartOne);
-        AddPart(PartTwo);
+        while (data.Folds.Any())
+        {
+            data = FoldSheet(data);
+        }
+
+        return RenderSheet(data);
     }
-
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            Sheet.Parse,
-            data => FoldSheet(data).Points.Count);
-
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            Sheet.Parse,
-            data =>
-            {
-                while (data.Folds.Any())
-                {
-                    data = FoldSheet(data);
-                }
-
-                return RenderSheet(data);
-            });
 
     public readonly record struct Sheet
     {
@@ -129,7 +118,7 @@ fold along x=5";
         {
             case Axis.X:
                 pointSelector = p => p.X > foldValue;
-                pointMapper = p => p with {X = foldValue - (p.X - foldValue)};
+                pointMapper = p => p with { X = foldValue - (p.X - foldValue) };
                 break;
             case Axis.Y:
                 pointSelector = p => p.Y > foldValue;
@@ -151,7 +140,7 @@ fold along x=5";
         };
     }
 
-    public static IEnumerable<string> RenderSheet(Sheet input)
+    public static string RenderSheet(Sheet input)
     {
         var minX = input.Points.Min(x => x.X);
         var minY = input.Points.Min(x => x.Y);
@@ -164,6 +153,6 @@ fold along x=5";
                     ? CharConstants.Filled
                     : CharConstants.Space).ToArray()));
 
-        return rendered;
+        return string.Join(Environment.NewLine, rendered);
     }
 }

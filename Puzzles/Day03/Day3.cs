@@ -5,9 +5,9 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day03;
 
-public class Day3 : AdventDay<string[]>
+public class Day3 : AdventDay
 {
-    private const string InputFile = "Day3/day3.txt";
+    private const string InputFile = "Day03/day3.txt";
 
     private const string testInput = @"00100
 11110
@@ -23,7 +23,7 @@ public class Day3 : AdventDay<string[]>
 01010";
 
     public Day3() 
-        : base(3, AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo)
+        : base(3, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
     { }
 
 

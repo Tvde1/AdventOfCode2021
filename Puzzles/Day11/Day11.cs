@@ -23,48 +23,40 @@ public class Day11 : AdventDay
 5283751526";
 
     public Day11()
-        : base(11)
+        : base(11, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
+
+    public static int[,] Parse(string input) =>
+        input.Split(Environment.NewLine)
+            .Select(x => x.Select(y => int.Parse(y.ToString())))
+            .ToTwoDimensionalArray();
+
+    public static string PartOne(int[,] data)
     {
-        AddPart(PartOne);
-        AddPart(PartTwo);
+        var totalFlashCount = 0;
+        for (var i = 1; i <= 100; i++)
+        {
+            data = Step(data, out var amountFlashed);
+            totalFlashCount += amountFlashed;
+        }
+
+        return totalFlashCount.ToString();
     }
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString())))
-                .ToTwoDimensionalArray(),
-            data =>
+    public static string PartTwo(int[,] data)
+    {
+        var i = 1;
+        for (; ; i++)
+        {
+            data = Step(data, out _);
+            if (data.Flatten().All(x => x == 0))
             {
-                var totalFlashCount = 0;
-                for (var i = 1; i <= 100; i++)
-                {
-                    data = Step(data, out var amountFlashed);
-                    totalFlashCount += amountFlashed;
-                }
+                break;
+            }
+        }
 
-                return totalFlashCount;
-            });
-
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(x => x.Select(y => int.Parse(y.ToString())))
-                .ToTwoDimensionalArray(),
-            data =>
-            {
-                var i = 1;
-                for (;; i++)
-                {
-                    data = Step(data, out _);
-                    if (data.Flatten().All(x => x == 0))
-                    {
-                        break;
-                    }
-                }
-
-                return i;
-            });
+        return i.ToString();
+    }
 
     private static int[,] Step(int[,] input, out int amountFlashed)
     {

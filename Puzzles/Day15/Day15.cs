@@ -23,43 +23,35 @@ public partial class Day15 : AdventDay
 2311944581";
 
     public Day15()
-        : base(15)
+        : base(15, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne))
+    { }
+
+    public static int[,] Parse(string input) => GetGrid(input);
+
+    public static string PartOne(int[,] data)
     {
-        AddPart(PartOne);
-        // AddPart(PartTwo);
+        var startPoint = new Point2D(0, 0);
+        var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
+
+        var (Path, Cost) = GetCost(data, startPoint, endPoint);
+
+        // PrintBoard(data, Path);
+
+        return Cost.ToString();
     }
+    public static string PartTwo(int[,] data)
+    {
+        data = GetBigGrid(data, 5);
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            GetGrid,
-            data =>
-            {
-                var startPoint = new Point2D(0, 0);
-                var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
+        var startPoint = new Point2D(0, 0);
+        var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
 
-                var (Path, Cost) = GetCost(data, startPoint, endPoint);
+        var (Path, Cost) = GetCost(data, startPoint, endPoint);
 
-                // PrintBoard(data, Path);
+        //PrintBoard(data, Path);
 
-                return Cost;
-            });
-
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => GetBigGrid(GetGrid(input), 5),
-            data =>
-            {
-                var startPoint = new Point2D(0, 0);
-                var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
-
-                var (Path, Cost) = GetCost(data, startPoint, endPoint);
-
-                PrintBoard(data, Path);
-
-                return Cost;
-            });
+        return Cost.ToString();
+    }
 
     private static int[,] GetGrid(string input) => input.Split(Environment.NewLine).Select(x => x.Select(cha => int.Parse(cha.ToString()))).ToTwoDimensionalArray();
 

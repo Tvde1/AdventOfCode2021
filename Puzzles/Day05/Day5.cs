@@ -8,7 +8,7 @@ namespace AdventOfCode.Puzzles.Day05;
 
 public class Day5 : AdventDay
 {
-    private const string InputFile = "Day5/day5.txt";
+    private const string InputFile = "Day05/day5.txt";
 
     private const string TestInput = @"0,9 -> 5,9
 8,0 -> 0,8
@@ -22,86 +22,38 @@ public class Day5 : AdventDay
 5,5 -> 8,2";
 
     public Day5()
-        : base(5)
+        : base(5, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
+
+    public readonly struct VentLine
     {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        private readonly Point2D _start;
+        private readonly Point2D _end;
 
-    // 2743844
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine)
-                .Select(VentLine.Parse(false)),
-            data =>
-            {
-                var board = new Dictionary<Point2D, int>();
-
-                foreach (var point in data.SelectMany(x => x.AllCoveringPoints))
-                    if (board.ContainsKey(point))
-                        board[point]++;
-                    else
-                        board.Add(point, 1);
-
-                return board.Values.Count(x => x > 1);
-            });
-
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine)
-                .Select(VentLine.Parse(true)),
-            data =>
-            {
-                var board = FillBoard(data);
-
-                return board.Values.Count(x => x > 1);
-            });
-
-    private static Dictionary<Point2D, int> FillBoard(IEnumerable<VentLine> data)
-    {
-        var board = new Dictionary<Point2D, int>();
-
-        foreach (var point in data.SelectMany(x => x.AllCoveringPoints))
-            if (board.ContainsKey(point))
-                board[point]++;
-            else
-                board.Add(point, 1);
-
-        return board;
-    }
-
-    private readonly struct VentLine
-    {
-        private VentLine(Point2D start, Point2D end, bool countDiagonals)
+        private VentLine(Point2D start, Point2D end)
         {
-            AllCoveringPoints = CalculateAllCoveringPoints(start, end, countDiagonals);
+            _start = start;
+            _end = end;
         }
 
-        public Point2D[] AllCoveringPoints { get; }
-
-        public static Func<string, VentLine> Parse(bool countDiagonals)
+        public static VentLine Parse(string input)
         {
-            return input =>
-            {
-                var s = input.Split(" -> ");
-                var startVector = Point2D.Parse(s[0]);
-                var endVector = Point2D.Parse(s[1]);
-                return new VentLine(startVector, endVector, countDiagonals);
-            };
+            var s = input.Split(" -> ");
+            var startVector = Point2D.Parse(s[0]);
+            var endVector = Point2D.Parse(s[1]);
+            return new VentLine(startVector, endVector);
         }
 
-        private static Point2D[] CalculateAllCoveringPoints(Point2D start, Point2D end, bool countDiagonals)
+        public Point2D[] CalculateAllCoveringPoints(bool countDiagonals)
         {
-            var isVertical = start.X == end.X;
-            var isHorizontal = start.Y == end.Y;
+            var isVertical = _start.X == _end.X;
+            var isHorizontal = _start.Y == _end.Y;
 
             if (isVertical)
             {
-                var x = start.X;
-                var smallest = Math.Min(start.Y, end.Y);
-                var largest = Math.Max(start.Y, end.Y);
+                var x = _start.X;
+                var smallest = Math.Min(_start.Y, _end.Y);
+                var largest = Math.Max(_start.Y, _end.Y);
 
                 return Enumerable.Range(smallest, largest - smallest + 1)
                     .Select(y => new Point2D(x, y))
@@ -110,9 +62,9 @@ public class Day5 : AdventDay
 
             if (isHorizontal)
             {
-                var y = start.Y;
-                var smallest = Math.Min(start.X, end.X);
-                var largest = Math.Max(start.X, end.X);
+                var y = _start.Y;
+                var smallest = Math.Min(_start.X, _end.X);
+                var largest = Math.Max(_start.X, _end.X);
 
                 return Enumerable.Range(smallest, largest - smallest + 1)
                     .Select(x => new Point2D(x, y))
@@ -121,7 +73,7 @@ public class Day5 : AdventDay
 
             if (countDiagonals)
             {
-                return GenerateDiagonals(start, end).ToArray();
+                return GenerateDiagonals(_start, _end).ToArray();
             }
 
             return Array.Empty<Point2D>();
@@ -153,4 +105,27 @@ public class Day5 : AdventDay
             yield return new Point2D(x, y);
         }
     }
+
+
+    public static IEnumerable<VentLine> Parse(string input) =>
+        input.Split(Environment.NewLine).Select(VentLine.Parse);
+
+
+    // 2743844
+    public static string PartOne(IEnumerable<VentLine> data) => FillBoardAndCount(data, false);
+
+    public static string PartTwo(IEnumerable<VentLine> data) => FillBoardAndCount(data, true);
+
+    private static string FillBoardAndCount(IEnumerable<VentLine> data, bool countDiagonals)
+    {
+        var board = new Dictionary<Point2D, int>();
+
+        foreach (var point in data.SelectMany(x => x.CalculateAllCoveringPoints(countDiagonals)))
+            if (board.ContainsKey(point))
+                board[point]++;
+            else
+                board.Add(point, 1);
+
+        return board.Values.Count(x => x > 1).ToString();
+    } 
 }

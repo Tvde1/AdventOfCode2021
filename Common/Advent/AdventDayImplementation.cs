@@ -10,28 +10,35 @@ public record struct AdventDayPartResult(string Output, long ExecutionDurationMs
 
 public record struct AdventDayResult(long ParseDurationMs, AdventDayPartResult[] PartResults);
 
-public interface IAdventDay
+public interface IAdventDayImplementation
 {
     AdventDayResult Run();
 }
 
 public delegate TData AdventDataParser<TData>(string input);
 
-public class AdventDay<TData> : IAdventDay
+public static class AdventDayImplementation
+{
+    public static IAdventDayImplementation Build<TData>(AdventDataSource dataSource,
+        AdventDataParser<TData> parser, 
+        params AdventDayPart<TData>[] parts)
+    {
+        return new AdventDayImplementation<TData>(dataSource, parser, parts);
+    }
+}
+
+public class AdventDayImplementation<TData> : IAdventDayImplementation
 {
     private readonly AdventDataSource _dataSource;
     private readonly AdventDataParser<TData> _parser;
     private readonly AdventDayPart<TData>[] _parts;
 
-    public AdventDay(int dayNumber, AdventDataSource dataSource, AdventDataParser<TData> parser, params AdventDayPart<TData>[] parts)
+    public AdventDayImplementation(AdventDataSource dataSource, AdventDataParser<TData> parser, params AdventDayPart<TData>[] parts)
     {
-        DayNumber = dayNumber;
         _dataSource = dataSource;
         _parser = parser;
         _parts = parts;
     }
-
-    public int DayNumber { get; }
 
     public AdventDayResult Run()
     {
@@ -59,3 +66,17 @@ public class AdventDay<TData> : IAdventDay
         return new AdventDayResult(parsedMs, parseResults.ToArray());
     }
 }
+
+public abstract class AdventDay
+{
+    public AdventDay(int dayNumber, IAdventDayImplementation implementation)
+    {
+        DayNumber = dayNumber;
+        Implementation = implementation;
+    }
+
+    public int DayNumber { get; }
+
+    public IAdventDayImplementation Implementation { get; }
+}
+

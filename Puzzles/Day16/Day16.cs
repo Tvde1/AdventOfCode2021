@@ -12,53 +12,40 @@ public class Day16 : AdventDay
     private const string TestInput = @"8A004A801A8002F478";
 
     public Day16()
-        : base(16)
+        : base(16, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), HexToBits, PartOne))
+    { }
+
+    public static string PartOne(Queue<bool> data)
     {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        var packets = new Queue<Packet>(ParsePackets(data));
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => HexToBits(TestInput),
-            data =>
+        var flattened = new List<Packet>();
+        while (packets.TryDequeue(out var p))
+        {
+            switch (p)
             {
-                var packets = new Queue<Packet>(ParsePackets(data));
-
-                var flattened = new List<Packet>();
-                while (packets.TryDequeue(out var p))
-                {
-                    switch(p)
+                case LiteralPacket l:
                     {
-                        case LiteralPacket l:
-                            {
-                                flattened.Add(p);
-                                break;
-                            }
-                        case OperatorPacket o:
-                            {
-                                flattened.Add(p);
-                                foreach(var sp in o.SubPackets) {
-                                    packets.Enqueue(sp);
-                                }
-                                break;
-                            }
-                            default :
-                            {
-                                throw new ArgumentException();
-                            }
+                        flattened.Add(p);
+                        break;
                     }
-                }
+                case OperatorPacket o:
+                    {
+                        flattened.Add(p);
+                        foreach (var sp in o.SubPackets) {
+                            packets.Enqueue(sp);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        throw new ArgumentException();
+                    }
+            }
+        }
 
-                return flattened.Aggregate(0, (sum, packet) => sum + packet.Version);
-            });
-
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input,
-            data => data);
+        return flattened.Aggregate(0, (sum, packet) => sum + packet.Version).ToString();
+    }
 
     private enum PacketType
     {

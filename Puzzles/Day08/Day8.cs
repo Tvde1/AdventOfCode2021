@@ -8,7 +8,7 @@ namespace AdventOfCode.Puzzles.Day08;
 
 public class Day8 : AdventDay
 {
-    private const string InputFile = "Day8/day8.txt";
+    private const string InputFile = "Day08/day8.txt";
 
     private const string TestInput =
         @"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
@@ -23,27 +23,33 @@ egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce";
 
     public Day8()
-        : base(8)
+        : base(8, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
+
+    public readonly record struct SegmentData(string[] Signals, string[] Output)
     {
-        AddPart(PartOne);
-        AddPart(PartTwo);
+        public static SegmentData Parse(string input)
+        {
+            var s = input.Split(" | ");
+
+            var signals = s[0].Split(StringConstants.Space, StringSplitOptions.TrimEntries)
+                .Select(x => x.ToAlphabeticalOrder()).ToArray();
+
+            var output = s[1].Split(StringConstants.Space, StringSplitOptions.TrimEntries)
+                .Select(x => x.ToAlphabeticalOrder()).ToArray();
+
+            return new SegmentData(signals, output);
+        }
     }
+
+    public static IEnumerable<SegmentData> Parse(string input) => input.Split(Environment.NewLine).Select(SegmentData.Parse);
 
     // Test: 26
     // 288
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(SegmentData.Parse),
-            data => data.Sum(x => x.Output.Count(a => a is {Length: 2 or 3 or 4 or 7})));
+    public static string PartOne (IEnumerable<SegmentData> data) => data.Sum(x => x.Output.Count(a => a is {Length: 2 or 3 or 4 or 7})).ToString();
 
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(SegmentData.Parse),
-            data => data.Sum(segmentData =>
-                CalculateNumber(segmentData.Output, CalculateConnections(segmentData.Signals)))
-        );
+    public static string PartTwo(IEnumerable<SegmentData> data) => data.Sum(segmentData =>
+        CalculateNumber(segmentData.Output, CalculateConnections(segmentData.Signals))).ToString();
 
     private static IReadOnlyDictionary<string, int> CalculateConnections(string[] signals)
     {
@@ -99,21 +105,5 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
     private static int CalculateNumber(IEnumerable<string> inputs, IReadOnlyDictionary<string, int> mapping)
     {
         return inputs.Select((t, i) => mapping[t] * Convert.ToInt32(Math.Pow(10, 3 - i))).Sum();
-    }
-
-    private readonly record struct SegmentData(string[] Signals, string[] Output)
-    {
-        public static SegmentData Parse(string input)
-        {
-            var s = input.Split(" | ");
-
-            var signals = s[0].Split(StringConstants.Space, StringSplitOptions.TrimEntries)
-                .Select(x => x.ToAlphabeticalOrder()).ToArray();
-
-            var output = s[1].Split(StringConstants.Space, StringSplitOptions.TrimEntries)
-                .Select(x => x.ToAlphabeticalOrder()).ToArray();
-
-            return new SegmentData(signals, output);
-        }
     }
 }

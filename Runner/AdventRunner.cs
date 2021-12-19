@@ -18,12 +18,13 @@ using AdventOfCode.Puzzles.Day13;
 using AdventOfCode.Puzzles.Day14;
 using AdventOfCode.Puzzles.Day15;
 using AdventOfCode.Puzzles.Day16;
+using AdventOfCode.Puzzles.Day17;
 
 namespace AdventOfCode.Runner
 {
     public class AdventRunner
     {
-        private readonly List<int> _daysToSkip = new() { 9, 11, 15, };
+        private readonly List<int>? _daysToSkip = null;//new() { 9, 11, 15, };
         private readonly int? _onlyDay = 15;
 
         private readonly List<AdventDay> _days = new()
@@ -44,6 +45,7 @@ namespace AdventOfCode.Runner
             new Day14(),
             new Day15(),
             new Day16(),
+            new Day17(),
         };
 
         public void Run()
@@ -51,19 +53,32 @@ namespace AdventOfCode.Runner
             List<AdventDay> days;
             if (_onlyDay.HasValue)
             {
-                days = _days.Where(x => x.Number == _onlyDay.Value)
+                days = _days.Where(x => x.DayNumber == _onlyDay.Value)
                     .ToList();
             }
-            else
+            else if (_daysToSkip is not null)
             {
                 days = _days
-                    .Where(x => !_daysToSkip.Contains(x.Number))
+                    .Where(x => !_daysToSkip.Contains(x.DayNumber))
                     .ToList();
+            } 
+            else
+            {
+                days = _days;
             }
 
-            foreach (var line in days.SelectMany(x => x.Run()))
+            foreach (var day in days)
             {
-                Console.WriteLine(line);
+                var result = day.Implementation.Run();
+                Console.WriteLine($"Day: {day.DayNumber:D2} | Parsing took {result.ParseDurationMs}ms");
+
+                var i  = 1;
+                foreach(var partResult in result.PartResults)
+                {
+                    Console.WriteLine($"Part {i} took {partResult.ExecutionDurationMs}ms.");
+                    Console.WriteLine(partResult.Output);
+                    i++;
+                }
             }
 
             Console.WriteLine("End of advent...");

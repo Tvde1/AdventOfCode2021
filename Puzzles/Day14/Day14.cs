@@ -29,31 +29,20 @@ CC -> N
 CN -> C";
 
     public Day14()
-        : base(14)
+        : base(14, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), PolymerTemplate.Parse, PartOne, PartTwo))
+    { }
+
+    public static string PartOne(PolymerTemplate data)
     {
-        AddPart(PartOne);
-        AddPart(PartTwo);
+        for (var i = 1; i <= 10; i++)
+        {
+            data = SimulationSolution.IteratePolymerTemplate(data);
+        }
+
+        return data.Hash().ToString();
     }
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            _ => PolymerTemplate.Parse(TestInput),
-            data =>
-            {
-                for (var i = 1; i <= 10; i++)
-                {
-                    data = SimulationSolution.IteratePolymerTemplate(data);
-                }
-
-                return data.Hash();
-            });
-
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            PolymerTemplate.Parse,
-            data => PairIteratorSolution.CalculatePolymerHashFast(data, 40));
+    public static string PartTwo(PolymerTemplate data) => PairIteratorSolution.CalculatePolymerHashFast(data, 40).ToString();
 
     public record PolymerTemplate(string Polymer, IReadOnlyDictionary<(char, char), char> PolymerInstructions)
     {

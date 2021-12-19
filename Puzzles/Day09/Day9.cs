@@ -8,7 +8,7 @@ namespace AdventOfCode.Puzzles.Day09;
 
 public class Day9 : AdventDay
 {
-    private const string InputFile = "Day9/day9.txt";
+    private const string InputFile = "Day09/day9.txt";
 
     private const string TestInput =
         @"2199943210
@@ -18,26 +18,20 @@ public class Day9 : AdventDay
 9899965678";
 
     public Day9()
-        : base(9)
-    {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        : base(9, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
-                .ToTwoDimensionalArray(),
-            data => CalculateLowestPointsParallel(data).Sum(x => data[x.X, x.Y] + 1));
+    private static int[,] Parse(string input) => 
+        input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString()))).ToTwoDimensionalArray();
 
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(Environment.NewLine).Select(x => x.Select(c => int.Parse(c.ToString())))
-                .ToTwoDimensionalArray(),
-            data => CalculateLowestPointsParallel(data).Select(x => CalculateBasinSize(data, x))
-                .OrderByDescending(x => x).Take(3).Aggregate(1, (a, b) => a * b));
+    public static string PartOne(int[,] data) => CalculateLowestPointsParallel(data).Sum(x => data[x.X, x.Y] + 1).ToString();
+
+    public static string PartTwo(int[,] data) => CalculateLowestPointsParallel(data)
+        .Select(x => CalculateBasinSize(data, x))
+        .OrderByDescending(x => x)
+        .Take(3)
+        .Aggregate(1, (a, b) => a * b)
+        .ToString();
 
     private static IEnumerable<Point2D> CalculateLowestPointsParallel(int[,] inputs)
     {

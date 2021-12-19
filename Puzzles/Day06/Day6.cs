@@ -6,37 +6,31 @@ namespace AdventOfCode.Puzzles.Day06;
 
 public class Day6 : AdventDay
 {
-    private const string InputFile = "Day6/day6.txt";
+    private const string InputFile = "Day06/day6.txt";
 
     private const string TestInput = "3,4,3,1,2";
 
     public Day6()
-        : base(6)
-    {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        : base(6, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
+
+    private static List<int> Parse(string input) => input.Split(",").Select(int.Parse).ToList();
 
     // 389726
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(",").Select(int.Parse),
-            data => SimulateLanternFish(data, 80).Count());
+    public static string PartOne(List<int> data) => SimulateLanternFish(data, 80).Count().ToString();
 
     // 1743335992042
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => input.Split(",").Select(int.Parse).ToList(),
-            data => SimulateLanternFishFaster(data, 256));
-
+    public static string PartTwo(List<int> data) => SimulateLanternFishFaster(data, 256).ToString();
 
     public static IEnumerable<int> SimulateLanternFish(IEnumerable<int> data, int daysToSimulate)
     {
-        if (daysToSimulate > 1) data = SimulateLanternFish(data, daysToSimulate - 1);
+        if (daysToSimulate > 1)
+        {
+            data = SimulateLanternFish(data, daysToSimulate - 1);
+        }
 
         foreach (var fish in data)
+        {
             if (fish == 0)
             {
                 yield return 6;
@@ -46,6 +40,7 @@ public class Day6 : AdventDay
             {
                 yield return fish - 1;
             }
+        }
     }
 
     public static ulong SimulateLanternFishFaster(IEnumerable<int> data, int daysToSimulate)

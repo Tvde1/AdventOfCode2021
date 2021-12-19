@@ -34,26 +34,17 @@ kj-HN
 kj-dc";
 
     public Day12()
-        : base(12)
-    {
-        AddPart(PartOne);
-        AddPart(PartTwo);
-    }
+        : base(12, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+    { }
 
-    public static AdventDayPart PartOne =>
-        AdventDayPart.Build(
-            InputFile,
-            input => GetAllCaveConnections(input.Split(Environment.NewLine)),
-            data => GetFullFromCurrentToEndPaths(data, CaveStart, CaveEnd).Count());
+    private static Dictionary<string, Cave> Parse(string input) => GetAllCavesFull(input.Split(Environment.NewLine));
 
-    public static AdventDayPart PartTwo =>
-        AdventDayPart.Build(
-            InputFile,
-            input => GetAllCavesFull(input.Split(Environment.NewLine)),
-            data => data.Values
+    private static string PartOne(Dictionary<string, Cave> data) => GetFullFromCurrentToEndPaths(data, CaveStart, CaveEnd).Count().ToString();
+
+    private static string PartTwo(Dictionary<string, Cave> data) =>  data.Values
                 .Where(cave => cave.CaveType == CaveType.Small)
                 .SelectMany(c => GetFullFromCurrentToEndPaths2(data, CaveStart, CaveEnd, c.Name))
-                .Distinct().Count());
+                .Distinct().Count().ToString();
 
     private static ILookup<string, string> GetAllCaveConnections(IEnumerable<string> inputs)
     {
@@ -64,7 +55,7 @@ kj-dc";
             .ToLookup(x => x[0], x => x[1]);
     }
 
-    private static IEnumerable<string> GetFullFromCurrentToEndPaths(ILookup<string, string> allPaths, string currentCave, string endCave,
+    private static IEnumerable<string> GetFullFromCurrentToEndPaths(Dictionary<string, Cave> allPaths, string currentCave, string endCave,
         List<string>? currentRoute = null,
         HashSet<string>? visitedSmallCaves = null)
     {
@@ -83,8 +74,8 @@ kj-dc";
             yield break;
         }
 
-        var currentPaths = allPaths[currentCave];
-        foreach (var subCave in currentPaths)
+        var cave = allPaths[currentCave];
+        foreach (var subCave in cave.Connections)
         {
             if (subCave.All(char.IsLower) && visitedSmallCaves.Contains(subCave))
             {
