@@ -34,7 +34,12 @@ namespace AdventOfCode.Puzzles.Day18
 
         public abstract int CalculateMagnitude();
 
-        public static SnailFishNumber Add(SnailFishNumber left, SnailFishNumber right) => new PairSnailFishNumber(left, right);
+        public abstract SnailFishNumber Clone();
+
+        public static SnailFishNumber Add(SnailFishNumber left, SnailFishNumber right) 
+        {
+            return new PairSnailFishNumber(left.Clone(), right.Clone());
+        }
 
         public static SnailFishNumber Parse(string input)
         {
@@ -229,6 +234,11 @@ namespace AdventOfCode.Puzzles.Day18
         {
             return $"[{Left},{Right}]";
         }
+
+        public override SnailFishNumber Clone()
+        {
+            return new PairSnailFishNumber(Left.Clone(), Right.Clone());
+        }
     }
 
     public class LiteralSnailFishNumber : SnailFishNumber
@@ -281,6 +291,11 @@ namespace AdventOfCode.Puzzles.Day18
         public override string ToString()
         {
             return Value.ToString();
+        }
+
+        public override SnailFishNumber Clone()
+        {
+            return new LiteralSnailFishNumber(Value);
         }
     }
 }

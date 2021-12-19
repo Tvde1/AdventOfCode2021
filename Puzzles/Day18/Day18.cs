@@ -28,7 +28,7 @@ public class Day18 : AdventDay
     private const string TestInput2 = @"[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]";
 
     public Day18()
-        : base(18, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne))
+        : base(18, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
     { }
 
     private static SnailFishNumber[] Parse(string input) => input.Split(Environment.NewLine).Select(SnailFishNumber.Parse).ToArray();
@@ -37,26 +37,40 @@ public class Day18 : AdventDay
     {
         var number = data[0];
 
-        Console.WriteLine($"Initial number: {number}");
-        Console.WriteLine();
-
-        number.ReduceFull(out var initialSteps);
-        Console.WriteLine(initialSteps);
-
         foreach (var snailFishNumber in data.Skip(1))
         {
-            Console.WriteLine("  " + number);
-            Console.WriteLine(" +" + snailFishNumber);
-
             number = SnailFishNumber.Add(number, snailFishNumber);
-            Console.WriteLine(" =" + number);
 
-            number.ReduceFull(out var steps);
-            Console.WriteLine(steps);
+            number.ReduceFull(out _);
         }
 
         return number.CalculateMagnitude().ToString();
     }
 
-    private static string PartTwo(SnailFishNumber[] data) => data.ToString()!;
+    private static string PartTwo(SnailFishNumber[] data)
+    {
+        var highestMagnitude = 0;
+
+        foreach (var number1 in data)
+        {
+            foreach (var number2 in data)
+            {
+                if (number1 == number2)
+                {
+                    continue;
+                }
+
+                var product = SnailFishNumber.Add(number1, number2);
+                product.ReduceFull(out _);
+
+                var magnitude = product.CalculateMagnitude();
+                if (magnitude > highestMagnitude)
+                {
+                    highestMagnitude = magnitude;
+                }
+            }
+        }
+
+        return highestMagnitude.ToString();
+    }
 }
