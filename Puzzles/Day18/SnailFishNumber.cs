@@ -1,5 +1,4 @@
-﻿using AdventOfCode.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -7,20 +6,43 @@ namespace AdventOfCode.Puzzles.Day18
 {
     public abstract class SnailFishNumber
     {
-        public abstract ReduceOperation Reduce(int depth = 0);
+        public void ReduceFull(out string steps)
+        {
+            steps = "";
+            var i = 1;
+            while (true)
+            {
+                var explodeOperation = ReduceInternal(0, ReduceStrategy.Explosions);
+                if (explodeOperation is not NoActionReduceOperation)
+                {
+                    steps += $"After step {i:D3} ({explodeOperation,18}): {this}{Environment.NewLine}";
+                    continue;
+                }
+
+                var splitOperation = ReduceInternal(0, ReduceStrategy.Splits);
+                if (splitOperation is not NoActionReduceOperation)
+                {
+                    steps += $"After step {i:D3} ({splitOperation,18}): {this}{Environment.NewLine}";
+                    continue;
+                }
+
+                break;
+            }
+        }
 
         public abstract bool PerformReduceOperation(ReduceOperation operation);
 
         public abstract int CalculateMagnitude();
 
-        public static SnailFishNumber Add(SnailFishNumber left, SnailFishNumber right)
-        {
-            return new PairSnailFishNumber(left, right);
-        }
+        public static SnailFishNumber Add(SnailFishNumber left, SnailFishNumber right) => new PairSnailFishNumber(left, right);
 
         public static SnailFishNumber Parse(string input)
         {
-            return ParseInternal(new Queue<char>(input));
+            var parsed = ParseInternal(new Queue<char>(input));
+
+            Debug.Assert(parsed.ToString() == input);
+
+            return parsed;
         }
 
         public static SnailFishNumber ParseInternal(Queue<char> input)
@@ -48,6 +70,8 @@ namespace AdventOfCode.Puzzles.Day18
         }
 
         public abstract override string ToString();
+
+        public abstract ReduceOperation ReduceInternal(int depth, ReduceStrategy strategy);
     }
 
     public class PairSnailFishNumber : SnailFishNumber
@@ -61,85 +85,100 @@ namespace AdventOfCode.Puzzles.Day18
         public SnailFishNumber Left { get; private set; }
         public SnailFishNumber Right { get; private set; }
 
-        public override ReduceOperation Reduce(int depth)
+        public override ReduceOperation ReduceInternal(int depth, ReduceStrategy strategy)
         {
-            // Self
-            if (depth >= 4) // We go boom
+            if (strategy == ReduceStrategy.Explosions)
             {
-                if (Left is not LiteralSnailFishNumber || Right is not LiteralSnailFishNumber)
+                // Self
+                if (depth >= 4) // We go boom
                 {
-                    // throw new Oopsie("Cannot explode :D");
-                }
-                else
-                {
-                    return ReduceOperation.FromExplosion(this);
+                    if (Left is LiteralSnailFishNumber && Right is LiteralSnailFishNumber)
+                    {
+                        return ReduceOperation.FromExplosion(this);
+                    }
                 }
             }
 
             // Left
-            var leftOperation = Left.Reduce(depth + 1);
-            if (leftOperation is not NoActionReduceOperation)
             {
-                if (leftOperation is ExplodeReduceOperation expl1)
+                var leftOperation = Left.ReduceInternal(depth + 1, strategy);
+                if (leftOperation is not NoActionReduceOperation)
                 {
-                    if (expl1.RemoveMe)
+                    if (strategy == ReduceStrategy.Explosions)
                     {
-                        Left = new LiteralSnailFishNumber(0);
-                        leftOperation = expl1.WithRemovedPerformed();
-                    }
-
-                    if (leftOperation is ExplodeReduceOperation expl2)
-                    {
-                        if (expl2.AddRight is not null)
+                        if (leftOperation is ExplodeReduceOperation expl1)
                         {
-                            if (Right.PerformReduceOperation(expl2.AddRight))
+                            if (expl1.RemoveMe)
                             {
-                                leftOperation = expl2.WithRightPerformed();
+                                Left = new LiteralSnailFishNumber(0);
+                                leftOperation = expl1.WithRemovedPerformed();
+                            }
+
+                            if (leftOperation is ExplodeReduceOperation expl2)
+                            {
+                                if (expl2.AddRight is not null)
+                                {
+                                    if (Right.PerformReduceOperation(expl2.AddRight))
+                                    {
+                                        leftOperation = expl2.WithRightPerformed();
+                                    }
+                                }
                             }
                         }
                     }
-                }
-                else if (leftOperation is SplitReduceOperation spl)
-                {
-                    Left = spl.ReplacePair;
+                    else if (strategy == ReduceStrategy.Splits)
+                    {
+                        if (leftOperation is SplitReduceOperation spl)
+                        {
+                            Left = spl.ReplacePair;
 
-                    leftOperation = spl.WithReplaced();
-                }
+                            leftOperation = spl.WithReplaced();
+                        }
+                    }
 
-                return leftOperation;
+                    return leftOperation;
+                }
             }
 
             // Right
-            var rightOperation = Right.Reduce(depth + 1);
-            if (rightOperation is not NoActionReduceOperation)
             {
-                if (rightOperation is ExplodeReduceOperation expl1)
+                var rightOperation = Right.ReduceInternal(depth + 1, strategy);
+                if (rightOperation is not NoActionReduceOperation)
                 {
-                    if (expl1.RemoveMe)
+                    if (strategy == ReduceStrategy.Explosions)
                     {
-                        Right = new LiteralSnailFishNumber(0);
-                        rightOperation = expl1.WithRemovedPerformed();
-                    }
-
-                    if (rightOperation is ExplodeReduceOperation expl2)
-                    {
-                        if (expl2.AddLeft is not null)
+                        if (rightOperation is ExplodeReduceOperation expl1)
                         {
-                            if (Left.PerformReduceOperation(expl2.AddLeft))
+                            if (expl1.RemoveMe)
                             {
-                                rightOperation = expl2.WithLeftPerformed();
+                                Right = new LiteralSnailFishNumber(0);
+                                rightOperation = expl1.WithRemovedPerformed();
+                            }
+
+                            if (rightOperation is ExplodeReduceOperation expl2)
+                            {
+                                if (expl2.AddLeft is not null)
+                                {
+                                    if (Left.PerformReduceOperation(expl2.AddLeft))
+                                    {
+                                        rightOperation = expl2.WithLeftPerformed();
+                                    }
+                                }
                             }
                         }
                     }
-                }
-                else if (rightOperation is SplitReduceOperation spl)
-                {
-                    Right = spl.ReplacePair;
+                    else if (strategy == ReduceStrategy.Splits)
+                    {
+                        if (rightOperation is SplitReduceOperation spl)
+                        {
+                            Right = spl.ReplacePair;
 
-                    rightOperation = spl.WithReplaced();
-                }
+                            rightOperation = spl.WithReplaced();
+                        }
+                    }
 
-                return rightOperation;
+                    return rightOperation;
+                }
             }
 
             return ReduceOperation.NoAction;
@@ -149,8 +188,6 @@ namespace AdventOfCode.Puzzles.Day18
         {
             switch (operation)
             {
-                case CompletedReduceOperation:
-                    return true;
                 case AddToLeftMostOperation lmO:
                     {
                         if (Left.PerformReduceOperation(lmO))
@@ -185,8 +222,7 @@ namespace AdventOfCode.Puzzles.Day18
 
         public override int CalculateMagnitude()
         {
-            return 3 * Left.CalculateMagnitude() +
-                2 * Right.CalculateMagnitude();
+            return (3 * Left.CalculateMagnitude()) + (2 * Right.CalculateMagnitude());
         }
 
         public override string ToString()
@@ -204,9 +240,9 @@ namespace AdventOfCode.Puzzles.Day18
 
         public int Value { get; private set; }
 
-        public override ReduceOperation Reduce(int depth)
+        public override ReduceOperation ReduceInternal(int depth, ReduceStrategy strategy)
         {
-            if (Value > 9)
+            if (strategy == ReduceStrategy.Splits && Value > 9)
             {
                 var divByTwo = Value / 2d;
 
@@ -228,8 +264,6 @@ namespace AdventOfCode.Puzzles.Day18
         {
             switch (operation)
             {
-                case CompletedReduceOperation:
-                    return true;
                 case AddToLeftMostOperation lmO:
                     {
                         Value += lmO.Value;

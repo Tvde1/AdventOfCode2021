@@ -6,26 +6,54 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Puzzles.Day18
 {
+    public enum ReduceStrategy
+    {
+        Explosions,
+        Splits,
+    }
+
     public abstract record class ReduceOperation
     {
         public static NoActionReduceOperation NoAction => new NoActionReduceOperation();
-        protected static CompletedReduceOperation Completed => new CompletedReduceOperation();
+        protected static CompletedReduceOperation Completed(ReduceOperation operation) => new CompletedReduceOperation(operation);
 
         public static ExplodeReduceOperation FromExplosion(PairSnailFishNumber explodedPair) => new(explodedPair);
         public static SplitReduceOperation FromSplit(SnailFishNumber replacePair) => new(replacePair);
 
+        public abstract override string ToString();
     }
 
     public record NoActionReduceOperation : ReduceOperation
     {
+        public override string ToString()
+        {
+            return "noaction";
+        }
     }
 
-    public record CompletedReduceOperation : ReduceOperation
+    public record CompletedReduceOperation(ReduceOperation Operation) : ReduceOperation
     {
+        public override string ToString()
+        {
+            return $"{Operation}, completed";
+        }
     }
 
-    public record class AddToLeftMostOperation(int Value) : ReduceOperation;
-    public record class AddToRightMostOperation(int Value) : ReduceOperation;
+    public record class AddToLeftMostOperation(int Value) : ReduceOperation
+    {
+        public override string ToString()
+        {
+            return "addleft";
+        }
+    }
+
+    public record class AddToRightMostOperation(int Value) : ReduceOperation
+    {
+        public override string ToString()
+        {
+            return "addright";
+        }
+    }
 
     public record class ExplodeReduceOperation : ReduceOperation
     {
@@ -46,7 +74,7 @@ namespace AdventOfCode.Puzzles.Day18
         {
             if (AddRight is null && !RemoveMe)
             {
-                return Completed;
+                return Completed(this);
             }
 
             return this with { AddLeft = null };
@@ -56,7 +84,7 @@ namespace AdventOfCode.Puzzles.Day18
         {
             if (AddLeft is null && !RemoveMe)
             {
-                return Completed;
+                return Completed(this);
             }
 
             return this with { AddRight = null };
@@ -66,10 +94,15 @@ namespace AdventOfCode.Puzzles.Day18
         {
             if (AddLeft is null && AddRight is null)
             {
-                return Completed;
+                return Completed(this);
             }
 
             return this with { RemoveMe = false };
+        }
+
+        public override string ToString()
+        {
+            return "explode";
         }
     }
 
@@ -84,7 +117,12 @@ namespace AdventOfCode.Puzzles.Day18
 
         public ReduceOperation WithReplaced()
         {
-            return Completed;
+            return Completed(this);
+        }
+
+        public override string ToString()
+        {
+            return "split";
         }
     }
 }

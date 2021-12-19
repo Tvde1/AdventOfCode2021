@@ -179,6 +179,7 @@ kj-dc";
             CaveType.Big => true,
             CaveType.Small => visitedCount < (cave.Name == specialSmallCave ? 2 : 1),
             CaveType.StartEnd => visitedCount < 1,
+            _ => throw new ArgumentOutOfRangeException(),
         };
     }
 }
