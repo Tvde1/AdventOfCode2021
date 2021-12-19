@@ -8,11 +8,16 @@ namespace AdventOfCode.Puzzles.Day18
 {
     public abstract record class ReduceOperation
     {
-        public static CompletedReduceOperation Done => new CompletedReduceOperation();
+        public static NoActionReduceOperation NoAction => new NoActionReduceOperation();
+        protected static CompletedReduceOperation Completed => new CompletedReduceOperation();
 
         public static ExplodeReduceOperation FromExplosion(PairSnailFishNumber explodedPair) => new(explodedPair);
         public static SplitReduceOperation FromSplit(SnailFishNumber replacePair) => new(replacePair);
 
+    }
+
+    public record NoActionReduceOperation : ReduceOperation
+    {
     }
 
     public record CompletedReduceOperation : ReduceOperation
@@ -26,6 +31,7 @@ namespace AdventOfCode.Puzzles.Day18
     {
         public ExplodeReduceOperation(PairSnailFishNumber explodedPair)
         {
+            RemoveMe = true;
             AddLeft = new AddToRightMostOperation((explodedPair.Left as LiteralSnailFishNumber)!.Value);
             AddRight = new AddToLeftMostOperation((explodedPair.Right as LiteralSnailFishNumber)!.Value);
         }
@@ -40,7 +46,7 @@ namespace AdventOfCode.Puzzles.Day18
         {
             if (AddRight is null && !RemoveMe)
             {
-                return ReduceOperation.Done;
+                return Completed;
             }
 
             return this with { AddLeft = null };
@@ -50,7 +56,7 @@ namespace AdventOfCode.Puzzles.Day18
         {
             if (AddLeft is null && !RemoveMe)
             {
-                return ReduceOperation.Done;
+                return Completed;
             }
 
             return this with { AddRight = null };
@@ -60,7 +66,7 @@ namespace AdventOfCode.Puzzles.Day18
         {
             if (AddLeft is null && AddRight is null)
             {
-                return ReduceOperation.Done;
+                return Completed;
             }
 
             return this with { RemoveMe = false };
@@ -75,5 +81,10 @@ namespace AdventOfCode.Puzzles.Day18
         }
 
         public SnailFishNumber ReplacePair { get; }
+
+        public ReduceOperation WithReplaced()
+        {
+            return Completed;
+        }
     }
 }

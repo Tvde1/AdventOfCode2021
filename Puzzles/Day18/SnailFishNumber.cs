@@ -46,6 +46,8 @@ namespace AdventOfCode.Puzzles.Day18
                 return new LiteralSnailFishNumber((int)char.GetNumericValue(firstChar));
             }
         }
+
+        public abstract override string ToString();
     }
 
     public class PairSnailFishNumber : SnailFishNumber
@@ -66,15 +68,17 @@ namespace AdventOfCode.Puzzles.Day18
             {
                 if (Left is not LiteralSnailFishNumber || Right is not LiteralSnailFishNumber)
                 {
-                    throw new Oopsie("Cannot explode :D");
+                    // throw new Oopsie("Cannot explode :D");
                 }
-
-                return ReduceOperation.FromExplosion(this);
+                else
+                {
+                    return ReduceOperation.FromExplosion(this);
+                }
             }
 
             // Left
             var leftOperation = Left.Reduce(depth + 1);
-            if (leftOperation is not CompletedReduceOperation)
+            if (leftOperation is not NoActionReduceOperation)
             {
                 if (leftOperation is ExplodeReduceOperation expl1)
                 {
@@ -83,17 +87,23 @@ namespace AdventOfCode.Puzzles.Day18
                         Left = new LiteralSnailFishNumber(0);
                         leftOperation = expl1.WithRemovedPerformed();
                     }
-                }
 
-                if (leftOperation is ExplodeReduceOperation expl2)
-                {
-                    if (expl2.AddRight is not null)
+                    if (leftOperation is ExplodeReduceOperation expl2)
                     {
-                        if (Right.PerformReduceOperation(expl2.AddRight))
+                        if (expl2.AddRight is not null)
                         {
-                            leftOperation = expl2.WithRightPerformed();
+                            if (Right.PerformReduceOperation(expl2.AddRight))
+                            {
+                                leftOperation = expl2.WithRightPerformed();
+                            }
                         }
                     }
+                }
+                else if (leftOperation is SplitReduceOperation spl)
+                {
+                    Left = spl.ReplacePair;
+
+                    leftOperation = spl.WithReplaced();
                 }
 
                 return leftOperation;
@@ -101,7 +111,7 @@ namespace AdventOfCode.Puzzles.Day18
 
             // Right
             var rightOperation = Right.Reduce(depth + 1);
-            if (rightOperation is not CompletedReduceOperation)
+            if (rightOperation is not NoActionReduceOperation)
             {
                 if (rightOperation is ExplodeReduceOperation expl1)
                 {
@@ -110,23 +120,29 @@ namespace AdventOfCode.Puzzles.Day18
                         Right = new LiteralSnailFishNumber(0);
                         rightOperation = expl1.WithRemovedPerformed();
                     }
-                }
 
-                if (rightOperation is ExplodeReduceOperation expl2)
-                {
-                    if (expl2.AddLeft is not null)
+                    if (rightOperation is ExplodeReduceOperation expl2)
                     {
-                        if (Left.PerformReduceOperation(expl2.AddLeft))
+                        if (expl2.AddLeft is not null)
                         {
-                            rightOperation = expl2.WithLeftPerformed();
+                            if (Left.PerformReduceOperation(expl2.AddLeft))
+                            {
+                                rightOperation = expl2.WithLeftPerformed();
+                            }
                         }
                     }
+                }
+                else if (rightOperation is SplitReduceOperation spl)
+                {
+                    Right = spl.ReplacePair;
+
+                    rightOperation = spl.WithReplaced();
                 }
 
                 return rightOperation;
             }
 
-            return ReduceOperation.Done;
+            return ReduceOperation.NoAction;
         }
 
         public override bool PerformReduceOperation(ReduceOperation operation)
@@ -172,6 +188,11 @@ namespace AdventOfCode.Puzzles.Day18
             return 3 * Left.CalculateMagnitude() +
                 2 * Right.CalculateMagnitude();
         }
+
+        public override string ToString()
+        {
+            return $"[{Left},{Right}]";
+        }
     }
 
     public class LiteralSnailFishNumber : SnailFishNumber
@@ -195,7 +216,7 @@ namespace AdventOfCode.Puzzles.Day18
                 return ReduceOperation.FromSplit(new PairSnailFishNumber(new LiteralSnailFishNumber(left), new LiteralSnailFishNumber(right)));
             }
 
-            return ReduceOperation.Done;
+            return ReduceOperation.NoAction;
         }
 
         public override int CalculateMagnitude()
@@ -221,6 +242,11 @@ namespace AdventOfCode.Puzzles.Day18
                     }
                 default: throw new NotImplementedException();
             }
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
         }
     }
 }
