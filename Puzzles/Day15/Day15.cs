@@ -115,7 +115,7 @@ public partial class Day15 : AdventDay
 
                 if (!breadCrumbs.TryGetValue(neighbor, out var crumb) || crumb.Cost > lowestCostPoint.Cost)
                 {
-                    breadCrumbs[neighbor] = (lowestCostPoint.Point, lowestCostPoint.Cost);
+                    breadCrumbs[neighbor] = lowestCostPoint;
                 }
 
                 if (neighbor == end)

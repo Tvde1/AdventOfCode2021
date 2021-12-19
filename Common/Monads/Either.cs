@@ -30,6 +30,11 @@ namespace AdventOfCode.Common.Monads
             }
         }
 
+        public Either<TLeftOut, TRightOut> Match<TLeftOut, TRightOut>(Func<TLeft, TLeftOut> onLeft, Func<TRight, TRightOut> onRight)
+        {
+            return IsLeft ? onLeft(_left!) : onRight(_right!);
+        }
+
         public TResult Match<TResult>(Func<TLeft, TResult> onLeft, Func<TRight, TResult> onRight)
         {
             return IsLeft ? onLeft(_left!) : onRight(_right!);

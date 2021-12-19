@@ -67,7 +67,7 @@ namespace AdventOfCode.Common.Monads
 
         public TOut Match<TOut>(Func<TResult, TOut> onSuccess, Func<Exception, TOut> onError)
         {
-            return _either.Match(onError, onSuccess);
+            return _either.Match<TOut>(onError, onSuccess);
         }
 
         public void ThrowIfFailed()
@@ -80,7 +80,7 @@ namespace AdventOfCode.Common.Monads
 
         public TryCatch<T> Continue<T>(Func<TResult, T> onSucceeded)
         {
-            return _either.Match(TryCatch<T>.FromException, r => TryCatch.Try(() => onSucceeded(r)));
+            return _either.Match<TryCatch<T>>(TryCatch<T>.FromException, r => TryCatch.Try(() => onSucceeded(r)));
         }
 
         public TryCatch<TResult> SelectException<TEx>(Func<TEx, Exception> selector)
