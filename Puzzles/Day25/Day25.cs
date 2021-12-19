@@ -12,9 +12,9 @@ public class Day25 : AdventDay
         : base(25, AdventDayImplementation.Build(AdventDataSource.FromRaw(TestInput), Parse))
     { }
 
-    public static string Parse(string input) => input;
+    private static string Parse(string input) => input;
 
-    public static string PartOne(string data) => data;
+    private static string PartOne(string data) => data;
 
-    public static string PartTwo(string data) => data;
+    private static string PartTwo(string data) => data;
 }

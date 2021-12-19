@@ -12,10 +12,10 @@ public class Day16 : AdventDay
     private const string TestInput = @"8A004A801A8002F478";
 
     public Day16()
-        : base(16, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), HexToBits, PartOne))
+        : base(16, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Transmission.Parse, PartOne))
     { }
 
-    public static string PartOne(Queue<bool> data)
+    public static string PartOne(Transmission data)
     {
         var packets = new Queue<Packet>(ParsePackets(data));
 
@@ -47,62 +47,13 @@ public class Day16 : AdventDay
         return flattened.Aggregate(0, (sum, packet) => sum + packet.Version).ToString();
     }
 
-    private enum PacketType
-    {
-        Literal = 4,
-        Operator,
-    }
-
-    private abstract class Packet
-    {
-        protected Packet(int version, PacketType type)
-        {
-            Version = version;
-            Type = type;
-        }
-
-        public int Version { get; }
-        public PacketType Type { get; }
-    }
-
-    private class LiteralPacket : Packet
-    {
-        public LiteralPacket(int version, PacketType type, int decimalValue)
-               : base(version, type)
-        {
-            DecimalValue = decimalValue;
-        }
-
-        public int DecimalValue { get; }
-    }
-
-    private enum LengthType
-    {
-        TotalLength,
-        SubPacketCount,
-    }
-
-    private class OperatorPacket : Packet
-    {
-        public OperatorPacket(int version, PacketType type, LengthType lengthType, Packet[] subPackets)
-            : base(version, type)
-        {
-            LengthType = lengthType;
-            SubPackets = subPackets;
-        }
-
-        public LengthType LengthType { get; }
-
-        public Packet[] SubPackets { get; }
-    }
-
-    private static Packet[] ParsePackets(Queue<bool> bits)
+    private static Packet[] ParsePackets(Transmission data)
     {
         var packets = new List<Packet>();
 
         while (true)
         {
-            var packet = ParsePacket(bits);
+            var packet = ParsePacket(data);
 
             if (packet is null)
             {
@@ -115,46 +66,37 @@ public class Day16 : AdventDay
         return packets.ToArray();
     }
 
-    private static Packet? ParsePacket(Queue<bool> bits)
+    private static Packet? ParsePacket(Transmission transmission)
     {
-        if (!bits.TryDequeueAmount(3, out var packetVersionBits))
-        {
-            return null;
-        }
-        var packetVersion = packetVersionBits.ArrangeBits();
 
-        if (!bits.TryDequeueAmount(3, out var packetTypeBits))
-        {
-            return null;
-        }
-        var packetType = (PacketType)packetTypeBits.ArrangeBits();
+        var packetVersion = transmission.ReadTree();
+        var packetType = (PacketType) transmission.ReadTree();
 
         switch (packetType)
         {
             case PacketType.Literal:
                 {
-                    var segments = new List<bool>();
+                    var segments = new List<byte>();
 
                     while (true)
                     {
-                        if (!bits.TryDequeueAmount(4, out var part))
-                        {
-                            throw new ArgumentException();
-                        }
+                        var part = transmission.ReadFour();
 
                         segments.AddRange(part);
 
-                        if (!part[0])
+                        if ((part & 0b1000) == 0)
                         {
                             break;
                         }
                     }
 
-                    return new LiteralPacket(packetVersion, packetType, segments.ArrangeBits());
+                    var realValue = BitConverter.ToInt32(segments.ToArray());
+
+                    return new LiteralPacket(packetVersion, packetType, realValue);
                 }
             case PacketType.Operator:
                 {
-                    if (!bits.TryDequeue(out var lengthTypeBit))
+                    if (!transmission.TryDequeue(out var lengthTypeBit))
                     {
                         throw new ArgumentException();
                     }
@@ -164,7 +106,7 @@ public class Day16 : AdventDay
                     {
                         case LengthType.SubPacketCount:
                             {
-                                if (!bits.TryDequeueAmount(11, out var subPacketCountBits))
+                                if (!transmission.TryDequeueAmount(11, out var subPacketCountBits))
                                 {
                                     throw new ArgumentException();
                                 }
@@ -173,7 +115,7 @@ public class Day16 : AdventDay
                                 var subPackets = new Packet[subPacketCount];
                                 for(int i = 0; i < subPacketCount; i++)
                                 {
-                                    var parsedPacket = ParsePacket(bits);
+                                    var parsedPacket = ParsePacket(transmission);
                                     if (parsedPacket is null)
                                     {
                                         throw new ArgumentException();
@@ -185,7 +127,7 @@ public class Day16 : AdventDay
                             }
                         case LengthType.TotalLength:
                             {
-                                if (!bits.TryDequeueAmount(15, out var subPacketLengthBits))
+                                if (!transmission.TryDequeueAmount(15, out var subPacketLengthBits))
                                 {
                                     throw new ArgumentException();
                                 }
@@ -193,10 +135,10 @@ public class Day16 : AdventDay
 
                                 var subPackets = new List<Packet>();
 
-                                var currentCount = bits.Count;
-                                while (bits.Count != currentCount - subPacketLength)
+                                var currentCount = transmission.Count;
+                                while (transmission.Count != currentCount - subPacketLength)
                                 {
-                                    var parsedPacket = ParsePacket(bits);
+                                    var parsedPacket = ParsePacket(transmission);
                                     if (parsedPacket is null)
                                     {
                                         throw new ArgumentException();
@@ -217,31 +159,5 @@ public class Day16 : AdventDay
         }
 
         throw new Oopsie();
-    }
-
-    private static Queue<bool> HexToBits(string hex)
-    {
-        var enumerable = hex.Select(x => x switch
-        {
-            '0' => (byte) 0b0000,
-            '1' => (byte) 0b0001,
-            '2' => (byte) 0b0010,
-            '3' => (byte) 0b0011,
-            '4' => (byte) 0b0100,
-            '5' => (byte) 0b0101,
-            '6' => (byte) 0b0110,
-            '7' => (byte) 0b0111,
-            '8' => (byte) 0b1000,
-            '9' => (byte) 0b1001,
-            'A' => (byte) 0b1010,
-            'B' => (byte) 0b1011,
-            'C' => (byte) 0b1100,
-            'D' => (byte) 0b1101,
-            'E' => (byte) 0b1110,
-            'F' => (byte) 0b1111,
-            _ => throw new ArgumentException(),
-        }).SelectMany(x => x.ToBits(4));
-
-        return new Queue<bool>(enumerable);
     }
 }

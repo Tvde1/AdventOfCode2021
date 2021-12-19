@@ -179,7 +179,7 @@ public class Day19 : AdventDay
         return scannerDatas.ToArray();
     }
 
-    public static string PartOne(ScannerData[] data) 
+    private static string PartOne(ScannerData[] data)
     {
         var baseScanner = data[0];
 
@@ -191,25 +191,26 @@ public class Day19 : AdventDay
         {
 
         }
+
+        throw new NotImplementedException();
     }
 
-    public static string PartTwo(string data) => data;
-
+    private static string PartTwo(string data) => data;
 
     private static ((int ScannerNo, Point3D BasePoint), (int ScannerNo, Point3D BasePoint)) FindMatchingPoints(ScannerData baseScanner, ScannerData secondScanner, int amountMatch)
     {
         foreach (var baseBeacon in baseScanner.Beacons)
         {
-            var baseTranslations = baseScanner.Beacons.Select(x => Point3D.CalculatePointTranslation(baseBeacon, x));
+            var baseTranslations = baseScanner.Beacons.Select(x => Point3D.CalculatePointTranslation(baseBeacon, x)).ToHashSet();
 
             foreach (var secondScannerBeacon in secondScanner.Beacons)
             {
-                if (secondScanner.Beacons.Select(baseTranslations).Where(x =>  x.Contains(  x)).Skip(amountMatch - 1).Any())
+                if (secondScanner.Beacons.Select(x => Point3D.CalculatePointTranslation(secondScannerBeacon, x)).Where(x => baseTranslations.Contains(x)).Skip(amountMatch - 1).Any())
                 {
-                    return ((baseScanner.ScannerNumber, ))
                 }
             }
         }
+        throw new NotImplementedException();
     }
 
     private static Translation3D? FindTranslationOld(ScannerData baseScanner, ScannerData secondScanner, int amountMatch)
@@ -230,8 +231,6 @@ public class Day19 : AdventDay
                     if (translatedFirstScannerBeacons.Where(x => secondScanner.Beacons.Contains(x)).Skip(amountMatch - 1).Any())
                     {
                         var baseScannerToBeacon = Point3D.CalculatePointTranslation(new Point3D(0, 0, 0), baseBeacon);
-
-                        var 
 
                         return translation;
                     }
