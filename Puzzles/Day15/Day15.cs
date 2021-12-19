@@ -23,7 +23,7 @@ public partial class Day15 : AdventDay
 2311944581";
 
     public Day15()
-        : base(15, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne))
+        : base(15, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
     { }
 
     public static int[,] Parse(string input) => GetGrid(input);
@@ -35,8 +35,6 @@ public partial class Day15 : AdventDay
 
         var (Path, Cost) = GetCost(data, startPoint, endPoint);
 
-        // PrintBoard(data, Path);
-
         return Cost.ToString();
     }
     public static string PartTwo(int[,] data)
@@ -47,8 +45,6 @@ public partial class Day15 : AdventDay
         var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
 
         var (Path, Cost) = GetCost(data, startPoint, endPoint);
-
-        //PrintBoard(data, Path);
 
         return Cost.ToString();
     }
@@ -91,29 +87,21 @@ public partial class Day15 : AdventDay
         var bottomBound = grid.GetUpperBound(1);
 
         var visitedPoints = new HashSet<Point2D>();
-        var openPoints = new PriorityQueue<Point2D, int>();
-        openPoints.Enqueue(start, 0);
+        var openPoints = new PriorityQueue<(Point2D Point, int Cost), int>();
+        openPoints.Enqueue((start, 0), 0);
 
         var breadCrumbs = new Dictionary<Point2D, (Point2D Point, int Cost)>();
 
         var neighbors = new Point2D[4];
 
-        int iterations = 0;
-        while (openPoints.TryDequeue(out var lowestCostPoint, out var lowestCostValue))
+        while (openPoints.TryDequeue(out var lowestCostPoint, out _))
         {
-            iterations++;
-            //if (iterations > 100_000)
-            //{
-            //    openPoints = new PriorityQueue<Point2D, int>(openPoints.UnorderedItems.OrderBy(x => x.Priority).Take(50_000));
-            //    iterations = 0;
-            //}
+            visitedPoints.Add(lowestCostPoint.Point);
 
-            visitedPoints.Add(lowestCostPoint);
-
-            FillArrayWithNeighbors(lowestCostPoint, rightBound, bottomBound,
+            FillArrayWithNeighbors(lowestCostPoint.Point, rightBound, bottomBound,
                 ref neighbors, out var neighborCount);
 
-            for(int i = 0; i < neighborCount; i++)
+            for (int i = 0; i < neighborCount; i++)
             {
                 var neighbor = neighbors[i];
 
@@ -122,11 +110,12 @@ public partial class Day15 : AdventDay
                     continue;
                 }
 
-                var newCost = lowestCostValue + grid.GetPoint(neighbor);
+                var newCost = lowestCostPoint.Cost + grid.GetPoint(neighbor);
+                var heuristicCost = newCost + Heuristic(neighbor, end);
 
-                if (!breadCrumbs.TryGetValue(neighbor, out var crumb) || crumb.Cost > lowestCostValue)
+                if (!breadCrumbs.TryGetValue(neighbor, out var crumb) || crumb.Cost > lowestCostPoint.Cost)
                 {
-                    breadCrumbs[neighbor] = (lowestCostPoint, lowestCostValue);
+                    breadCrumbs[neighbor] = (lowestCostPoint.Point, lowestCostPoint.Cost);
                 }
 
                 if (neighbor == end)
@@ -134,38 +123,11 @@ public partial class Day15 : AdventDay
                     return (GetPath(breadCrumbs, end), newCost);
                 }
 
-                openPoints.Enqueue(neighbor, newCost);
+                openPoints.Enqueue((neighbor, newCost), heuristicCost);
             }
         }
 
         throw new Oopsie("No possible paths");
-    }
-
-    private static IEnumerable<Point2D> GetNeighbors(Point2D point, int rightBound, int bottomBound)
-    {
-        // Left
-        if (point.X > 0)
-        {
-            yield return point with { X = point.X - 1 };
-        }
-
-        // Up
-        if (point.Y > 0)
-        {
-            yield return point with { Y = point.Y - 1 };
-        }
-
-        // Right
-        if (point.X < rightBound)
-        {
-            yield return point with { X = point.X + 1 };
-        }
-
-        // Down
-        if (point.Y < bottomBound)
-        {
-            yield return point with { Y = point.Y + 1 };
-        }
     }
 
     private static void FillArrayWithNeighbors(Point2D point, int rightBound, int bottomBound,
@@ -230,5 +192,10 @@ public partial class Day15 : AdventDay
         }
 
         return path.AsEnumerable().Reverse().ToArray();
+    }
+
+    private static int Heuristic(Point2D point, Point2D endPoint)
+    {
+        return Math.Abs(endPoint.X - point.X) + Math.Abs(endPoint.Y - point.Y);
     }
 }
