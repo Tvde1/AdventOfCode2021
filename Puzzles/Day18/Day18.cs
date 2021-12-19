@@ -33,19 +33,10 @@ public class Day18 : AdventDay
 
     private static SnailFishNumber[] Parse(string input) => input.Split(Environment.NewLine).Select(SnailFishNumber.Parse).ToArray();
 
-    private static string PartOne(SnailFishNumber[] data)
-    {
-        var number = data[0];
-
-        foreach (var snailFishNumber in data.Skip(1))
-        {
-            number = SnailFishNumber.Add(number, snailFishNumber);
-
-            number.ReduceFull(out _);
-        }
-
-        return number.CalculateMagnitude().ToString();
-    }
+    private static string PartOne(SnailFishNumber[] data) => 
+        data.Aggregate((total, newNum) => SnailFishNumber.Add(total, newNum))
+            .CalculateMagnitude()
+            .ToString();
 
     private static string PartTwo(SnailFishNumber[] data)
     {
@@ -61,7 +52,6 @@ public class Day18 : AdventDay
                 }
 
                 var product = SnailFishNumber.Add(number1, number2);
-                product.ReduceFull(out _);
 
                 var magnitude = product.CalculateMagnitude();
                 if (magnitude > highestMagnitude)

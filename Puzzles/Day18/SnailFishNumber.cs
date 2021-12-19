@@ -6,23 +6,19 @@ namespace AdventOfCode.Puzzles.Day18
 {
     public abstract class SnailFishNumber
     {
-        public void ReduceFull(out string steps)
+        public void ReduceBaseFull()
         {
-            steps = "";
-            var i = 1;
             while (true)
             {
                 var explodeOperation = ReduceInternal(0, ReduceStrategy.Explosions);
                 if (explodeOperation is not NoActionReduceOperation)
                 {
-                    steps += $"After step {i:D3} ({explodeOperation,18}): {this}{Environment.NewLine}";
                     continue;
                 }
 
                 var splitOperation = ReduceInternal(0, ReduceStrategy.Splits);
                 if (splitOperation is not NoActionReduceOperation)
                 {
-                    steps += $"After step {i:D3} ({splitOperation,18}): {this}{Environment.NewLine}";
                     continue;
                 }
 
@@ -38,7 +34,11 @@ namespace AdventOfCode.Puzzles.Day18
 
         public static SnailFishNumber Add(SnailFishNumber left, SnailFishNumber right) 
         {
-            return new PairSnailFishNumber(left.Clone(), right.Clone());
+            var number = new PairSnailFishNumber(left.Clone(), right.Clone());
+
+            number.ReduceBaseFull();
+
+            return number;
         }
 
         public static SnailFishNumber Parse(string input)
