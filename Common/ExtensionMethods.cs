@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using AdventOfCode.Common.Models;
 using AdventOfCode.Common.Monads;
 
@@ -221,6 +222,18 @@ namespace AdventOfCode.Common
             return grid[point.X, point.Y];
         }
 
+        public static T GetPointOr<T>(this T[,] grid, Point2D point, T or)
+        {
+            try
+            {
+                return grid[point.X, point.Y];
+            }
+            catch
+            {
+                return or;
+            }
+        }
+
         public static bool TryGetFirst<T>(this IEnumerable<T> items, Func<T, bool> predicate, out T item)
             where T : struct
         {
@@ -285,6 +298,74 @@ namespace AdventOfCode.Common
             }
 
             return result;
+        }
+
+        public static void Fill<T>(this T[,] source, T value)
+        {
+            for(var x =0; x < source.GetLength(0); x++)
+            for (var y = 0; y < source.GetLength(1); y++)
+            {
+                source[x, y] = value;
+            }
+        }
+
+        public static T[,] Paste<T>(this T[,] source, T[,] toPaste, int xOffset, int yOffset)
+        {
+            for (var x = 0; x < toPaste.GetLength(0); x++)
+            for (var y = 0; y < toPaste.GetLength(1); y++)
+            {
+                source[x + xOffset, y + yOffset] = toPaste[x, y];
+            }
+
+            return source;
+        }
+
+        public static string Render<T>(this T[,] source, Func<T, string> toString)
+        {
+            var sb = new StringBuilder();
+            for (var y = 0; y < source.GetLength(1); y++)
+            {
+                for (var x = 0; x < source.GetLength(0); x++)
+                {
+                    sb.Append(toString(source[x, y]));
+                }
+
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
+        public static string Render<T>(this T[,] original, Func<T, char> toChar)
+        {
+            var source = original.Flip();
+            var sb = new StringBuilder();
+            for (var y = 0; y < source.GetLength(1); y++)
+            {
+                for (var x = 0; x < source.GetLength(0); x++)
+                {
+                    sb.Append(toChar(source[x, y]));
+                }
+
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
+        public static T[,] Flip<T>(this T[,] source)
+        {
+            var width = source.GetLength(0);
+            var height = source.GetLength(1);
+            var newGrid = new T[height, width];
+
+            for (var x = 0; x < width; x++)
+            for (var y = 0; y < height; y++)
+            {
+                newGrid[y, x] = source[x, y];
+            }
+
+            return newGrid;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode.Common.Models;
@@ -15,6 +16,19 @@ public readonly record struct Point2D(int X, int Y) : IComparable<Point2D>
     {
         var xComparison = X.CompareTo(other.X);
         return xComparison != 0 ? xComparison : Y.CompareTo(other.Y);
+    }
+
+    public IEnumerable<Point2D> GetSurrounding()
+    {
+        yield return new Point2D(X - 1, Y - 1);
+        yield return new Point2D(X, Y - 1);
+        yield return new Point2D(X + 1, Y - 1);
+        yield return new Point2D(X - 1, Y);
+        yield return new Point2D(X, Y);
+        yield return new Point2D(X + 1, Y);
+        yield return new Point2D(X - 1, Y + 1);
+        yield return new Point2D(X, Y + 1);
+        yield return new Point2D(X + 1, Y + 1);
     }
 }
 
@@ -47,7 +61,7 @@ public readonly record struct Point3D(int X, int Y, int Z)
 
     public Point3D Translate(Rotation3D rotationTranslation)
     {
-        
+
 
         throw new NotImplementedException();
     }
