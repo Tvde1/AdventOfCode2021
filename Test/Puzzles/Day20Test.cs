@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Drawing;
+using System.Collections;
 using System.Linq;
 using AdventOfCode.Common;
 using AdventOfCode.Common.Models;
@@ -36,17 +35,18 @@ namespace Test
                 {o, o, o, o, o, o, o,},
             };
 
+            var scannerData = new ScannerData(new BitArray(0), board, false);
+
             var increment = 2;
-            var outside = o;
 
             // When
-            var grownBoard = Day20.GrowBoard(board, outside, increment, out var newWidth, out var newHeight);
+            var grownBoard = Day20.GrowBoard(scannerData, increment, out var newWidth, out var newHeight);
 
             // Then
-            Assert.AreEqual(newWidth, 7);
-            Assert.AreEqual(newHeight, 7);
+            Assert.AreEqual(7, newWidth);
+            Assert.AreEqual(7, newHeight);
 
-            CollectionAssert.AreEqual(expectedBoard, grownBoard);
+            CollectionAssert.AreEqual(expectedBoard, grownBoard.Input);
         }
 
         [DataTestMethod]
@@ -119,6 +119,29 @@ namespace Test
             var surrounding = point.GetSurrounding().ToArray();
 
             CollectionAssert.AreEqual(expectedSurrounding, surrounding);
+        }
+
+        [TestMethod]
+        public void ScannerData_EnhanceAlgorithmTest()
+        {
+            var input = @"..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
+
+#..#.
+#....
+##..#
+..#..
+..###";
+
+            var scannerData = ScannerData.Parse(input);
+
+            Assert.AreEqual(true, scannerData.EnhanceAlgorithm.Get(31));
+            Assert.AreEqual(true, scannerData.EnhanceAlgorithm.Get(32));
+            Assert.AreEqual(false, scannerData.EnhanceAlgorithm.Get(33));
+            Assert.AreEqual(true, scannerData.EnhanceAlgorithm.Get(34));
+            Assert.AreEqual(true, scannerData.EnhanceAlgorithm.Get(35));
+            Assert.AreEqual(false, scannerData.EnhanceAlgorithm.Get(36));
+            Assert.AreEqual(true, scannerData.EnhanceAlgorithm.Get(37));
+            Assert.AreEqual(false, scannerData.EnhanceAlgorithm.Get(38));
         }
     }
 }

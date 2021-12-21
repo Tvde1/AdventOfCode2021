@@ -29,9 +29,7 @@ public class Day20 : AdventDay
 
     private static string PartOne(ScannerData data)
     {
-        var newBoard = GrowBoard(data.Input, data.BorderPixel, 5, out _, out _);
-
-        data = new ScannerData(data.EnhanceAlgorithm, newBoard, data.BorderPixel);
+        data = GrowBoard(data, 5, out _, out _);
 
         Console.WriteLine(data.Input.Render(x => x ? '#' : '.'));
 
@@ -50,38 +48,41 @@ public class Day20 : AdventDay
 
     private static ScannerData Step(ScannerData scannerData)
     {
-        var resultBoard = GrowBoard(scannerData.Input, scannerData.BorderPixel, 1, out var width, out var height);
+        var increment = 1;
+        var biggerData = GrowBoard(scannerData, increment, out var width, out var height);
+
+        var lol = GrowBoard(scannerData, 0, out _, out _);
 
         for (var x = 0; x < width; x++)
+        {
             for (var y = 0; y < height; y++)
             {
-                resultBoard[x, y] = CalculateState(scannerData, new Point2D(x, y));
+                biggerData.Input[x, y] = CalculateState(lol, new Point2D(x, y));
             }
+        }
 
-        return new ScannerData(scannerData.EnhanceAlgorithm, resultBoard, resultBoard[0, 0]);
+        return biggerData with { BorderPixel = biggerData.Input[0, 0] };
     }
 
-
-    public static bool[,] GrowBoard(bool[,] board, bool outside, int increment, out int width, out int height)
+    public static ScannerData GrowBoard(ScannerData scannerData, int increment, out int width, out int height)
     {
-        width = board.GetLength(0) + 2 * increment;
-        height = board.GetLength(1) + 2 * increment;
+        width = scannerData.Input.GetLength(0) + 2 * increment;
+        height = scannerData.Input.GetLength(1) + 2 * increment;
 
         var newBoard = new bool[width, height];
-        newBoard.Fill(outside);
+        newBoard.Fill(scannerData.BorderPixel);
 
-        newBoard = newBoard.Paste(board, increment, increment);
+        newBoard = newBoard.Paste(scannerData.Input, increment, increment);
 
         var resultBoard = new bool[width, height];
         resultBoard.Paste(newBoard, 0, 0);
 
-        return resultBoard;
+        return new ScannerData(scannerData.EnhanceAlgorithm, resultBoard, scannerData.BorderPixel);
     }
 
     public static bool CalculateState(ScannerData data, Point2D point)
     {
         var reslt = CalculateEnhanceSpot(data.Input, data.BorderPixel, point);
-
         return data.EnhanceAlgorithm.Get(reslt);
     }
 
@@ -95,7 +96,6 @@ public class Day20 : AdventDay
 
         var result = 0;
 
-        // 100011110
         foreach (var p in values)
         {
             result <<= 1;
