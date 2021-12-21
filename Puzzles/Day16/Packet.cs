@@ -32,13 +32,13 @@ public abstract class Packet
 
 public class LiteralPacket : Packet
 {
-    public LiteralPacket(int version, PacketType type, int decimalValue)
+    public LiteralPacket(int version, PacketType type, ulong decimalValue)
            : base(version, type)
     {
         DecimalValue = decimalValue;
     }
 
-    public int DecimalValue { get; }
+    public ulong DecimalValue { get; }
 }
 
 public enum LengthType

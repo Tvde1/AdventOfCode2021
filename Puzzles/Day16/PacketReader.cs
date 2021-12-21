@@ -35,14 +35,14 @@ public class PacketReader
 
     private LiteralPacket ParseLiteralPacket(PacketType packetType, int packetVersion)
     {
-        var payload = 0;
+        var payload = 0UL;
 
         while (true)
         {
-            var part = (byte)_transmissionReader.Read(5);
+            var part = _transmissionReader.Read(5);
 
             payload <<= 4;
-            payload |= (part & 0b01111);
+            payload |= (byte) (part & 0b01111);
 
             if ((part & 0b10000) == 0)
             {
@@ -70,7 +70,6 @@ public class PacketReader
     private OperatorPacket ParseSubPacketCountOperatorPacket(PacketType packetType, int packetVersion,
         LengthType lengthType)
     {
-
         var subPacketCount = _transmissionReader.Read(11);
 
         var subPackets = new Packet[subPacketCount];
