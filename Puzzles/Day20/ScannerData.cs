@@ -15,7 +15,7 @@ public readonly record struct ScannerData(BitArray EnhanceAlgorithm, bool[,] Inp
 
         var algo = spl[0].Select(x => x == '#').ToArray();
 
-        var grid = spl.Skip(2).Select(x => x.Select(y => y == '#')).ToTwoDimensionalArray().Flip();
+        var grid = spl.Skip(2).Select(x => x.Select(y => y == '#')).ToTwoDimensionalArray();
 
         return new ScannerData(new BitArray(algo), grid, false);
     }

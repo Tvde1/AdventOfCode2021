@@ -143,5 +143,102 @@ namespace Test
             Assert.AreEqual(true, scannerData.EnhanceAlgorithm.Get(37));
             Assert.AreEqual(false, scannerData.EnhanceAlgorithm.Get(38));
         }
+
+        [TestMethod]
+        public void ScannerData_StepTest()
+        {
+            var input = @"..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
+
+...............
+...............
+...............
+...............
+...............
+.....#..#......
+.....#.........
+.....##..#.....
+.......#.......
+.......###.....
+...............
+...............
+...............
+...............
+...............";
+
+            var expectedStep = @"...............
+...............
+...............
+...............
+.....##.##.....
+....#..#.#.....
+....##.#..#....
+....####..#....
+.....#..##.....
+......##..#....
+.......#.#.....
+...............
+...............
+...............
+...............
+";
+
+            var scannerData = ScannerData.Parse(input);
+
+            // When
+            var stepped = Day20.CalcNewState(scannerData);
+
+            var stringified = stepped.Render(x => x ? '#' : '.');
+
+            Assert.AreEqual(expectedStep, stringified);
+        }
+
+        [DataTestMethod]
+        [DataRow(true,  0b111_011_111)]
+        [DataRow(false, 0b000_011_000)]
+        public void CalculateEnhanceSpotWithOutsideTest(bool outside, int expectedValue)
+        {
+            const bool o = false;
+            const bool X = true;
+
+            var midPoint = new Point2D(1, 0);
+
+            // Given
+            var board = new[,]
+            {
+                { o, X, X,},
+            }.Flip();
+
+            // When
+            var spot = Day20.CalculateEnhanceSpot(board, outside, midPoint);
+
+            // Then
+            Assert.AreEqual(expectedValue, spot);
+        }
+
+        [TestMethod]
+        public void RenderTest()
+        {
+            const bool o = false;
+            const bool X = true;
+
+            // Given
+            var board = new[,]
+            {
+                {o, o, o,},
+                {X, o, o,},
+                {o, X, o,},
+            }.Flip();
+
+            var expected = @"...
+#..
+.#.
+";
+
+            // When
+            var rendered = board.Render(x => x ? '#' : '.');
+
+            // Then
+            Assert.AreEqual(expected, rendered);
+        }
     }
 }

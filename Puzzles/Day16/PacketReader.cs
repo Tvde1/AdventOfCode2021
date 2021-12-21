@@ -35,7 +35,7 @@ public class PacketReader
 
     private LiteralPacket ParseLiteralPacket(PacketType packetType, int packetVersion)
     {
-        var payload = 0UL;
+        var payload = 0L;
 
         while (true)
         {

@@ -151,7 +151,7 @@ public class Day19 : AdventDay
         : base(19, AdventDayImplementation.Build(AdventDataSource.FromRaw(TestInput), Parse, PartOne))
     { }
 
-    private readonly record struct ScannerData(int ScannerNumber, HashSet<Point3D> Beacons);
+    private readonly record struct ScannerData(int ScannerNumber, HashSet<Vector3D> Beacons);
 
     private static ScannerData[] Parse(string input)
     {
@@ -162,18 +162,18 @@ public class Day19 : AdventDay
         {
             if (currentScanner == null)
             {
-                currentScanner = new ScannerData(int.Parse(line[12..^3]), new HashSet<Point3D>());
+                currentScanner = new ScannerData(int.Parse(line[12..^3]), new HashSet<Vector3D>());
                 continue;
             }
 
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(line))
             {
                 scannerDatas.Add(currentScanner.Value);
                 currentScanner = null;
                 continue;
             }
 
-            currentScanner.Value.Beacons.Add(Point3D.Parse(input));
+            currentScanner.Value.Beacons.Add(Vector3D.Parse(line));
         }
 
         return scannerDatas.ToArray();
@@ -181,15 +181,26 @@ public class Day19 : AdventDay
 
     private static string PartOne(ScannerData[] data)
     {
-        var baseScanner = data[0];
+        var scanners = new Dictionary<int, ScannerData> {
+            { 0, data.Single(x => x.ScannerNumber == 0) },
+        };
 
-        var remainingScanners = data.Skip(1).ToArray();
+        var remainingScanners = new Queue<ScannerData>(data.Where(x => x.ScannerNumber != 0));
 
-        var mappedScanners = new List<(ScannerData, Vector3D)>();
-
-        foreach (var scanners in remainingScanners)
+        foreach (var mappedScanner in scanners.Values)
         {
+            while(remainingScanners.TryDequeue(out ScannerData unmappedScanner))
+            {
+                var mapping = FindMatchingPoints(mappedScanner, unmappedScanner, 12);
 
+                if (mapping.HasValue)
+                {
+                throw new NotImplementedException();
+                    //var totalTranslation = 
+
+                    //scanners.Add((unmappedScanner, ))
+                }
+            }
         }
 
         throw new NotImplementedException();
@@ -197,46 +208,78 @@ public class Day19 : AdventDay
 
     private static string PartTwo(string data) => data;
 
-    private static ((int ScannerNo, Point3D BasePoint), (int ScannerNo, Point3D BasePoint)) FindMatchingPoints(ScannerData baseScanner, ScannerData secondScanner, int amountMatch)
-    {
-        foreach (var baseBeacon in baseScanner.Beacons)
-        {
-            var baseTranslations = baseScanner.Beacons.Select(x => Point3D.CalculatePointTranslation(baseBeacon, x)).ToHashSet();
+    public static Func<Vector3D, Vector3D>[] Rotations = new[] {
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.X, v.Y, v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.X, v.Z, -v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.X, -v.Y, -v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.X, -v.Z, v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Y, v.X, -v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Y, v.Z, v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Y, -v.X, v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Y, -v.Z, -v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Z, v.X, v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Z, v.Y, -v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Z, -v.X, -v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D(v.Z, -v.Y, v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.X, v.Y, -v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.X, v.Z, v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.X, -v.Y, v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.X, -v.Z, -v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Y, v.X, v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Y, v.Z, -v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Y, -v.X, -v.Z )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Y, -v.Z, v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Z, v.X, -v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Z, v.Y, v.X )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Z, -v.X, v.Y )),
+        new Func<Vector3D, Vector3D>(v => new Vector3D( -v.Z, -v.Y, -v.X )),
+    };
 
-            foreach (var secondScannerBeacon in secondScanner.Beacons)
+    private static (int FirstScanner, int SecondScanner, Vector3D Translation, Vector3D Rotation)? FindMatchingPoints(ScannerData baseScanner, ScannerData secondScanner, int amountMatch)
+    {
+        foreach(var rotator in Rotations)
+        {
+            var baseMappingsToBeacons = baseScanner.Beacons.Select(x => rotator(x));
+
+            if (secondScanner.Beacons.Where(a => baseMappingsToBeacons.Contains(a)).Skip(amountMatch - 1).Any())
             {
-                if (secondScanner.Beacons.Select(x => Point3D.CalculatePointTranslation(secondScannerBeacon, x)).Where(x => baseTranslations.Contains(x)).Skip(amountMatch - 1).Any())
-                {
-                }
+                throw new NotImplementedException();
+                //var secondScannerToCommonBeacon = Point3D.CalculatePointTranslation(new Point3D(0, 0, 0), secondScannerBeacon);
+                //var commonBeaconToFirstScanner = Point3D.CalculatePointTranslation(baseBeacon, new Point3D(0, 0, 0));
+
             }
         }
-        throw new NotImplementedException();
-    }
-
-    private static Translation3D? FindTranslationOld(ScannerData baseScanner, ScannerData secondScanner, int amountMatch)
-    {
-        foreach (var baseBeacon in baseScanner.Beacons)
-        {
-            foreach (var secondScannerBeacon in secondScanner.Beacons)
-            {
-                var locationTranslation = Point3D.CalculatePointTranslation(secondScannerBeacon, baseBeacon);
-
-                foreach (var rotationTranslation in Rotation3D.AllRotationTranslations)
-                {
-                    var translation = new Translation3D(locationTranslation, rotationTranslation);
-
-                    var translatedFirstScannerBeacons = baseScanner.Beacons.Select(x => x.Translate(rotationTranslation).Translate(locationTranslation));
 
 
-                    if (translatedFirstScannerBeacons.Where(x => secondScanner.Beacons.Contains(x)).Skip(amountMatch - 1).Any())
-                    {
-                        var baseScannerToBeacon = Point3D.CalculatePointTranslation(new Point3D(0, 0, 0), baseBeacon);
 
-                        return translation;
-                    }
-                }
-            }
-        }
+
+
+        //foreach (var baseBeacon in baseScanner.Beacons)
+        //{
+        //    var baseTranslations = baseScanner.Beacons.Select(x => Point3D.CalculatePointTranslation(baseBeacon, x)).ToHashSet();
+
+        //    foreach (var secondScannerBeacon in secondScanner.Beacons)
+        //    {
+        //        foreach (var rotationTranslation in Rotations)
+        //        {
+        //            var secondScannerBeaconTranslations = secondScanner.Beacons.Select(x => rotationTranslation(Point3D.CalculatePointTranslation(secondScannerBeacon, x)));
+
+        //            var twelfthTranslation = secondScannerBeaconTranslations.Where(x => baseTranslations.Contains(x)).Skip(amountMatch - 1).Any();
+
+        //            if (twelfthTranslation)
+        //            {
+        //                var scannerToBeacon = Point3D.CalculatePointTranslation(new Point3D(0, 0, 0), baseBeacon);
+
+        //                var secondScannerToCommonBeacon = Point3D.CalculatePointTranslation(new Point3D(0, 0, 0), secondScannerBeacon);
+        //                var commonBeaconToFirstScanner = Point3D.CalculatePointTranslation(baseBeacon, new Point3D(0, 0, 0));
+
+        //                var totalTranslation = secondScannerToCommonBeacon + commonBeaconToFirstScanner;
+
+        //                return (baseScanner.ScannerNumber, secondScanner.ScannerNumber, totalTranslation, rotationTranslation);
+        //            }
+        //        }
+        //    }
+        //}
 
         return null;
     }

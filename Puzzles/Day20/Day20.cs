@@ -9,19 +9,19 @@ namespace AdventOfCode.Puzzles.Day20;
 
 public class Day20 : AdventDay
 {
-    private const string InputFile = "Day20/day20.txt";
+    private static AdventDataSource RealInput = AdventDataSource.FromFile("Day20/day20.txt");
 
-    private const string TestInput =
-        @"..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
+    private static AdventDataSource TestInput =
+        AdventDataSource.FromRaw(@"..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
 
 #..#.
 #....
 ##..#
 ..#..
-..###";
+..###");
 
     public Day20()
-        : base(20, AdventDayImplementation.Build(AdventDataSource.FromRaw(TestInput), Parse, PartOne))
+        : base(20, AdventDayImplementation.Build(RealInput, Parse, PartOne, PartTwo))
     {
     }
 
@@ -31,37 +31,49 @@ public class Day20 : AdventDay
     {
         data = GrowBoard(data, 5, out _, out _);
 
-        Console.WriteLine(data.Input.Render(x => x ? '#' : '.'));
-
         data = Step(data);
-
-        Console.WriteLine(data.Input.Render(x => x ? '#' : '.'));
-
         data = Step(data);
-
-        Console.WriteLine(data.Input.Render(x => x ? '#' : '.'));
 
         return data.Input.Flatten().AsParallel().Count(x => x).ToString();
     }
 
-    private static string PartTwo(string data) => data;
+    private static string PartTwo(ScannerData data)
+    {
+        data = GrowBoard(data, 5, out _, out _);
+
+        for (int i = 0; i < 50; i++)
+        {
+            data = Step(data);
+        }
+
+        Console.Write(data.Input.Render(x => x ? '#' : '.'));
+
+        return data.Input.Flatten().AsParallel().Count(x => x).ToString();
+    }
 
     private static ScannerData Step(ScannerData scannerData)
     {
         var increment = 1;
         var biggerData = GrowBoard(scannerData, increment, out var width, out var height);
 
-        var lol = GrowBoard(scannerData, 0, out _, out _);
+        var newBoard = CalcNewState(biggerData);
+
+        return biggerData with { Input = newBoard, BorderPixel = newBoard[0, 0] };
+    }
+
+    public static bool[,] CalcNewState(ScannerData scannerData)
+    {
+        var copy = GrowBoard(scannerData, 0, out var width, out var height);
 
         for (var x = 0; x < width; x++)
         {
             for (var y = 0; y < height; y++)
             {
-                biggerData.Input[x, y] = CalculateState(lol, new Point2D(x, y));
+                copy.Input[x, y] = CalculateState(scannerData, new Point2D(x, y));
             }
         }
 
-        return biggerData with { BorderPixel = biggerData.Input[0, 0] };
+        return copy.Input;
     }
 
     public static ScannerData GrowBoard(ScannerData scannerData, int increment, out int width, out int height)

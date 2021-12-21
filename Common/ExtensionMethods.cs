@@ -302,20 +302,20 @@ namespace AdventOfCode.Common
 
         public static void Fill<T>(this T[,] source, T value)
         {
-            for(var x =0; x < source.GetLength(0); x++)
-            for (var y = 0; y < source.GetLength(1); y++)
-            {
-                source[x, y] = value;
-            }
+            for (var x = 0; x < source.GetLength(0); x++)
+                for (var y = 0; y < source.GetLength(1); y++)
+                {
+                    source[x, y] = value;
+                }
         }
 
         public static T[,] Paste<T>(this T[,] source, T[,] toPaste, int xOffset, int yOffset)
         {
             for (var x = 0; x < toPaste.GetLength(0); x++)
-            for (var y = 0; y < toPaste.GetLength(1); y++)
-            {
-                source[x + xOffset, y + yOffset] = toPaste[x, y];
-            }
+                for (var y = 0; y < toPaste.GetLength(1); y++)
+                {
+                    source[x + xOffset, y + yOffset] = toPaste[x, y];
+                }
 
             return source;
         }
@@ -336,13 +336,12 @@ namespace AdventOfCode.Common
             return sb.ToString();
         }
 
-        public static string Render<T>(this T[,] original, Func<T, char> toChar)
+        public static string Render<T>(this T[,] source, Func<T, char> toChar)
         {
-            var source = original.Flip();
             var sb = new StringBuilder();
-            for (var y = 0; y < source.GetLength(1); y++)
+            for (var y = 0; y < source.GetLength(0); y++)
             {
-                for (var x = 0; x < source.GetLength(0); x++)
+                for (var x = 0; x < source.GetLength(1); x++)
                 {
                     sb.Append(toChar(source[x, y]));
                 }
@@ -360,10 +359,10 @@ namespace AdventOfCode.Common
             var newGrid = new T[height, width];
 
             for (var x = 0; x < width; x++)
-            for (var y = 0; y < height; y++)
-            {
-                newGrid[y, x] = source[x, y];
-            }
+                for (var y = 0; y < height; y++)
+                {
+                    newGrid[y, x] = source[x, y];
+                }
 
             return newGrid;
         }
