@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace AdventOfCode.Common
 {
 	public class Lambda
-	{
-		public static Func<T, T> Identity<T>() => x => x;
+    {
+        public static T Identity<T>(T t) => t;
 
-		public static Action<T> Discard<T>() => _ => { };
+        public static Action<T> Discard<T>() => _ => { };
 	}
 }

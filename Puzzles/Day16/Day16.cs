@@ -7,157 +7,70 @@ namespace AdventOfCode.Puzzles.Day16;
 
 public class Day16 : AdventDay
 {
-    private const string InputFile = "Day16/day16.txt";
+    private static readonly AdventDataSource TestInput1 = AdventDataSource.FromRaw("D2FE28");
+    private static readonly AdventDataSource TestInput2 = AdventDataSource.FromRaw("38006F45291200");
+    private static readonly AdventDataSource TestInput3 = AdventDataSource.FromRaw("EE00D40C823060");
 
-    private const string TestInput = @"8A004A801A8002F478";
+    private static readonly AdventDataSource TestInput4 = AdventDataSource.FromRaw("C200B40A82");
+    private static readonly AdventDataSource TestInput5 = AdventDataSource.FromRaw("04005AC33890");
+    private static readonly AdventDataSource TestInput6 = AdventDataSource.FromRaw("880086C3E88112");
+    private static readonly AdventDataSource TestInput7 = AdventDataSource.FromRaw("CE00C43D881120");
+    private static readonly AdventDataSource TestInput8 = AdventDataSource.FromRaw("D8005AC2A8F0");
+    private static readonly AdventDataSource TestInput9 = AdventDataSource.FromRaw("F600BC2D8F");
+    private static readonly AdventDataSource TestInputA = AdventDataSource.FromRaw("9C005AC2F8F0");
+    private static readonly AdventDataSource TestInputB = AdventDataSource.FromRaw("9C0141080250320F1802104A08");
+
+    private static readonly AdventDataSource RealInput = AdventDataSource.FromFile("Day16/day16.txt");
 
     public Day16()
-        : base(16, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Transmission.Parse, PartOne))
+        : base(16, AdventDayImplementation.Build(RealInput, Lambda.Identity, PartOne, PartTwo))
     { }
 
-    public static string PartOne(Transmission data)
+    public static string PartOne(string data)
     {
-        var packets = new Queue<Packet>(ParsePackets(data));
+        var transmission = Transmission.Parse(data);
 
         var flattened = new List<Packet>();
-        while (packets.TryDequeue(out var p))
+        void FlattenPacket(Packet p)
         {
             switch (p)
             {
-                case LiteralPacket l:
-                    {
-                        flattened.Add(p);
-                        break;
-                    }
+                case LiteralPacket:
+                {
+                    flattened.Add(p);
+                    break;
+                }
                 case OperatorPacket o:
+                {
+                    flattened.Add(p);
+                    foreach (var sp in o.SubPackets)
                     {
-                        flattened.Add(p);
-                        foreach (var sp in o.SubPackets) {
-                            packets.Enqueue(sp);
-                        }
-                        break;
+                        FlattenPacket(sp);
                     }
+
+                    break;
+                }
                 default:
-                    {
-                        throw new ArgumentException();
-                    }
+                {
+                    throw new ArgumentException();
+                }
             }
+        }
+
+        foreach (var p in transmission.Packets)
+        {
+            FlattenPacket(p);
         }
 
         return flattened.Aggregate(0, (sum, packet) => sum + packet.Version).ToString();
     }
 
-    private static Packet[] ParsePackets(Transmission data)
+    public static string PartTwo(string data)
     {
-        var packets = new List<Packet>();
+        var transmission = Transmission.Parse(data);
 
-        while (true)
-        {
-            var packet = ParsePacket(data);
+        var result = transmission.Run();
 
-            if (packet is null)
-            {
-                break;
-            }
-
-            packets.Add(packet);
-        }
-
-        return packets.ToArray();
-    }
-
-    private static Packet? ParsePacket(Transmission transmission)
-    {
-
-        //var packetVersion = transmission.ReadTree();
-        //var packetType = (PacketType) transmission.ReadTree();
-
-        //switch (packetType)
-        //{
-        //    case PacketType.Literal:
-        //        {
-        //            var segments = new List<byte>();
-
-        //            while (true)
-        //            {
-        //                var part = transmission.ReadFour();
-
-        //                segments.AddRange(part);
-
-        //                if ((part & 0b1000) == 0)
-        //                {
-        //                    break;
-        //                }
-        //            }
-
-        //            var realValue = BitConverter.ToInt32(segments.ToArray());
-
-        //            return new LiteralPacket(packetVersion, packetType, realValue);
-        //        }
-        //    case PacketType.Operator:
-        //        {
-        //            if (!transmission.TryDequeue(out var lengthTypeBit))
-        //            {
-        //                throw new ArgumentException();
-        //            }
-        //            var lengthType = lengthTypeBit ? LengthType.TotalLength : LengthType.SubPacketCount;
-
-        //            switch (lengthType)
-        //            {
-        //                case LengthType.SubPacketCount:
-        //                    {
-        //                        if (!transmission.TryDequeueAmount(11, out var subPacketCountBits))
-        //                        {
-        //                            throw new ArgumentException();
-        //                        }
-        //                        var subPacketCount = subPacketCountBits.ArrangeBits();
-
-        //                        var subPackets = new Packet[subPacketCount];
-        //                        for(int i = 0; i < subPacketCount; i++)
-        //                        {
-        //                            var parsedPacket = ParsePacket(transmission);
-        //                            if (parsedPacket is null)
-        //                            {
-        //                                throw new ArgumentException();
-        //                            }
-        //                            subPackets[i] = parsedPacket;
-        //                        }
-
-        //                        return new OperatorPacket(packetVersion, packetType, lengthType, subPackets);
-        //                    }
-        //                case LengthType.TotalLength:
-        //                    {
-        //                        if (!transmission.TryDequeueAmount(15, out var subPacketLengthBits))
-        //                        {
-        //                            throw new ArgumentException();
-        //                        }
-        //                        var subPacketLength = subPacketLengthBits.ArrangeBits();
-
-        //                        var subPackets = new List<Packet>();
-
-        //                        var currentCount = transmission.Count;
-        //                        while (transmission.Count != currentCount - subPacketLength)
-        //                        {
-        //                            var parsedPacket = ParsePacket(transmission);
-        //                            if (parsedPacket is null)
-        //                            {
-        //                                throw new ArgumentException();
-        //                            }
-        //                            subPackets.Add(parsedPacket);
-        //                        }
-
-        //                        return new OperatorPacket(packetVersion, packetType, lengthType, subPackets.ToArray());
-        //                    }
-        //                default:
-        //                    {
-        //                        throw new ArgumentOutOfRangeException();
-        //                    }
-        //            }
-        //        }
-        //    default:
-        //        throw new ArgumentOutOfRangeException();
-        //}
-
-        throw new Oopsie();
+        return result.ToString();
     }
 }

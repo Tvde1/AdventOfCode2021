@@ -8,8 +8,14 @@ namespace AdventOfCode.Puzzles.Day16;
 
 public enum PacketType : byte
 {
+    Sum = 0,
+    Product = 1,
+    Minimum = 2,
+    Maximum = 3,
     Literal = 4,
-    Operator,
+    GreaterThan = 5,
+    LessThan = 6,
+    EqualTo = 7,
 }
 
 public abstract class Packet
@@ -37,8 +43,8 @@ public class LiteralPacket : Packet
 
 public enum LengthType
 {
-    TotalLength,
-    SubPacketCount,
+    TotalLength = 0,
+    SubPacketCount = 1,
 }
 
 public class OperatorPacket : Packet
@@ -54,4 +60,3 @@ public class OperatorPacket : Packet
 
     public Packet[] SubPackets { get; }
 }
-

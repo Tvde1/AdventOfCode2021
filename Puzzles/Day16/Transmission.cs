@@ -1,77 +1,60 @@
-﻿using System.Collections;
-using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace AdventOfCode.Puzzles.Day16;
 
 public record Transmission
 {
-    private BitArray _data;
-    private int _index = 0;
-
-    private Transmission(string input)
+    public Transmission(string data)
     {
-        _data = new BitArray(ConvertHexToBitArray(input));
+        var packetReader = new PacketReader(new TransmissionReader(data));
+
+        Packets = packetReader.ReadAllPackets().ToArray();
     }
 
-    public bool Read()
+    public IReadOnlyList<Packet> Packets { get; set; }
+    
+    public static Transmission Parse(string input) => new(input);
+
+    public long Run()
     {
-        return _data.Get(_index++);
+        return TransmissionRunner.Run(Packets[0]);
     }
+}
 
-    public byte ReadTree()
+public class TransmissionRunner
+{
+    public static long Run(Packet p)
     {
-        byte b = 0;
-
-        var b1 = Read();
-        var b2 = Read();
-        var b3 = Read();
-
-        b |= b1 ? (byte)1 : (byte)0;
-        b <<= 1;
-        b |= b2 ? (byte)1 : (byte)0;
-        b <<= 1;
-        b |= b3 ? (byte)1 : (byte)0;
-
-        _index += 3;
-
-        return b;
-    }
-
-    public byte ReadFour()
-    {
-        byte b = 0;
-
-        var b1 = Read();
-        var b2 = Read();
-        var b3 = Read();
-        var b4 = Read();
-
-        b |= b1 ? (byte)1 : (byte)0;
-        b <<= 1;
-        b |= b2 ? (byte)1 : (byte)0;
-        b <<= 1;
-        b |= b3 ? (byte)1 : (byte)0;
-        b <<= 1;
-        b |= b4 ? (byte)1 : (byte)0;
-
-        _index += 4;
-
-        return b;
-    }
-
-    public static Transmission Parse(string input) => new Transmission(input);
-
-    private static BitArray ConvertHexToBitArray(string hexData)
-    {
-        var bitArray = new BitArray(4 * hexData.Length);
-        for (int byteIndex = 0; byteIndex < hexData.Length; byteIndex++)
+        return p switch
         {
-            byte b = byte.Parse(hexData[byteIndex].ToString(), NumberStyles.HexNumber);
-            for (int bitIndex = 0; bitIndex < 4; bitIndex++)
-            {
-                bitArray.Set(byteIndex * 4 + bitIndex, (b & (1 << (3 - bitIndex))) != 0);
-            }
-        }
-        return bitArray;
+            LiteralPacket literalPacket => Run(literalPacket),
+            OperatorPacket operatorPacket => Run(operatorPacket),
+            _ => throw new ArgumentOutOfRangeException(nameof(p))
+        };
+    }
+
+    public static long Run(LiteralPacket literalPacket)
+    {
+        return literalPacket.DecimalValue;
+    }
+
+    public static long Run(OperatorPacket operatorPacket)
+    {
+        return operatorPacket.Type switch
+        {
+            PacketType.Sum => operatorPacket.SubPackets.Sum(Run),
+            PacketType.Product => operatorPacket.SubPackets.Select(Run).Aggregate(1L, (product, packetValue) => packetValue * product),
+            PacketType.Minimum => operatorPacket.SubPackets.Min(Run),
+            PacketType.Maximum => operatorPacket.SubPackets.Max(Run),
+            PacketType.GreaterThan => Run(operatorPacket.SubPackets[0]) > Run(operatorPacket.SubPackets[1]) ? 1 : 0,
+            PacketType.LessThan => Run(operatorPacket.SubPackets[0]) < Run(operatorPacket.SubPackets[1]) ? 1 : 0,
+            PacketType.EqualTo => Run(operatorPacket.SubPackets[0]) == Run(operatorPacket.SubPackets[1]) ? 1 : 0,
+            PacketType.Literal => throw new InvalidOperationException(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }
