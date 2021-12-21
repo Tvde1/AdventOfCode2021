@@ -20,6 +20,8 @@ public class Day16 : AdventDay
     private static readonly AdventDataSource TestInputA = AdventDataSource.FromRaw("9C005AC2F8F0");
     private static readonly AdventDataSource TestInputB = AdventDataSource.FromRaw("9C0141080250320F1802104A08");
 
+    private static readonly AdventDataSource TestInputX = AdventDataSource.FromRaw("D2FE28");
+
     private static readonly AdventDataSource RealInput = AdventDataSource.FromFile("Day16/day16.txt");
 
     public Day16()
