@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day21;
@@ -14,7 +11,7 @@ public class Day21 : AdventDay
 Player 2 starting position: 8");
 
     public Day21()
-        : base(21, AdventDayImplementation.Build(TestInput, StartPosition.Parse, PartOne, PartTwo))
+        : base(21, AdventDayImplementation.Build(PuzzleInput, StartPosition.Parse, PartOne, PartTwo))
     { }
 
     private static string PartOne(StartPosition data)
@@ -30,9 +27,9 @@ Player 2 starting position: 8");
     {
         var quantumGame = new QuantumDiracDice(data);
 
-        var result = quantumGame.PlayAndDoesCurrentPlayerWin();
+        var result = quantumGame.Play();
 
-        return Math.Max(result.Player1Wins, result.Player2Wins).ToString();
+        return $"Player 1 wins {result.Player1Wins} games and \nPlayer 2 wins {result.Player2Wins} games.";
     }
 }
 

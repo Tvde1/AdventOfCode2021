@@ -1,14 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Puzzles.Day21;
 
 public class QuantumDiracDice
 {
-    private static readonly int[] PossibleDiceRolls = { 1, 2, 3 };
+    private static readonly IReadOnlyDictionary<int, int> PossibleDiceRolls;
 
-    private static int TotalWins = 0;
-    private static object _lock = new object();
+    private long _currentWins;
+    private long _otherWins;
+
+    static QuantumDiracDice()
+    {
+        var possibleDiceValues = new[] {1, 2, 3};
+
+        PossibleDiceRolls = possibleDiceValues.SelectMany(roll1 =>
+                possibleDiceValues.SelectMany(roll2 => possibleDiceValues.Select(roll3 => roll1 + roll2 + roll3)))
+            .GroupBy(x => x)
+            .ToDictionary(x => x.Key, x => x.Count());
+    }
 
     private readonly StartPosition _startPosition;
 
@@ -17,37 +30,38 @@ public class QuantumDiracDice
         _startPosition = startPosition;
     }
 
-    public (long Player1Wins, long Player2Wins) PlayAndDoesCurrentPlayerWin()
+    public (long Player1Wins, long Player2Wins) Play()
     {
-        return CalculateWins(_startPosition.Player1Position, 0, _startPosition.Player2Position, 0);
+        CalculateWins(_startPosition.Player1Position, 0, _startPosition.Player2Position, 0, false, 1);
+
+        return (_currentWins, _otherWins);
     }
 
-    private static (long CurrentPlayerWins, long OtherPlayerWins) CalculateWins(int currentPlayerPosition, int currentPlayerScore, int otherPlayerPosition, int otherPlayerScore)
+    private void CalculateWins(int currentPlayerPosition, int currentPlayerScore, int otherPlayerPosition,
+        int otherPlayerScore, bool flip, long alternateRealityCount)
     {
-        var currentWins = 0L;
-        var otherWins = 0L;
-
-        Parallel.ForEach(PossibleDiceRolls, diceRoll =>
+        foreach(var (diceValue, amountOfSplits) in PossibleDiceRolls)
         {
-            var newPosition = (currentPlayerPosition + diceRoll - 1) % 10 + 1;
+            var newPosition = (currentPlayerPosition + diceValue - 1) % 10 + 1;
             var newScore = currentPlayerScore + newPosition;
+
+            var newRealityCount = alternateRealityCount * amountOfSplits;
 
             if (newScore >= 21)
             {
-                lock (_lock)
+                if (flip)
                 {
-                    TotalWins++;
+                    _otherWins += newRealityCount;
                 }
-                currentWins++;
+                else
+                {
+                    _currentWins += newRealityCount;
+                }
             }
             else
             {
-                var nextResult = CalculateWins(otherPlayerPosition, otherPlayerScore, newPosition, newScore);
-                currentWins += nextResult.OtherPlayerWins;
-                otherWins += nextResult.CurrentPlayerWins;
+                CalculateWins(otherPlayerPosition, otherPlayerScore, newPosition, newScore, !flip, newRealityCount);
             }
-        });
-
-        return (currentWins, otherWins);
+        }
     }
 }
