@@ -59,7 +59,7 @@ public readonly record struct Point3D(int X, int Y, int Z)
         return this with { X = X + translation.X, Y = Y + translation.Y, Z = Z + translation.Z };
     }
 
-    public static object CalculatePointTranslation(object zero, object )
+    public static object CalculatePointTranslation(object zero)
     {
         throw new NotImplementedException();
     }

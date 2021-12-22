@@ -4,12 +4,12 @@ namespace AdventOfCode.Puzzles.Day25;
 
 public class Day25 : AdventDay
 {
-    private const string InputFile = "Day25/day25.txt";
+    private static AdventDataSource RealInput = AdventDataSource.FromFile("Day25/day25.txt");
 
-    private const string TestInput = @"";
+    private static AdventDataSource TestInput = AdventDataSource.FromRaw(@"");
 
     public Day25()
-        : base(25, AdventDayImplementation.Build(AdventDataSource.FromRaw(TestInput), Parse))
+        : base(25, AdventDayImplementation.Build(TestInput, Parse))
     { }
 
     private static string Parse(string input) => input;
