@@ -23,7 +23,7 @@ public partial class Day15 : AdventDay
 2311944581";
 
     public Day15()
-        : base(15, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(15, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo, PartThree))
     { }
 
     public static int[,] Parse(string input) => GetGrid(input);
@@ -49,6 +49,18 @@ public partial class Day15 : AdventDay
         return Cost.ToString();
     }
 
+    public static string PartThree(int[,] data)
+    {
+        data = GetBigGrid(data, 5);
+
+        var startPoint = new Point2D(0, 0);
+        var endPoint = new Point2D(data.GetUpperBound(0), data.GetUpperBound(1));
+
+        var otherCost = LowestCostUsingAStar(data, startPoint, endPoint);
+
+        return otherCost.ToString();
+    }
+
     private static int[,] GetGrid(string input) => input.Split(Environment.NewLine).Select(x => x.Select(cha => int.Parse(cha.ToString()))).ToTwoDimensionalArray();
 
     private static int[,] GetBigGrid(int[,] grid, int timesBigger)
@@ -56,8 +68,8 @@ public partial class Day15 : AdventDay
         var width = grid.GetLength(0);
         var height = grid.GetLength(1);
 
-        int newWidth = grid.GetLength(0) * timesBigger;
-        int newHeight = grid.GetLength(1) * timesBigger;
+        var newWidth = grid.GetLength(0) * timesBigger;
+        var newHeight = grid.GetLength(1) * timesBigger;
 
         var newGrid = new int[newWidth, newHeight];
 
@@ -79,6 +91,29 @@ public partial class Day15 : AdventDay
         }
 
         return newGrid;
+    }
+
+    private static int LowestCostUsingAStar(int[,] grid, Point2D start, Point2D end)
+    {
+        var rightBound = grid.GetUpperBound(0);
+        var bottomBound = grid.GetUpperBound(1);
+
+        var neighbors = new Point2D[4];
+
+        Point2D[] GetNeighbors(Point2D point)
+        {
+            FillArrayWithNeighbors(point, rightBound, bottomBound, ref neighbors, out var amountOfNeighbors);
+
+            return neighbors.Take(amountOfNeighbors).ToArray();
+        }
+
+        var lowestCost = AStar.Calculate(start,
+            item => item == end,
+            GetNeighbors,
+            grid.GetPoint,
+            item => Heuristic(item, end));
+
+        return lowestCost.Cost;
     }
 
     private static (Point2D[] Path, int Cost) GetCost(int[,] grid, Point2D start, Point2D end)

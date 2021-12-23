@@ -56,11 +56,11 @@ public class AdventDayImplementation<TData> : IAdventDayImplementation
         foreach (var part in _parts)
         {
             sw.Restart();
-            var partReuslt = part(parsed);
+            var partResult = part(parsed);
             sw.Stop();
 
             var executedMs = sw.ElapsedMilliseconds;
-            parseResults.Add(new AdventDayPartResult(partReuslt, executedMs));
+            parseResults.Add(new AdventDayPartResult(partResult, executedMs));
         }
 
         return new AdventDayResult(parsedMs, parseResults.ToArray());

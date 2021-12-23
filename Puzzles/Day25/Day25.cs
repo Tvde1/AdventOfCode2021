@@ -4,9 +4,9 @@ namespace AdventOfCode.Puzzles.Day25;
 
 public class Day25 : AdventDay
 {
-    private static AdventDataSource RealInput = AdventDataSource.FromFile("Day25/day25.txt");
+    private static readonly AdventDataSource RealInput = AdventDataSource.FromFile("Day25/day25.txt");
 
-    private static AdventDataSource TestInput = AdventDataSource.FromRaw(@"");
+    private static readonly AdventDataSource TestInput = AdventDataSource.FromRaw(@"");
 
     public Day25()
         : base(25, AdventDayImplementation.Build(TestInput, Parse))

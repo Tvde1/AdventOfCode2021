@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using AdventOfCode.Common;
 using AdventOfCode.Common.Models;
@@ -125,7 +126,11 @@ public class Day4 : AdventDay
             var winningBoard = data.Boards.Where(x => x.Register(dataNumber) is not null).ToList();
             winningBoard.ForEach(x => data.Boards.Remove(x));
 
-            if (data.Boards.Count == 0) return (winningBoard.First().SumOfAllUnmarked * dataNumber).ToString();
+            if (data.Boards.Count == 0)
+            {
+                Debug.Assert(winningBoard.Count == 1);
+                return (winningBoard.First().SumOfAllUnmarked * dataNumber).ToString();
+            }
         }
 
         return "No found";

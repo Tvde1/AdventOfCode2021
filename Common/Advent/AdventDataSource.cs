@@ -12,13 +12,13 @@ public enum AdventDataSourceType
 
 public record struct AdventDataSource(AdventDataSourceType Type, string Location)
 {
-    public static AdventDataSource FromFile(string fileName) => new AdventDataSource(AdventDataSourceType.File, fileName);
+    public static AdventDataSource FromFile(string fileName) => new(AdventDataSourceType.File, fileName);
 
-    public static AdventDataSource FromWeb(string url) => new AdventDataSource(AdventDataSourceType.Web, url);
+    public static AdventDataSource FromWeb(string url) => new(AdventDataSourceType.Web, url);
 
-    public static AdventDataSource FromRaw(string data) => new AdventDataSource(AdventDataSourceType.Raw, data);
+    public static AdventDataSource FromRaw(string data) => new(AdventDataSourceType.Raw, data);
 
-    public string GetInput()
+    public readonly string GetInput()
     {
         return Type switch
         {

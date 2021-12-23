@@ -115,6 +115,7 @@ namespace AdventOfCode.Common
             return new string(source.OrderBy(x => x).ToArray());
         }
 
+        [DebuggerStepThrough]
         public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
             where T : struct
         {
@@ -365,6 +366,25 @@ namespace AdventOfCode.Common
                 }
 
             return newGrid;
+        }
+
+        public static T? Map<T>(this T? source, Func<T, T> selector)
+            where T : struct
+        {
+            if (source.HasValue)
+            {
+                return selector(source.Value);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static T OrElse<T>(this T? source, T orElse)
+            where T : struct
+        {
+            return source ?? orElse;
         }
     }
 }

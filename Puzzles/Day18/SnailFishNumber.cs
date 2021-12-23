@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using AdventOfCode.Common;
 
 namespace AdventOfCode.Puzzles.Day18
 {
@@ -100,6 +101,10 @@ namespace AdventOfCode.Puzzles.Day18
                     if (Left is LiteralSnailFishNumber && Right is LiteralSnailFishNumber)
                     {
                         return ReduceOperation.FromExplosion(this);
+                    }
+                    else
+                    {
+                        throw new Oopsie();
                     }
                 }
             }

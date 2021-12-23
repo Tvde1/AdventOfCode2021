@@ -105,6 +105,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Include="Day23\Day23.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
@@ -113,6 +117,12 @@
     <Resource Include="Day01\day1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Day23\day23.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
