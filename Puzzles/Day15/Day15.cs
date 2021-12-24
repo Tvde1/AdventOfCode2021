@@ -110,10 +110,11 @@ public partial class Day15 : AdventDay
         var lowestCost = AStar.Calculate(start,
             item => item == end,
             GetNeighbors,
+            (mod, state) => mod,
             grid.GetPoint,
             item => Heuristic(item, end));
 
-        return lowestCost.Cost;
+        return lowestCost;
     }
 
     private static (Point2D[] Path, int Cost) GetCost(int[,] grid, Point2D start, Point2D end)

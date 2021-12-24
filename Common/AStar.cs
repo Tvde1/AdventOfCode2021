@@ -5,14 +5,15 @@ namespace AdventOfCode.Common;
 
 public static class AStar
 {
-    public static (T Reuslt, int Cost) Calculate<T>(T source,
-        Func<T, bool> completedFunc,
-        Func<T, IEnumerable<T>> getNext,
-        Func<T, int> getCost,
-        Func<T, int> getHeuristic)
+    public static int Calculate<TState, TModification>(TState source,
+        Func<TState, bool> completedFunc,
+        Func<TState, IEnumerable<TModification>> getModifications,
+        Func<TState, TModification, TState> applyModification,
+        Func<TModification, int> getCost,
+        Func<TState, int> getHeuristic)
     {
-        var visited = new HashSet<T>();
-        var queue = new PriorityQueue<(T Item, int ActualCost), int>();
+        var visited = new HashSet<TState>();
+        var queue = new PriorityQueue<(TState Item, int ActualCost), int>();
 
         queue.Enqueue((source, 0), 0);
 
@@ -22,22 +23,24 @@ public static class AStar
 
             if (completedFunc(currentItem))
             {
-                return current;
+                return current.ActualCost;
             }
 
             visited.Add(currentItem);
 
-            foreach (var next in getNext(currentItem))
+            foreach (var modification in getModifications(currentItem))
             {
-                if (visited.Contains(next))
+                var newState = applyModification(currentItem, modification);
+
+                if (visited.Contains(newState))
                 {
                     continue;
                 }
 
-                var nextCost = currentCost + getCost(next);
-                var nextHeuristicCost = nextCost + getHeuristic(next);
+                var nextCost = currentCost + getCost(modification);
+                var nextHeuristicCost = nextCost + getHeuristic(newState);
 
-                queue.Enqueue((next, nextCost), nextHeuristicCost);
+                queue.Enqueue((newState, nextCost), nextHeuristicCost);
             }
         }
 
