@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Day23\Day23.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Day10\day10.txt" />
     <None Remove="Day11\day11.txt" />
     <None Remove="Day12\day12.txt" />
@@ -30,6 +34,8 @@
     <None Remove="Day20\day20.txt" />
     <None Remove="Day21\day21.txt" />
     <None Remove="Day22\day22.txt" />
+    <None Remove="Day24\day24.txt" />
+    <None Remove="Day24\day24opt.txt" />
     <None Remove="Day25\day25.txt" />
   </ItemGroup>
 
@@ -59,6 +65,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Day22\day22.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day24\day24opt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day24\day24.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Day25\day25.txt">
@@ -103,10 +115,6 @@
     <Content Include="Day03\day3.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Day23\Day23.cs" />
   </ItemGroup>
 
 	<ItemGroup>

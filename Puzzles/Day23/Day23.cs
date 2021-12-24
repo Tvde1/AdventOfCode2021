@@ -32,7 +32,7 @@ public class Day23 : AdventDay
 
         var cost = AStar.Calculate(data,
             state => state.IsCompleted(layout),
-            state => state.GetPossibleModifications(layout),
+            state => GetPossibleModifications(state, layout),
             (state, modification) => ApplyModification(state, modification),
             stateChange => GetCost(stateChange),
             stateChange => GetHeuristic(stateChange));
@@ -54,6 +54,11 @@ public class Day23 : AdventDay
             AmphipodType.D => 1000,
             _ => throw new ArgumentOutOfRangeException(),
         };
+    }
+
+    public static IEnumerable<AmphipodBurrowModification> GetPossibleModifications(Dictionary<int, AmphipodType> state, AmphipodBurrowModification modification)
+    {
+        throw new NotImplementedException();
     }
 
     //private static int GetHeuristic(AmphipodBurrowState state)
@@ -157,6 +162,8 @@ public static class AmphipodBurrowLayoutLogic
                     break;
                 }
         }
+
+        return locations;
     }
 }
 
