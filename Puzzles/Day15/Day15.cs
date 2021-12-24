@@ -108,9 +108,8 @@ public partial class Day15 : AdventDay
         }
 
         var lowestCost = AStar.Calculate(start,
-            item => item == end,
             GetNeighbors,
-            (mod, state) => mod,
+            (mod, _) => mod,
             grid.GetPoint,
             item => Heuristic(item, end));
 

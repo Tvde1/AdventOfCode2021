@@ -24,29 +24,35 @@ public class Day23 : AdventDay
         : base(23, AdventDayImplementation.Build(TestInput, Parse, PartOne))
     { }
 
-    private static Dictionary<int, AmphipodType> Parse(string input) => throw new NotImplementedException();
+    private static AmphipodType?[] Parse(string input) => AmphipodBurrowLayoutLogic.Parse(input);
 
-    private static string PartOne(Dictionary<int, AmphipodType> data)
+    private static string PartOne(AmphipodType?[] data)
     {
-        var layout = AmphipodBurrowLayout.Default;
-
         var cost = AStar.Calculate(data,
-            state => state.IsCompleted(layout),
-            state => GetPossibleModifications(state, layout),
-            (state, modification) => ApplyModification(state, modification),
-            stateChange => GetCost(stateChange),
-            stateChange => GetHeuristic(stateChange));
+            AmphipodBurrowLayoutLogic.GetPossibleModifications,
+            ApplyModification,
+            GetCost,
+            AmphipodBurrowLayoutLogic.GetHeuristic);
 
         return cost.ToString();
+    }
 
-        throw new Oopsie();
+    private static AmphipodType?[] ApplyModification(AmphipodType?[] state, (int OldLocation, int NewLocation, AmphipodType Moved) modification)
+    {
+        var newState = new AmphipodType?[state.Length];
+
+        state.CopyTo(newState, 0);
+        newState[modification.OldLocation] = null;
+        newState[modification.NewLocation] = modification.Moved;
+
+        return newState;
     }
 
     private static string PartTwo(string data) => data;
 
-    private static int GetCost(BurrowChange change)
+    private static int GetCost((int OldLocation, int NewLocation, AmphipodType Moved) modification)
     {
-        return change.Current.Type switch
+        return modification.Moved switch
         {
             AmphipodType.A => 1,
             AmphipodType.B => 10,
@@ -55,21 +61,6 @@ public class Day23 : AdventDay
             _ => throw new ArgumentOutOfRangeException(),
         };
     }
-
-    public static IEnumerable<AmphipodBurrowModification> GetPossibleModifications(Dictionary<int, AmphipodType> state, AmphipodBurrowModification modification)
-    {
-        throw new NotImplementedException();
-    }
-
-    //private static int GetHeuristic(AmphipodBurrowState state)
-    //{
-    //    return 0;
-    //}
-
-    //private static AmphipodBurrowState ApplyModification(AmphipodBurrowState state, BurrowChange modification)
-    //{
-    //    return new AmphipodBurrowState(state.Amphipods.Select(x => x with { Location = x == modification.Previous ? m : x.Location }).ToList()),
-    //}
 }
 
 public enum AmphipodType
@@ -108,18 +99,86 @@ public static class AmphipodBurrowLayoutLogic
         { 6, LocationState.Hallway },
         { 10, LocationState.RoomA },
         { 11, LocationState.RoomA },
-        { 12, LocationState.RoomB },
-        { 13, LocationState.RoomB },
-        { 14, LocationState.RoomC },
-        { 15, LocationState.RoomC },
-        { 16, LocationState.RoomD },
-        { 17, LocationState.RoomD },
+        { 12, LocationState.RoomA },
+        { 13, LocationState.RoomA },
+        { 14, LocationState.RoomB },
+        { 15, LocationState.RoomB },
+        { 16, LocationState.RoomB },
+        { 17, LocationState.RoomB },
+        { 18, LocationState.RoomC },
+        { 19, LocationState.RoomC },
+        { 20, LocationState.RoomC },
+        { 21, LocationState.RoomC },
+        { 22, LocationState.RoomD },
+        { 23, LocationState.RoomD },
+        { 24, LocationState.RoomD },
+        { 25, LocationState.RoomD },
     };
 
-    public static IEnumerable<int> NextLocations(int location, ref List<int> locations)
+    public static IEnumerable<(AmphipodType[] NewState, int Cost)> GetPossibleModifications(AmphipodType?[] locations)
     {
-        int i = 0;
-        switch(location)
+        var newLocations = new List<int>(10);
+        for (var i = 0; i < locations.Length; i++)
+        {
+            var amphipod = locations[i];
+
+            if (amphipod == null)
+            {
+                continue;
+            }
+
+            FillListWithNextLocations(i, ref newLocations);
+
+            foreach (var newLocation in newLocations)
+            {
+                if (locations[newLocation] != null)
+                {
+                    continue;
+                }
+
+                if (IsInvalidMove(LocationStates[newLocation], amphipod.Value))
+                {
+                    continue;
+                }
+
+                var newState = new AmphipodType?[26];
+                locations.CopyTo(newState);
+
+                yield return (i, newLocation, amphipod.Value);
+            }
+        }
+    }
+
+    private static bool IsInvalidMove(LocationState locationState, AmphipodType amphipod)
+    {
+        return (locationState, amphipod) switch
+        {
+            (LocationState.RoomA, AmphipodType.A) => false,
+            (LocationState.RoomB, AmphipodType.B) => false,
+            (LocationState.RoomC, AmphipodType.C) => false,
+            (LocationState.RoomD, AmphipodType.D) => false,
+            (LocationState.Hallway, _) => false,
+            _ => true,
+        };
+    }
+
+    private static bool IsCorrectHome(LocationState locationState, AmphipodType amphipod)
+    {
+        return (locationState, amphipod) switch
+        {
+            (LocationState.RoomA, AmphipodType.A) => true,
+            (LocationState.RoomB, AmphipodType.B) => true,
+            (LocationState.RoomC, AmphipodType.C) => true,
+            (LocationState.RoomD, AmphipodType.D) => true,
+            (LocationState.Hallway, _) => false,
+            _ => false,
+        };
+    }
+
+    public static void FillListWithNextLocations(int location, ref List<int> locations)
+    {
+        locations.Clear();
+        switch (location)
         {
             case 0:
                 {
@@ -130,30 +189,62 @@ public static class AmphipodBurrowLayoutLogic
                 {
                     locations.Add(0);
                     locations.Add(2);
+                    locations.Add(10);
+                    locations.Add(11);
+                    locations.Add(12);
+                    locations.Add(13);
                     break;
                 }
             case 2:
                 {
                     locations.Add(1);
                     locations.Add(3);
+                    locations.Add(10);
+                    locations.Add(11);
+                    locations.Add(12);
+                    locations.Add(13);
+                    locations.Add(14);
+                    locations.Add(15);
+                    locations.Add(16);
+                    locations.Add(17);
                     break;
                 }
             case 3:
                 {
                     locations.Add(2);
                     locations.Add(4);
+                    locations.Add(14);
+                    locations.Add(15);
+                    locations.Add(16);
+                    locations.Add(17);
+                    locations.Add(18);
+                    locations.Add(19);
+                    locations.Add(20);
+                    locations.Add(21);
                     break;
                 }
             case 4:
                 {
                     locations.Add(3);
                     locations.Add(5);
+                    locations.Add(18);
+                    locations.Add(19);
+                    locations.Add(20);
+                    locations.Add(21);
+                    locations.Add(22);
+                    locations.Add(23);
+                    locations.Add(24);
+                    locations.Add(25);
                     break;
                 }
             case 5:
                 {
                     locations.Add(4);
                     locations.Add(6);
+                    locations.Add(22);
+                    locations.Add(23);
+                    locations.Add(24);
+                    locations.Add(25);
                     break;
                 }
             case 6:
@@ -161,9 +252,85 @@ public static class AmphipodBurrowLayoutLogic
                     locations.Add(5);
                     break;
                 }
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+                {
+                    locations.Add(1);
+                    locations.Add(2);
+                    break;
+                }
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            {
+                locations.Add(2);
+                locations.Add(3);
+                break;
+            }
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            {
+                locations.Add(3);
+                locations.Add(4);
+                break;
+            }
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            {
+                locations.Add(4);
+                locations.Add(5);
+                break;
+            }
+        }
+    }
+
+    public static int GetHeuristic(AmphipodType?[] state)
+    {
+        var notHomeCount = state.Where((amphipodType, i) =>
+                amphipodType != null && !IsCorrectHome(LocationStates[i], amphipodType.Value))
+            .Count();
+
+        return notHomeCount;
+    }
+
+    private static readonly Regex ParseRegex = new(@"##(?'A1'\w)#(?'B1'\w)#(?'C1'\w)#(?'D1'\w).+\n  #(?'A2'\w)#(?'B2'\w)#(?'C2'\w)#(?'D2'\w)");
+
+    public static AmphipodType?[] Parse(string input)
+    {
+        var arr = new AmphipodType?[26];
+
+        void Add(string type, int index)
+        {
+            arr[index] = Enum.Parse<AmphipodType>(type);
         }
 
-        return locations;
+        var match = ParseRegex.Match(input);
+        {
+            Add(match.Groups["A1"].Value, 10);
+            Add(match.Groups["A2"].Value, 11);
+            Add(match.Groups["B1"].Value, 14);
+            Add(match.Groups["B2"].Value, 15);
+            Add(match.Groups["C1"].Value, 18);
+            Add(match.Groups["C2"].Value, 19);
+            Add(match.Groups["D1"].Value, 22);
+            Add(match.Groups["D2"].Value, 23);
+        }
+
+        return arr;
+    }
+
+    public static AmphipodType?[] Unfold(AmphipodType?[] input)
+    {
+        var toInsert = @"#D#C#B#A#
+#D#B#A#C#";
+        return null;
     }
 }
 
