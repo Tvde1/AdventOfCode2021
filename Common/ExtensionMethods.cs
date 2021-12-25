@@ -310,13 +310,11 @@ namespace AdventOfCode.Common
                 }
         }
 
-        public static T[,] Paste<T>(this T[,] source, T[,] toPaste, int xOffset, int yOffset)
+        public static T[,] Paste<T>(this T[,] source, T[,] toPaste, int xOffset = 0, int yOffset = 0)
         {
-            for (var x = 0; x < toPaste.GetLength(0); x++)
-                for (var y = 0; y < toPaste.GetLength(1); y++)
-                {
-                    source[x + xOffset, y + yOffset] = toPaste[x, y];
-                }
+            for (var y = 0; y < toPaste.GetLength(0); y++)
+                for (var x = 0; x < toPaste.GetLength(1); x++)
+                    source[y + yOffset, x + xOffset] = toPaste[y, x];
 
             return source;
         }
@@ -340,9 +338,9 @@ namespace AdventOfCode.Common
         public static string Render<T>(this T[,] source, Func<T, char> toChar)
         {
             var sb = new StringBuilder();
-            for (var y = 0; y < source.GetLength(0); y++)
+            for (var y = 0; y < source.GetLength(1); y++)
             {
-                for (var x = 0; x < source.GetLength(1); x++)
+                for (var x = 0; x < source.GetLength(0); x++)
                 {
                     sb.Append(toChar(source[x, y]));
                 }

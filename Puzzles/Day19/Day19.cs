@@ -189,13 +189,13 @@ public class Day19 : AdventDay
 
         foreach (var mappedScanner in scanners.Values)
         {
-            while(remainingScanners.TryDequeue(out ScannerData unmappedScanner))
+            while (remainingScanners.TryDequeue(out ScannerData unmappedScanner))
             {
                 var mapping = FindMatchingPoints(mappedScanner, unmappedScanner, 12);
 
                 if (mapping.HasValue)
                 {
-                throw new NotImplementedException();
+                    throw new NotImplementedException();
                     //var totalTranslation = 
 
                     //scanners.Add((unmappedScanner, ))
@@ -209,35 +209,35 @@ public class Day19 : AdventDay
     private static string PartTwo(string data) => data;
 
     public static Func<Vector3D, Vector3D>[] Rotations = new Func<Vector3D, Vector3D>[] {
-        v => new Vector3D(v.X, v.Y, v.Z ),
-        v => new Vector3D(v.X, v.Z, -v.Y ),
-        v => new Vector3D(v.X, -v.Y, -v.Z ),
-        v => new Vector3D(v.X, -v.Z, v.Y ),
-        v => new Vector3D(v.Y, v.X, -v.Z ),
-        v => new Vector3D(v.Y, v.Z, v.X ),
-        v => new Vector3D(v.Y, -v.X, v.Z ),
-        v => new Vector3D(v.Y, -v.Z, -v.X ),
-        v => new Vector3D(v.Z, v.X, v.Y ),
-        v => new Vector3D(v.Z, v.Y, -v.X ),
-        v => new Vector3D(v.Z, -v.X, -v.Y ),
-        v => new Vector3D(v.Z, -v.Y, v.X ),
-        v => new Vector3D( -v.X, v.Y, -v.Z ),
-        v => new Vector3D( -v.X, v.Z, v.Y ),
-        v => new Vector3D( -v.X, -v.Y, v.Z ),
-        v => new Vector3D( -v.X, -v.Z, -v.Y ),
-        v => new Vector3D( -v.Y, v.X, v.Z ),
-        v => new Vector3D( -v.Y, v.Z, -v.X ),
-        v => new Vector3D( -v.Y, -v.X, -v.Z ),
-        v => new Vector3D( -v.Y, -v.Z, v.X ),
-        v => new Vector3D( -v.Z, v.X, -v.Y ),
-        v => new Vector3D( -v.Z, v.Y, v.X ),
-        v => new Vector3D( -v.Z, -v.X, v.Y ),
-        v => new Vector3D( -v.Z, -v.Y, -v.X ),
+        v => new Vector3D( v.X, v.Y, v.Z ),
+        v => new Vector3D( v.X, v.Z, -v.Y ),
+        v => new Vector3D( v.X, -v.Y, -v.Z ),
+        v => new Vector3D( v.X, -v.Z, v.Y ),
+        v => new Vector3D( v.Y, v.X, -v.Z ),
+        v => new Vector3D( v.Y, v.Z, v.X ),
+        v => new Vector3D( v.Y, -v.X, v.Z ),
+        v => new Vector3D( v.Y, -v.Z, -v.X ),
+        v => new Vector3D( v.Z, v.X, v.Y ),
+        v => new Vector3D( v.Z, v.Y, -v.X ),
+        v => new Vector3D( v.Z, -v.X, -v.Y ),
+        v => new Vector3D( v.Z, -v.Y, v.X ),
+        v => new Vector3D(-v.X, v.Y, -v.Z ),
+        v => new Vector3D(-v.X, v.Z, v.Y ),
+        v => new Vector3D(-v.X, -v.Y, v.Z ),
+        v => new Vector3D(-v.X, -v.Z, -v.Y ),
+        v => new Vector3D(-v.Y, v.X, v.Z ),
+        v => new Vector3D(-v.Y, v.Z, -v.X ),
+        v => new Vector3D(-v.Y, -v.X, -v.Z ),
+        v => new Vector3D(-v.Y, -v.Z, v.X ),
+        v => new Vector3D(-v.Z, v.X, -v.Y ),
+        v => new Vector3D(-v.Z, v.Y, v.X ),
+        v => new Vector3D(-v.Z, -v.X, v.Y ),
+        v => new Vector3D(-v.Z, -v.Y, -v.X ),
     };
 
     private static (int FirstScanner, int SecondScanner, Vector3D Translation, Vector3D Rotation)? FindMatchingPoints(ScannerData baseScanner, ScannerData secondScanner, int amountMatch)
     {
-        foreach(var rotator in Rotations)
+        foreach (var rotator in Rotations)
         {
             var baseMappingsToBeacons = baseScanner.Beacons.Select(x => rotator(x));
 
