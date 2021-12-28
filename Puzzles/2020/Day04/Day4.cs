@@ -79,6 +79,7 @@ iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719");
             }
         }
 
+        passports.Add(currentPassport);
         return passports;
     }
 

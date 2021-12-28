@@ -13,6 +13,8 @@
     <None Remove="2020\Day03\day3.txt" />
     <None Remove="2020\Day04\day4.txt" />
     <None Remove="2020\Day05\day5.txt" />
+    <None Remove="2020\Day06\day6.txt" />
+    <None Remove="2020\Day07\day7.txt" />
     <None Remove="2020\Day25\day25.txt" />
     <None Remove="2021\Day10\day10.txt" />
     <None Remove="2021\Day11\day11.txt" />
@@ -52,6 +54,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="2020\Day05\day5.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="2020\Day06\day6.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="2020\Day07\day7.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="2020\Day25\day25.txt">
