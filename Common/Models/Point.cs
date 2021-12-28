@@ -18,6 +18,11 @@ public readonly record struct Point2D(int X, int Y) : IComparable<Point2D>
         return xComparison != 0 ? xComparison : Y.CompareTo(other.Y);
     }
 
+    public Point2D Translate(Vector2D translation)
+    {
+        return this with {X = X + translation.X, Y = Y + translation.Y};
+    }
+
     public IEnumerable<Point2D> GetSurrounding()
     {
         yield return new Point2D(X - 1, Y - 1);

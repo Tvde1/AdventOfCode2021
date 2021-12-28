@@ -38,7 +38,7 @@ v.v..>>v.v
         };
     }
 
-    private static SeaCucumberCell[,] Parse(string input) => input.Split(Environment.NewLine).Select(x => x.Select(SeaCucumberCell.Parse)).ToTwoDimensionalArray().Flip();
+    private static SeaCucumberCell[,] Parse(string input) => input.Split(Environment.NewLine).Select(x => x.Select(SeaCucumberCell.Parse)).ToTwoDimensionalArray();
 
     private static string PartOne(SeaCucumberCell[,] data)
     {
@@ -58,7 +58,7 @@ v.v..>>v.v
             iteration++;
 
             //Console.WriteLine($"Iteration: {iteration++}");
-            //Console.WriteLine(data.Flip().Render(x => x switch
+            //Console.WriteLine(data.Render(x => x switch
             //{
             //    (true, false, false) => '.',
             //    (false, true, false) => '>',

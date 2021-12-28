@@ -72,7 +72,8 @@ public abstract class AdventDay
 {
     protected AdventDay(IAdventDayImplementation implementation, [CallerFilePath] string filePath = "")
     {
-        DayNumber = int.Parse(filePath.Split("\\")[^2][^3..]);
+        var dayNr = filePath.Split("\\")[^2][^2..];
+        DayNumber = int.Parse(dayNr);
         Implementation = implementation;
     }
 

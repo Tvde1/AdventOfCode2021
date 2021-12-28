@@ -65,7 +65,7 @@ namespace Test
                 {X, o, o,},
                 {o, X, X,},
                 {X, X, o,},
-            }.Flip();
+            };
 
             var expected = 0b100_011_110;
 
@@ -90,7 +90,7 @@ namespace Test
                 {o, o, o,},
                 {X, o, o,},
                 {o, X, o,},
-            }.Flip();
+            };
 
             var expected = 34;
 
@@ -206,7 +206,7 @@ namespace Test
             var board = new[,]
             {
                 { o, X, X,},
-            }.Flip();
+            };
 
             // When
             var spot = Day20.CalculateEnhanceSpot(board, outside, midPoint);
@@ -227,7 +227,7 @@ namespace Test
                 {o, o, o,},
                 {X, o, o,},
                 {o, X, o,},
-            }.Flip();
+            };
 
             var expected = @"...
 #..

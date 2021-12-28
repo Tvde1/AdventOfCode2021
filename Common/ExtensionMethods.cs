@@ -82,7 +82,7 @@ namespace AdventOfCode.Common
             } while (current != end);
         }
 
-        public static T[,] ToTwoDimensionalArray<T>(this IEnumerable<IEnumerable<T>> enumerable)
+        public static T[,] ToTwoDimensionalArrayOld<T>(this IEnumerable<IEnumerable<T>> enumerable)
         {
             var columns = enumerable.Select(inner => inner.ToArray()).ToArray();
             var lineCount = columns.Max(columns => columns.Length);
@@ -96,6 +96,26 @@ namespace AdventOfCode.Common
                 }
             }
             return twa;
+        }
+
+        public static T[,] ToTwoDimensionalArray<T>(this IEnumerable<IEnumerable<T>> enumerable)
+        {
+            var data = enumerable.Select(inner => inner.ToArray()).ToArray();
+
+            var length = data.Length;
+            var minorLength = data[0].Length;
+
+            var arr = new T[length, minorLength];
+
+            for (var i = 0; i < length; i++)
+            {
+                for (var j = 0; j < minorLength; j++)
+                {
+                    arr[i, j] = data[i][j];
+                }
+            }
+
+            return arr;
         }
 
         public static int? TryGet(this int[,] source, int x, int y)
@@ -220,14 +240,15 @@ namespace AdventOfCode.Common
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetPoint<T>(this T[,] grid, Point2D point)
         {
-            return grid[point.X, point.Y];
+            return grid[point.Y, point.X];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetPointOr<T>(this T[,] grid, Point2D point, T or)
         {
             try
             {
-                return grid[point.X, point.Y];
+                return grid[point.Y, point.X];
             }
             catch
             {
@@ -338,32 +359,17 @@ namespace AdventOfCode.Common
         public static string Render<T>(this T[,] source, Func<T, char> toChar)
         {
             var sb = new StringBuilder();
-            for (var y = 0; y < source.GetLength(1); y++)
+            for (var y = 0; y < source.GetLength(0); y++)
             {
-                for (var x = 0; x < source.GetLength(0); x++)
+                for (var x = 0; x < source.GetLength(1); x++)
                 {
-                    sb.Append(toChar(source[x, y]));
+                    sb.Append(toChar(source[y, x]));
                 }
 
                 sb.AppendLine();
             }
 
             return sb.ToString();
-        }
-
-        public static T[,] Flip<T>(this T[,] source)
-        {
-            var width = source.GetLength(0);
-            var height = source.GetLength(1);
-            var newGrid = new T[height, width];
-
-            for (var x = 0; x < width; x++)
-                for (var y = 0; y < height; y++)
-                {
-                    newGrid[y, x] = source[x, y];
-                }
-
-            return newGrid;
         }
 
         public static T? Map<T>(this T? source, Func<T, T> selector)
@@ -383,6 +389,11 @@ namespace AdventOfCode.Common
             where T : struct
         {
             return source ?? orElse;
+        }
+
+        public static bool Contains(this Range range, int integer)
+        {
+            return range.Start.Value <= integer && range.End.Value >= integer;
         }
     }
 }
