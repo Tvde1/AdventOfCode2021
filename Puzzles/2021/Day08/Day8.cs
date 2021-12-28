@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day08;
 
 public class Day8 : AdventDay
 {
-    private const string InputFile = "Day08/day8.txt";
-
     private const string TestInput =
         @"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
 edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
@@ -23,7 +21,7 @@ egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce";
 
     public Day8()
-        : base(8, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     public readonly record struct SegmentData(string[] Signals, string[] Output)

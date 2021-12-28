@@ -6,8 +6,6 @@ namespace AdventOfCode.Puzzles._2021.Day03;
 
 public class Day3 : AdventDay
 {
-    private const string InputFile = "Day03/day3.txt";
-
     private const string testInput = @"00100
 11110
 10110
@@ -22,7 +20,7 @@ public class Day3 : AdventDay
 01010";
 
     public Day3() 
-        : base(3, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
 

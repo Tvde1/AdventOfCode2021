@@ -22,10 +22,10 @@ public class Day16 : AdventDay
 
     private static readonly AdventDataSource TestInputX = AdventDataSource.FromRaw("D2FE28");
 
-    private static readonly AdventDataSource RealInput = AdventDataSource.FromFile("Day16/day16.txt");
+    private static readonly AdventDataSource RealInput = AdventDataSource.ForThisDay();
 
     public Day16()
-        : base(16, AdventDayImplementation.Build(RealInput, Lambda.Identity, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(RealInput, Lambda.Identity, PartOne, PartTwo))
     { }
 
     public static string PartOne(string data)

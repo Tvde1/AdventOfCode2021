@@ -8,7 +8,7 @@ namespace AdventOfCode.Puzzles._2021.Day24;
 
 public class Day24 : AdventDay
 {
-    private static readonly AdventDataSource RealInput = AdventDataSource.FromFile("Day24/day24.txt");
+    private static readonly AdventDataSource RealInput = AdventDataSource.ForThisDay();
 
     private static readonly AdventDataSource TestInput1 = AdventDataSource.FromRaw(@"inp x
 mul x -1");
@@ -31,7 +31,7 @@ div w 2
 mod w 2");
 
     public Day24()
-        : base(24, AdventDayImplementation.Build(RealInput, Parse, PartOne))
+        : base(AdventDayImplementation.Build(RealInput, Parse, PartOne))
     { }
 
     private static Instruction[] Parse(string input) => input.Split(Environment.NewLine).Select(Instruction.Parse).ToArray();
@@ -96,7 +96,7 @@ mod w 2");
     //    }
     //}
 
-    private static string PartTwo(Instruction[] data) => data.ToString();
+    private static string PartTwo(Instruction[] data) => data.ToString()!;
 
     private static readonly int[] PossibleDigits = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     private static readonly int[] ZDivs = new[] { 1, 1, 1, 1, 26, 26, 1, 26, 26, 26, 1, 26, 1, 26, };
@@ -302,7 +302,7 @@ public class InstructionCompiler
 
         var param = Expression.Parameter(typeof(IAluInputStream), "inputStream");
 
-        var methodInfo = typeof(IAluInputStream).GetMethod(nameof(IAluInputStream.Read));
+        var methodInfo = typeof(IAluInputStream).GetMethod(nameof(IAluInputStream.Read))!;
 
         var readnext = Expression.Call(param, methodInfo);
 

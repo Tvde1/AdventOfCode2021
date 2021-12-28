@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day12;
 
 public class Day12 : AdventDay
 {
-    private const string InputFile = "Day12/day12.txt";
-
     private const string CaveStart = "start";
     private const string CaveEnd = "end";
 
@@ -33,7 +31,7 @@ kj-HN
 kj-dc";
 
     public Day12()
-        : base(12, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     private static Dictionary<string, Cave> Parse(string input) => GetAllCavesFull(input.Split(Environment.NewLine));

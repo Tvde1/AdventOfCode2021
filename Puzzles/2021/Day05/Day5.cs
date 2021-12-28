@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day05;
 
 public class Day5 : AdventDay
 {
-    private const string InputFile = "Day05/day5.txt";
-
     private const string TestInput = @"0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
@@ -22,7 +20,7 @@ public class Day5 : AdventDay
 5,5 -> 8,2";
 
     public Day5()
-        : base(5, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     public readonly struct VentLine

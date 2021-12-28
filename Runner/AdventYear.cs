@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Common;
+using AdventOfCode.Puzzles._2021.Day01;
 
 namespace AdventOfCode.Runner
 {
@@ -24,26 +25,27 @@ namespace AdventOfCode.Runner
 
         public static List<AdventYear> GetYears()
         {
-            var types = Assembly.GetExecutingAssembly().GetTypes();
-
-            var years = types.Where(x =>
-                    x.IsClass && x.IsInstanceOfType(typeof(AdventDay)) && x.Namespace!.Contains("Puzzles."))
-                .Select(x => x.Namespace!.Split('.')[2][1..]).Distinct();
-
-            return years.Select(x => new AdventYear(int.Parse(x))).OrderBy(x => x).ToList();
+            return Assembly.GetAssembly(typeof(Day1))!.GetTypes()
+                .Where(x => x.IsAssignableTo(typeof(AdventDay)))
+                .Select(x => x.Namespace!)
+                .Select(x => x.Split('.'))
+                .Select(x => x[2][1..])
+                .Distinct()
+                .Select(x => new AdventYear(int.Parse(x)))
+                .OrderBy(x => x.Year)
+                .ToList();
         }
 
         private static IReadOnlyList<AdventDay> GetDays(int year)
         {
-            var types = Assembly.GetExecutingAssembly().GetTypes();
+            var namespaceToFind = $"Puzzles._{year:D4}";
 
-            var namespaceToFind = $"Puzzles.{year:D4}";
-
-            var typesForYear = types.Where(x => x.IsClass && x.IsInstanceOfType(typeof(AdventDay)) && x.Namespace!.Contains(namespaceToFind));
-
-            var days = typesForYear.Select(type => (AdventDay) Activator.CreateInstance(type)!);
-
-            return days.OrderBy(x => x.DayNumber).ToList();
+            return Assembly.GetAssembly(typeof(Day1))!.GetTypes()
+                .Where(x => x.IsAssignableTo(typeof(AdventDay)))
+                .Where(x => x.Namespace!.Contains(namespaceToFind))
+                .Select(type => (AdventDay) Activator.CreateInstance(type)!)
+                .OrderBy(x => x.DayNumber)
+                .ToList();
         }
     }
 }

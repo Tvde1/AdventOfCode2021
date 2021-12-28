@@ -8,13 +8,11 @@ namespace AdventOfCode.Puzzles._2021.Day17;
 public class Day17 : AdventDay
 {
     private const int MAX_MISS_COUNT = 512;
-
-    private const string InputFile = "Day17/day17.txt";
-
+    
     private const string TestInput = @"target area: x=20..30, y=-10..-5";
 
     public Day17()
-        : base(17, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), TargetArea.Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), TargetArea.Parse, PartOne, PartTwo))
     { }
 
     private readonly record struct FiringError(bool IsHit, Vector2D Distance);

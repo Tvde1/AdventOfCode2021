@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace AdventOfCode.Common;
 
@@ -13,6 +16,16 @@ public enum AdventDataSourceType
 public record struct AdventDataSource(AdventDataSourceType Type, string Location)
 {
     public static AdventDataSource FromFile(string fileName) => new(AdventDataSourceType.File, fileName);
+
+    public static AdventDataSource ForThisDay([CallerFilePath] string caller = "")
+    {
+
+        // C:\Repos\AoC\Puzzles\2021\Day01\Day1.cs
+
+        var fileName = caller.Split("Puzzles\\")[1].Replace("cs", "txt");
+
+        return new AdventDataSource(AdventDataSourceType.File, fileName);
+    }
 
     public static AdventDataSource FromWeb(string url) => new(AdventDataSourceType.Web, url);
 

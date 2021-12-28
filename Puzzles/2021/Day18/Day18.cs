@@ -6,8 +6,6 @@ namespace AdventOfCode.Puzzles._2021.Day18;
 
 public class Day18 : AdventDay
 {
-    private const string InputFile = "Day18/day18.txt";
-
     private const string TestInputWorks = @"[[[[4,3],4],4],[7,[[8,4],9]]]
 [1,1]";
 
@@ -25,7 +23,7 @@ public class Day18 : AdventDay
     private const string TestInput2 = @"[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]";
 
     public Day18()
-        : base(18, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     private static SnailFishNumber[] Parse(string input) => input.Split(Environment.NewLine).Select(SnailFishNumber.Parse).ToArray();

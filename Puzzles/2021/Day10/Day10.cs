@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day10;
 
 public class Day10 : AdventDay
 {
-    private const string InputFile = "Day10/day10.txt";
-
     private const string TestInput = @"[({(<(())[]>[[{[]{<()<>>
 [(()[<>])]({[<{<<[]>>(
 {([(<{}[<>[]}>{[]{[(<()>
@@ -22,7 +20,7 @@ public class Day10 : AdventDay
 <{([{{}}[<[[[<>{}]]]>[]]";
 
     public Day10()
-        : base(10, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     private static string[] Parse(string input) => input.Split(Environment.NewLine);

@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day15;
 
 public partial class Day15 : AdventDay
 {
-    private const string InputFile = "Day15/day15.txt";
-
     private const string TestInput = @"1163751742
 1381373672
 2136511328
@@ -22,7 +20,7 @@ public partial class Day15 : AdventDay
 2311944581";
 
     public Day15()
-        : base(15, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo, PartThree))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo, PartThree))
     { }
 
     public static int[,] Parse(string input) => GetGrid(input);

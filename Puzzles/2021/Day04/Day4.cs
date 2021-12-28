@@ -9,10 +9,8 @@ namespace AdventOfCode.Puzzles._2021.Day04;
 
 public class Day4 : AdventDay
 {
-    private const string InputFile = "Day04/day4.txt";
-
     public Day4()
-        : base(4, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     public class BoardValue

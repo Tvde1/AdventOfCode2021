@@ -8,7 +8,7 @@ namespace AdventOfCode.Puzzles._2021.Day22;
 
 public class Day22 : AdventDay
 {
-    private static readonly AdventDataSource RealInput = AdventDataSource.FromFile("Day22/day22.txt");
+    private static readonly AdventDataSource RealInput = AdventDataSource.ForThisDay();
 
     private static readonly AdventDataSource TestInput = AdventDataSource.FromRaw(@"on x=10..12,y=10..12,z=10..12
 on x=11..13,y=11..13,z=11..13
@@ -39,7 +39,7 @@ on x=-54112..-39298,y=-85059..-49293,z=-27449..7877
 on x=967..23432,y=45373..81175,z=27513..53682");
 
     public Day22()
-        : base(22, AdventDayImplementation.Build(RealInput, Parse, PartOne))
+        : base(AdventDayImplementation.Build(RealInput, Parse, PartOne))
     { }
 
     private static RebootStep[] Parse(string input) => input.Split(Environment.NewLine).Select(RebootStep.Parse).ToArray();

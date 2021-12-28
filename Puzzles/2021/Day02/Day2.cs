@@ -10,7 +10,7 @@ public class Day2 : AdventDay
     private const string InputFile = "Day02/day2.txt";
 
     public Day2()
-        : base(2, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     private static IEnumerable<Command> Parse(string input) => input.Split(Environment.NewLine).Select(Command.Parse);
@@ -73,7 +73,8 @@ public class Day2 : AdventDay
                     { Direction: Command.DirectionType.Forward } => state with
                     {
                         HorizontalPosition = state.HorizontalPosition + command.Count
-                    }
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)
                 }).ComputeResult().ToString();
 
     private static string PartTwo(IEnumerable<Command> data) => data.Aggregate(
@@ -92,6 +93,7 @@ public class Day2 : AdventDay
                     {
                         HorizontalPosition = state.HorizontalPosition + command.Count,
                         Depth = state.Depth + state.Aim * command.Count
-                    }
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)
                 }).ComputeResult().ToString();
 }

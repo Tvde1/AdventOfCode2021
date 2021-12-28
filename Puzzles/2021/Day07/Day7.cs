@@ -7,12 +7,10 @@ namespace AdventOfCode.Puzzles._2021.Day07;
 
 public class Day7 : AdventDay
 {
-    private const string InputFile = "Day07/day7.txt";
-
     private const string TestInput = "16,1,2,0,4,2,7,1,2,14";
 
     public Day7()
-        : base(7, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     public static int[] Parse(string input) => input.Split(",").Select(int.Parse).ToArray();

@@ -1,6 +1,7 @@
 ﻿using AdventOfCode.Common.Monads;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace AdventOfCode.Common;
 
@@ -69,9 +70,9 @@ public class AdventDayImplementation<TData> : IAdventDayImplementation
 
 public abstract class AdventDay
 {
-    public AdventDay(int dayNumber, IAdventDayImplementation implementation)
+    protected AdventDay(IAdventDayImplementation implementation, [CallerFilePath] string filePath = "")
     {
-        DayNumber = dayNumber;
+        DayNumber = int.Parse(filePath.Split("\\")[^2][^3..]);
         Implementation = implementation;
     }
 

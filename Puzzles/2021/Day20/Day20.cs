@@ -7,9 +7,9 @@ namespace AdventOfCode.Puzzles._2021.Day20;
 
 public class Day20 : AdventDay
 {
-    private static AdventDataSource RealInput = AdventDataSource.FromFile("Day20/day20.txt");
+    private static readonly AdventDataSource RealInput = AdventDataSource.ForThisDay();
 
-    private static AdventDataSource TestInput =
+    private static readonly AdventDataSource TestInput =
         AdventDataSource.FromRaw(@"..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
 
 #..#.
@@ -19,7 +19,7 @@ public class Day20 : AdventDay
 ..###");
 
     public Day20()
-        : base(20, AdventDayImplementation.Build(RealInput, Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(RealInput, Parse, PartOne, PartTwo))
     {
     }
 

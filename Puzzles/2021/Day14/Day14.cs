@@ -7,8 +7,6 @@ namespace AdventOfCode.Puzzles._2021.Day14;
 
 public class Day14 : AdventDay
 {
-    private const string InputFile = "Day14/day14.txt";
-
     private const string TestInput = @"NNCB
 
 CH -> B
@@ -29,7 +27,7 @@ CC -> N
 CN -> C";
 
     public Day14()
-        : base(14, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), PolymerTemplate.Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), PolymerTemplate.Parse, PartOne, PartTwo))
     { }
 
     public static string PartOne(PolymerTemplate data)

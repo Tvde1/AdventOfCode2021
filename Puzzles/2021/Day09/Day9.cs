@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day09;
 
 public class Day9 : AdventDay
 {
-    private const string InputFile = "Day09/day9.txt";
-
     private const string TestInput =
         @"2199943210
 3987894921
@@ -18,7 +16,7 @@ public class Day9 : AdventDay
 9899965678";
 
     public Day9()
-        : base(9, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     private static int[,] Parse(string input) => 

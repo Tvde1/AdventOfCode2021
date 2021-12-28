@@ -9,10 +9,8 @@ using Part1Data = IEnumerable<int>;
 
 public class Day1 : AdventDay
 {
-    private const string InputFile = "Day01/day1.txt";
-
     public Day1()
-        : base(1, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Parse, PartOne, PartTwo))
     { }
 
     public static Part1Data Parse(string s) => s.Split(Environment.NewLine).Select(int.Parse);

@@ -8,8 +8,6 @@ namespace AdventOfCode.Puzzles._2021.Day13;
 
 public class Day13 : AdventDay
 {
-    private const string InputFile = "Day13/day13.txt";
-
     private const string TestInput = @"6,10
 0,14
 9,10
@@ -33,7 +31,7 @@ fold along y=7
 fold along x=5";
 
     public Day13()
-        : base(13, AdventDayImplementation.Build(AdventDataSource.FromFile(InputFile), Sheet.Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(AdventDataSource.ForThisDay(), Sheet.Parse, PartOne, PartTwo))
     { }
 
     public static string PartOne(Sheet data) => FoldSheet(data).Points.Count.ToString();

@@ -5,13 +5,13 @@ namespace AdventOfCode.Puzzles._2021.Day21;
 
 public class Day21 : AdventDay
 {
-    private static AdventDataSource PuzzleInput = AdventDataSource.FromFile("Day21/day21.txt");
+    private static readonly AdventDataSource PuzzleInput = AdventDataSource.ForThisDay();
 
-    private static AdventDataSource TestInput = AdventDataSource.FromRaw(@"Player 1 starting position: 4
+    private static readonly AdventDataSource TestInput = AdventDataSource.FromRaw(@"Player 1 starting position: 4
 Player 2 starting position: 8");
 
     public Day21()
-        : base(21, AdventDayImplementation.Build(PuzzleInput, StartPosition.Parse, PartOne, PartTwo))
+        : base(AdventDayImplementation.Build(PuzzleInput, StartPosition.Parse, PartOne, PartTwo))
     { }
 
     private static string PartOne(StartPosition data)
