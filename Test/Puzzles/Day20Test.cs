@@ -2,7 +2,7 @@ using System.Collections;
 using System.Linq;
 using AdventOfCode.Common;
 using AdventOfCode.Common.Models;
-using AdventOfCode.Puzzles.Day20;
+using AdventOfCode.Puzzles._2021.Day20;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test

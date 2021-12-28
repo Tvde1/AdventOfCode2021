@@ -8,107 +8,107 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Day10\day10.txt" />
-    <None Remove="Day11\day11.txt" />
-    <None Remove="Day12\day12.txt" />
-    <None Remove="Day13\day13.txt" />
-    <None Remove="Day14\day14.txt" />
-    <None Remove="Day01\day1.txt" />
-    <None Remove="Day02\day2.txt" />
-    <None Remove="Day03\day3.txt" />
-    <None Remove="Day04\day4.txt" />
-    <None Remove="Day06\day6.txt" />
-    <None Remove="Day05\day5.txt" />
-    <None Remove="Day07\day7.txt" />
-    <None Remove="Day08\day8.txt" />
-    <None Remove="Day09\day9.txt" />
-    <None Remove="Day15\day15.txt" />
-    <None Remove="Day16\day16.txt" />
-    <None Remove="Day17\day17.txt" />
-    <None Remove="Day18\day18.txt" />
-    <None Remove="Day19\day19.txt" />
-    <None Remove="Day20\day20.txt" />
-    <None Remove="Day21\day21.txt" />
-    <None Remove="Day22\day22.txt" />
-    <None Remove="Day24\day24.txt" />
-    <None Remove="Day24\day24opt.txt" />
-    <None Remove="Day25\day25.txt" />
+    <None Remove="2021\Day10\day10.txt" />
+    <None Remove="2021\Day11\day11.txt" />
+    <None Remove="2021\Day12\day12.txt" />
+    <None Remove="2021\Day13\day13.txt" />
+    <None Remove="2021\Day14\day14.txt" />
+    <None Remove="2021\Day01\day1.txt" />
+    <None Remove="2021\Day02\day2.txt" />
+    <None Remove="2021\Day03\day3.txt" />
+    <None Remove="2021\Day04\day4.txt" />
+    <None Remove="2021\Day06\day6.txt" />
+    <None Remove="2021\Day05\day5.txt" />
+    <None Remove="2021\Day07\day7.txt" />
+    <None Remove="2021\Day08\day8.txt" />
+    <None Remove="2021\Day09\day9.txt" />
+    <None Remove="2021\Day15\day15.txt" />
+    <None Remove="2021\Day16\day16.txt" />
+    <None Remove="2021\Day17\day17.txt" />
+    <None Remove="2021\Day18\day18.txt" />
+    <None Remove="2021\Day19\day19.txt" />
+    <None Remove="2021\Day20\day20.txt" />
+    <None Remove="2021\Day21\day21.txt" />
+    <None Remove="2021\Day22\day22.txt" />
+    <None Remove="2021\Day24\day24.txt" />
+    <None Remove="2021\Day24\day24opt.txt" />
+    <None Remove="2021\Day25\day25.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Day14\day14.txt">
+    <Content Include="2021\Day14\day14.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day15\day15.txt">
+    <Content Include="2021\Day15\day15.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day16\day16.txt">
+    <Content Include="2021\Day16\day16.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day17\day17.txt">
+    <Content Include="2021\Day17\day17.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day18\day18.txt">
+    <Content Include="2021\Day18\day18.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day19\day19.txt">
+    <Content Include="2021\Day19\day19.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day20\day20.txt">
+    <Content Include="2021\Day20\day20.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day21\day21.txt">
+    <Content Include="2021\Day21\day21.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day22\day22.txt">
+    <Content Include="2021\Day22\day22.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day24\day24opt.txt">
+    <Content Include="2021\Day24\day24opt.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day24\day24.txt">
+    <Content Include="2021\Day24\day24.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day25\day25.txt">
+    <Content Include="2021\Day25\day25.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day13\day13.txt">
+    <Content Include="2021\Day13\day13.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day12\day12.txt">
+    <Content Include="2021\Day12\day12.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day11\day11.txt">
+    <Content Include="2021\Day11\day11.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day01\day1.txt">
+    <Content Include="2021\Day01\day1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day02\day2.txt">
+    <Content Include="2021\Day02\day2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day10\day10.txt">
+    <Content Include="2021\Day10\day10.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day09\day9.txt">
+    <Content Include="2021\Day09\day9.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day08\day8.txt">
+    <Content Include="2021\Day08\day8.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day07\day7.txt">
+    <Content Include="2021\Day07\day7.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day06\day6.txt">
+    <Content Include="2021\Day06\day6.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day05\day5.txt">
+    <Content Include="2021\Day05\day5.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day04\day4.txt">
+    <Content Include="2021\Day04\day4.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Day03\day3.txt">
+    <Content Include="2021\Day03\day3.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -118,13 +118,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Day01\day1.txt">
+    <Resource Include="2021\Day01\day1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Day23\day23.txt">
+    <None Update="2021\Day23\day23.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
