@@ -30,13 +30,12 @@ namespace AdventOfCode.Runner
                     }
 
                     var (parseDurationMs, adventDayPartResults) = day.Implementation.Run();
-                    Console.WriteLine($"Day: {day.DayNumber:D2} | Parsing took {parseDurationMs}ms");
+                    Console.WriteLine($"Day: {day.DayNumber:D2} ({parseDurationMs}ms parsing)");
 
                     var i = 1;
                     foreach (var (output, executionDurationMs) in adventDayPartResults)
                     {
-                        Console.WriteLine($"Part {i} took {executionDurationMs}ms.");
-                        Console.WriteLine(output);
+                        Console.WriteLine($"Part {i}: {output} ({executionDurationMs}ms).");
                         i++;
                     }
                 }

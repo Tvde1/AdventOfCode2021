@@ -19,9 +19,6 @@ public record struct AdventDataSource(AdventDataSourceType Type, string Location
 
     public static AdventDataSource ForThisDay([CallerFilePath] string caller = "")
     {
-
-        // C:\Repos\AoC\Puzzles\2021\Day01\Day1.cs
-
         var fileName = caller.Split("Puzzles\\")[1].Replace("cs", "txt");
 
         return new AdventDataSource(AdventDataSourceType.File, fileName);
